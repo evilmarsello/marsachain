@@ -1,0 +1,64 @@
+/* Fatal boot / render recovery */
+.tma-boot-err {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  max-width: 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.tma-boot-err-title {
+  margin: 0 0 16px;
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.tma-boot-err-desc {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #8e8e93;
+}
+
+.tma-boot-err-pre {
+  margin: 0 0 24px;
+  padding: 12px;
+  font-size: 12px;
+  background: #1c1c1e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  color: #ffb74d;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.tma-boot-err-btn {
+  align-self: stretch;
+}
+
+.tma-boot-err-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tma-boot-err-btn-danger {
+  opacity: 0.85;
+}
+
+.tma-tg-only {
+  align-items: center;
+  text-align: center;
+}
+
+.tma-tg-only .tma-boot-err-title {
+  margin-top: 16px;
+}
+

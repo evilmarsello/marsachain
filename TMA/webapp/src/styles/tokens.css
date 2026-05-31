@@ -1,0 +1,34 @@
+/* Палитра как в Android: colors.xml + card_background + primary_button_background */
+:root {
+  --bg: #000000;
+  --bar: #1c1c1e;
+  --tma-chrome-top: calc(env(safe-area-inset-top, 0px) + 62px);
+  /*
+   * Высота основной шапки (главный экран):
+   *   --tma-top-bar-inset-top — отступ НАД строкой logo / название / статистика (меняйте это).
+   *   --tma-top-bar-body — мин. высота самой строки с иконками.
+   * --tma-chrome-top НЕ управляет шапкой главного экрана; JS меряет .top-bar для подстраниц.
+   */
+  --tma-top-bar-inset-top: 50px;
+  --tma-top-bar-body: 36px;
+  --tma-content-below-header: 20px;
+  --tma-chrome-bottom: calc(46px + 10px + env(safe-area-inset-bottom, 0px));
+  --text: #ffffff;
+  /* primary_button_background.xml */
+  --btn-fill: #bc5a2b;
+  /* colors.xml primary_color — акценты цифр/ссылок как во fragment_wallet */
+  --accent-text: #ff9500;
+  --label-secondary: #8e8e93;
+  --muted: #8e8e93;
+  --ok: #4caf50;
+  --card: #1c1c1e;
+  --card-border: #2c2c2e;
+  --input-bg: #0d0d0d;
+  --btn-secondary-bg: #2c2c2e;
+  --btn-secondary-border: #3a3a3c;
+}
+
+* {
+  box-sizing: border-box;
+}
+

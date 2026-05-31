@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="28dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Receive MRS"
+        android:textSize="26sp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Address"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/input_background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/addressText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:breakStrategy="simple"
+            android:focusable="false"
+            android:fontFamily="monospace"
+            android:inputType="none"
+            android:maxLines="4"
+            android:text="..."
+            android:textColor="#FFFFFF"
+            android:textIsSelectable="true"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/copyButton"
+            android:layout_width="26dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Copy address"
+            android:padding="2dp"
+            android:src="@drawable/ic_copy" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share this address to receive MRS coins"
+        android:textSize="13sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="24dp"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:text="Close"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textColor="#8E8E93"
+            android:background="@drawable/receive_button_background" />
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Share"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/send_button_background" />
+
+    </LinearLayout>
+
+</LinearLayout>

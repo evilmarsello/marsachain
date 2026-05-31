@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/popup_background"
+    android:padding="8dp"
+    android:elevation="8dp">
+
+    <!-- Copy Address -->
+    <LinearLayout
+        android:id="@+id/optionCopyAddress"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_copy"
+            android:layout_marginEnd="12dp"
+            android:tint="#8E8E93" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Copy Address"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Rename Wallet -->
+    <LinearLayout
+        android:id="@+id/optionRename"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:layout_marginEnd="12dp"
+            android:tint="#8E8E93" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rename"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Show Private Key -->
+    <LinearLayout
+        android:id="@+id/optionShowPrivateKey"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_key"
+            android:layout_marginEnd="12dp"
+            android:tint="#8E8E93" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Show Private Key"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Set as Active -->
+    <LinearLayout
+        android:id="@+id/optionSetActive"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_check_circle"
+            android:layout_marginEnd="12dp"
+            android:tint="#8E8E93" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Set as Active"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Delete Wallet -->
+    <LinearLayout
+        android:id="@+id/optionDelete"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_delete"
+            android:layout_marginEnd="12dp"
+            android:tint="#FF3B30" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete Wallet"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#FF3B30" />
+
+    </LinearLayout>
+
+</LinearLayout>

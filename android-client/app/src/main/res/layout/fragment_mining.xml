@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
+
+        <!-- Balance and Difficulty Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="horizontal"
+            android:padding="@dimen/card_padding">
+
+            <!-- Balance Section (Left) -->
+            <LinearLayout
+                android:layout_width="68dp"
+                android:layout_height="57dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="6dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Total Balance"
+                    android:textColor="#8E8E93"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="bottom|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/balanceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/balance_text"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="MRS"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Network Info Section (Right) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Total blocks:"
+                        android:textColor="#8E8E93"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/networkHeightText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="..."
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Active Miners -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Active Miners:"
+                        android:textColor="#8E8E93"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/activeMininersText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Difficulty -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Difficulty:"
+                        android:textColor="#8E8E93"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/difficultyText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- MINER_STAKE Info Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <!-- Miner Stake Status -->
+            <TextView
+                android:id="@+id/minerStakeStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Mining Stake: Not Active"
+                android:textColor="#8E8E93"
+                android:textSize="11sp" />
+
+            <!-- Cost per 1 credit (1 hash) - only when stake is active -->
+            <TextView
+                android:id="@+id/minerStakeCostPerCreditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text=""
+                android:textColor="#8E8E93"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <!-- Unlock Block (only shown when stake is active) -->
+            <TextView
+                android:id="@+id/minerStakeUnlockText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text=""
+                android:textColor="#8E8E93"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Circular Mining Button with Glow Effect - Outside Card (квадрат = круг свечения без растяжения в эллипс) -->
+        <FrameLayout
+            android:layout_width="@dimen/mining_glow_size"
+            android:layout_height="@dimen/mining_glow_size"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin">
+
+            <!-- Glow Effect Background -->
+
+            <!-- Кольцо прогресса при ожидании ответа (проверка ноды, challenge, submit) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/mining_glow_background" />
+
+            <com.marsa.chain.ui.CircularProgressRingView
+                android:id="@+id/miningProgressRing"
+                android:layout_width="@dimen/mining_button_size"
+                android:layout_height="@dimen/mining_button_size"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <!-- Main Mining Button -->
+            <Button
+                android:id="@+id/miningButton"
+                android:layout_width="@dimen/mining_button_size"
+                android:layout_height="@dimen/mining_button_size"
+                android:layout_gravity="center"
+                android:background="@drawable/circular_mining_button"
+                android:text="MRS"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/mining_button_text"
+                android:textStyle="bold" />
+
+            <!-- Темный overlay для затемнения кнопки майнинга -->
+            <View
+                android:id="@+id/miningButtonDimOverlay"
+                android:layout_width="@dimen/mining_glow_size"
+                android:layout_height="@dimen/mining_glow_size"
+                android:layout_gravity="center"
+                android:background="#80000000"
+                android:visibility="gone" />
+
+            <!-- Overlay: Create MINER_STAKE Button (показывается поверх кнопки майнинга) -->
+            <Button
+                android:id="@+id/createMinerStakeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/create_stake_button_background"
+                android:paddingStart="32dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="32dp"
+                android:paddingBottom="16dp"
+                android:text="CREATE MINER STAKE"
+                android:textColor="#BC5A2B"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- Mining Credits (под кнопкой майнинга) -->
+        <TextView
+            android:id="@+id/miningCreditsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Credits: N/A"
+            android:textColor="#8E8E93"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/miningBlockRateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textColor="#8E8E93"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- Credits Status Text (под кнопкой майнинга) -->
+        <TextView
+            android:id="@+id/creditsRefillText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="Create MINER_STAKE to start mining"
+            android:textColor="#8E8E93"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</ScrollView>

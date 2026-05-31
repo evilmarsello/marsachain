@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboardingRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical">
+
+    <!-- Верхняя панель: только заголовок текущего шага (без лого) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1C1C1E"
+        android:elevation="4dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:background="#1C1C1E" />
+
+        <TextView
+            android:id="@+id/tvToolbarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/onboarding_toolbar_default"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <!-- Лого по центру, под ним wordmark по центру; ниже — приветствие -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp">
+
+        <ImageView
+            android:id="@+id/onboardingMarkLogo"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo" />
+
+        <ImageView
+            android:id="@+id/onboardingWordmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:maxWidth="260dp"
+            android:maxHeight="48dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logoname" />
+
+        <TextView
+            android:id="@+id/tvOnboardingWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/onboarding_welcome_tagline"
+            android:textAlignment="center"
+            android:textColor="#8E8E93"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:filterTouchesWhenObscured="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
+
+            <!-- Step 0: compact intro -->
+            <LinearLayout
+                android:id="@+id/stepWarnings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_background"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Before you continue"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="2dp"
+                        android:text="You will see your 24-word BIP39 seed phrase once (mnemonic). Write it down offline. Without it you cannot recover this HD wallet on a new device."
+                        android:textColor="#8E8E93"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="2dp"
+                        android:text="The seed phrase restores HD wallets only. Key-imported wallets are not included—keep those keys separately."
+                        android:textColor="#8E8E93"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/cbUnderstand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:buttonTint="@color/color_pending"
+                        android:contentDescription="@string/onboarding_understand_checkbox_a11y"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:paddingTop="2dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp">
+
+                        <TextView
+                            android:id="@+id/tvUnderstandTermsLink"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            tools:text="I understand the risks (Terms of Use)" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="top"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/cbWroteBackup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:buttonTint="@color/color_pending"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:paddingTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/tvWroteBackupLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="sans-serif"
+                        android:labelFor="@id/cbWroteBackup"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:text="@string/onboarding_backup_checkbox_label"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnContinueWarnings"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/primary_button_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="Show 24-word seed phrase"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/btnRestoreInstead"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/onboarding_outline_button_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/onboarding_restore_seed_button"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <!-- Step 1: mnemonic grid -->
+            <LinearLayout
+                android:id="@+id/stepWords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Write your seed phrase in order: left to right, top to bottom (1–24)."
+                    android:textColor="#8E8E93"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/card_background"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <GridLayout
+                        android:id="@+id/mnemonicGrid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alignmentMode="alignMargins"
+                        android:columnCount="3"
+                        android:useDefaultMargins="false"
+                        tools:ignore="MissingConstraints" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnWordsContinue"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/primary_button_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="I wrote the seed phrase down"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <!-- Step 2: verify -->
+            <LinearLayout
+                android:id="@+id/stepVerify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_background"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/tvVerifyHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Enter the correct word from your 24-word seed phrase for each position below."
+                        android:textColor="#8E8E93"
+                        android:textSize="14sp"
+                        tools:text="Enter the correct word from your 24-word seed phrase for each position below." />
+
+                    <TextView
+                        android:id="@+id/tvLabelWord1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        tools:text="Word 9" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/acWord1"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_background"
+                        android:completionThreshold="1"
+                        android:fontFamily="sans-serif"
+                        android:hint="Type a word"
+                        android:inputType="textNoSuggestions"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#8E8E93"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvLabelWord2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        tools:text="Word 12" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/acWord2"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_background"
+                        android:completionThreshold="1"
+                        android:fontFamily="sans-serif"
+                        android:hint="Type a word"
+                        android:inputType="textNoSuggestions"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#8E8E93"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvLabelWord3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        tools:text="Word 19" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/acWord3"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_background"
+                        android:completionThreshold="1"
+                        android:fontFamily="sans-serif"
+                        android:hint="Type a word"
+                        android:inputType="textNoSuggestions"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#8E8E93"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/btnVerifySubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="18dp"
+                        android:background="@drawable/primary_button_background"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Confirm"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Restore -->
+            <LinearLayout
+                android:id="@+id/stepRestore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_background"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Enter your 24-word BIP39 seed phrase separated by spaces. This restores HD wallets from that seed only."
+                        android:textColor="#8E8E93"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Imported key-based wallets need their private keys saved separately."
+                        android:textColor="#8E8E93"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/etRestoreMnemonic"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/input_background"
+                        android:fontFamily="sans-serif"
+                        android:gravity="top|start"
+                        android:hint="24-word seed: word1 word2 …"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:padding="12dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#8E8E93"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/btnRestoreSubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/primary_button_background"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Restore"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/btnRestoreBack"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:text="Back"
+                        android:textColor="#8E8E93"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

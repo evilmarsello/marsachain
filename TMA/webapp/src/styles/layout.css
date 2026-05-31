@@ -1,0 +1,499 @@
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+  flex-shrink: 0;
+  display: block;
+  background: var(--bar);
+  padding-top: calc(
+    var(--tg-safe-top, env(safe-area-inset-top, 0px)) + var(--tma-top-bar-inset-top)
+  );
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.top-bar * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Высота строки шапки: tokens.css → --tma-top-bar-inset-top (на .top-bar) и --tma-top-bar-body */
+.top-bar-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 36px;
+  align-items: end;
+  column-gap: 8px;
+  box-sizing: border-box;
+  min-height: var(--tma-top-bar-body);
+  padding: 0 10px 0 16px;
+}
+
+.top-logo {
+  display: block;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  justify-self: start;
+  align-self: end;
+}
+
+.top-title {
+  grid-column: 2;
+  margin: 0;
+  padding: 0 0 2px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  align-self: end;
+}
+
+.top-stat-btn {
+  grid-column: 3;
+  justify-self: end;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.top-stat-btn:active {
+  opacity: 0.65;
+}
+
+.top-stat-ico {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.top-browser-hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 0 16px 8px;
+  line-height: 1.3;
+}
+
+.content {
+  padding: 0 16px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content-with-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg);
+  padding-top: var(--tma-content-below-header, 12px);
+  padding-bottom: calc(var(--tma-chrome-bottom, 58px) + 4px);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
+}
+
+/* Карточка как card_background.xml: 20dp, #1C1C1E, обводка #2C2C2E */
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px 18px 18px;
+  margin-bottom: 14px;
+  border: 0.5px solid var(--card-border);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.13);
+}
+
+.card-hero {
+  padding-top: 18px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.card-head-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--label-secondary);
+}
+
+.card-ico {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+/* Верхний блок в духе fragment_mining: две колонки */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  margin-bottom: 14px;
+}
+
+.hero-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hero-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.hero-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--label-secondary);
+  letter-spacing: 0.02em;
+}
+
+.hero-kicker-right {
+  align-self: flex-end;
+}
+
+.hero-big {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.hero-big.ok {
+  color: var(--ok);
+}
+
+.hero-big.bad {
+  color: #f44336;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat-right {
+  align-items: flex-end;
+}
+
+.hero-lab {
+  font-size: 11px;
+  color: var(--label-secondary);
+}
+
+.hero-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-val-accent {
+  color: var(--accent-text);
+}
+
+.hero-foot {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.hero-foot-right {
+  align-self: flex-end;
+  text-align: right;
+  max-width: 100%;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: var(--label-secondary);
+  font-size: 14px;
+}
+
+.value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.value.ok {
+  color: var(--ok);
+}
+
+.value.bad {
+  color: #f44336;
+}
+
+/* Акцент цифр как primary_color в Android */
+.value.accent {
+  color: var(--accent-text);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+/* Кнопка как primary_button: заливка #BC5A2B, лёгкая тень снизу */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: var(--btn-fill);
+  color: #ffffff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  opacity: 0.88;
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  margin-top: 10px;
+  background: var(--btn-secondary-bg);
+  color: var(--text);
+  border: 1px solid var(--btn-secondary-border);
+  box-shadow: none;
+}
+
+.btn-secondary:active {
+  opacity: 0.9;
+}
+
+.input-row {
+  margin-top: 10px;
+}
+
+.inp {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--btn-secondary-border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.inp::placeholder {
+  color: var(--muted);
+}
+
+.tx-sep {
+  margin: 16px 0 8px;
+  border-top: 1px solid var(--card-border);
+}
+
+.tx-list {
+  margin-top: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.tx-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.tx-line {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.tx-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.hint-tight {
+  margin-top: 0;
+}
+
+.app-foot {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* Нижние вкладки как activity_main.xml (#1C1C1E, 72dp, активный #BC5A2B) */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  min-height: 58px;
+  padding: 4px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+  background: var(--bar);
+  border-top: 1px solid var(--card-border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.bottom-nav * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 4px 6px;
+  margin: 0 3px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--label-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab.active {
+  background: transparent;
+  color: var(--label-secondary);
+}
+
+.nav-ico-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--label-secondary);
+}
+
+.nav-tab.active .nav-ico-wrap {
+  color: var(--btn-fill);
+}
+
+/* Белая PNG-иконка: цвет через mask = тот же var(), что и у SVG-вкладок */
+.nav-ico-mining {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background-color: var(--label-secondary);
+  -webkit-mask-image: var(--nav-mining-mask);
+  mask-image: var(--nav-mining-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 0.15s ease;
+}
+
+.nav-tab.active .nav-ico-mining {
+  background-color: var(--btn-fill);
+}
+
+.nav-ico-svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.nav-tab-label {
+  line-height: 1.1;
+  text-align: center;
+  color: var(--label-secondary);
+}
+
+.nav-tab.active .nav-tab-label {
+  color: var(--label-secondary);
+}
+

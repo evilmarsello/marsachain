@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Import Wallet"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/background_card" />
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_close"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter your private key to import an existing wallet"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Private Key Input -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Private Key"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/background_card"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/etPrivateKey"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minLines="1"
+            android:maxLines="12"
+            android:minHeight="48dp"
+            android:background="@drawable/input_background"
+            android:breakStrategy="simple"
+            android:gravity="top|start"
+            android:hint="Enter your private key here..."
+            android:hyphenationFrequency="none"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:padding="12dp"
+            android:scrollbars="vertical"
+            android:textColor="@color/background_card"
+            android:textColorHint="@color/text_hint"
+            android:textSize="12sp"
+            android:typeface="monospace" />
+
+        <TextView
+            android:id="@+id/btnPastePrivateKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="10dp"
+            android:text="Paste"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Wallet Name Input -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wallet Name (Optional)"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/background_card"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etWalletName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_background"
+        android:padding="16dp"
+        android:hint="Enter wallet name (e.g., My Imported Wallet)"
+        android:textSize="12sp"
+        android:textColor="@color/background_card"
+        android:textColorHint="@color/text_hint"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="2dp"
+        android:text="Wallets imported by private key are not restored from the 24-word seed phrase—export and save each key you need."
+        android:textColor="@color/color_pending"
+        android:textSize="12sp" />
+
+    <!-- Status Message -->
+    <TextView
+        android:id="@+id/tvStatusMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="14sp"
+        android:textColor="@color/color_receive"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"
+        android:gravity="center" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/receive_button_background"
+            android:textColor="@color/background_card" />
+
+        <Button
+            android:id="@+id/btnImport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/send_button_background"
+            android:text="Import"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

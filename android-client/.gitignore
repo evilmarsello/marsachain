@@ -1,0 +1,18 @@
+# Android
+local.properties
+.gradle/
+**/build/
+app/.cxx/
+*.iml
+.idea/
+.kotlin/
+
+# Node / TMA
+**/node_modules/
+TMA/webapp/dist/
+TMA/webapp/.env
+TMA/marsa-pool-api/.env
+TMA/server-optional/.env
+
+# OS
+.DS_Store

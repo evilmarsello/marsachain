@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_toolbar_default">Mining App &amp; Custody wallet</string>
+    <string name="onboarding_welcome_tagline">Welcome to Marsa Chain.</string>
+
+    <string name="onboarding_understand_prefix">I understand the risks (</string>
+    <string name="onboarding_terms_of_use_link">Terms of Use</string>
+    <string name="onboarding_understand_suffix">)</string>
+    <string name="onboarding_understand_checkbox_a11y">I understand the risks</string>
+    <string name="onboarding_terms_dialog_title">Terms of Use</string>
+    <string name="onboarding_terms_accept_button">I have read and accept</string>
+    <string name="onboarding_terms_footer_acknowledge">By tapping the button below you confirm that you have read this notice, understand the risks of self-custody and decentralized networks, and accept the Terms of Use.</string>
+    <string name="onboarding_backup_checkbox_label">I will keep a backup (seed phrase / 24 words and/or imported keys)</string>
+    <string name="onboarding_restore_seed_button">I already have a seed phrase (24 words)</string>
+    <string name="connection_node_name">Нода %1$d</string>
+</resources>

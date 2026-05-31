@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Create New Wallet"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:text="✕"
+            android:textSize="20sp"
+            android:textColor="#8E8E93"
+            android:gravity="center_horizontal"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+    </LinearLayout>
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create a new wallet with a unique address and private key."
+        android:textSize="14sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Wallet Name Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wallet Name (optional)"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etWalletName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/input_background"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#8E8E93"
+        android:hint="Enter wallet name..."
+        android:layout_marginBottom="10dp" />
+
+    <!-- Info Box -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/info_background"
+        android:padding="5dp"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:text="The new wallet will be set as active and your current wallet will be saved."
+            android:textColor="#8E8E93"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/btnCancelBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Cancel"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#8E8E93"
+            android:background="?attr/selectableItemBackground"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/btnCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="New Wallet"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/primary_button_background"
+            android:padding="8dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>

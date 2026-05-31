@@ -1,0 +1,269 @@
+.pools-page {
+  /* Above mining-mode-bar (50), bottom-nav (100), wallet panels */
+  z-index: 2100;
+  overscroll-behavior: none;
+}
+
+.pools-page .tma-shell-inner {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+}
+
+.pools-page-inner {
+  padding: 0;
+}
+
+.pools-page-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.pools-page-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.pools-page .tma-shell-header--scroll-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -16px 12px;
+  padding: 24px 16px 0;
+  background: var(--bg);
+}
+
+.pools-page-footer {
+  flex-shrink: 0;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.pools-status {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--btn-fill, #ff8400);
+}
+
+.pools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pools-card {
+  padding: 14px;
+  border-radius: 14px;
+  background: #1c1c1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pools-card--selected {
+  border-color: rgba(52, 199, 89, 0.85);
+  box-shadow: 0 0 0 1px rgba(52, 199, 89, 0.35);
+}
+
+.pools-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.pools-pool-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.pools-card-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pools-card-miners {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--label-secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pools-card-meta {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--label-secondary);
+}
+
+.pools-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pools-btn {
+  flex: 1;
+  appearance: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.pools-btn--ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.pools-btn--primary {
+  background: var(--btn-fill, #ff8400);
+  color: #fff;
+}
+
+.pools-btn--join {
+  background: rgba(52, 199, 89, 0.95);
+  color: #fff;
+  border-color: rgba(52, 199, 89, 0.6);
+}
+
+.pools-btn--join:active {
+  background: rgba(46, 170, 78, 1);
+}
+
+.pools-btn--chosen {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--label-secondary);
+  border-color: rgba(255, 255, 255, 0.12);
+  cursor: default;
+}
+
+.pools-page--hidden {
+  display: none !important;
+}
+
+.pools-btn--info {
+  width: 100%;
+  flex: none;
+  background: #2c2c2e;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.pools-info-overlay,
+.pools-detail-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 20px 16px;
+}
+
+.pools-info-overlay[hidden],
+.pools-detail-overlay[hidden] {
+  display: none;
+}
+
+.pools-info-sheet,
+.pools-detail-sheet {
+  width: 100%;
+  max-width: 420px;
+  max-height: min(85vh, 640px);
+  overflow-y: auto;
+  border-radius: 16px;
+  background: #2c2c2e;
+  padding: 18px 16px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.pools-info-sheet::-webkit-scrollbar,
+.pools-detail-sheet::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.pools-info-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pools-info-body {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #e5e5ea;
+}
+
+.pools-info-body--muted {
+  color: var(--label-secondary);
+  margin-bottom: 14px;
+}
+
+.pools-info-how {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(28, 28, 30, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pools-info-how-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pools-info-how-body {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--label-secondary);
+}
+
+.pools-info-how-body--muted {
+  margin-bottom: 0;
+  font-size: 11px;
+}
+
+.pools-info-close,
+.pools-detail-close {
+  width: 100%;
+}
+
+.pools-detail-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.pools-detail-body {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--label-secondary);
+  white-space: pre-wrap;
+}

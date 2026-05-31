@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="28dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send MRS"
+        android:textSize="26sp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wallet Address"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/etRecipientAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minLines="1"
+            android:maxLines="10"
+            android:minHeight="48dp"
+            android:background="@drawable/input_background"
+            android:breakStrategy="simple"
+            android:gravity="top|start"
+            android:hint="mrs..."
+            android:hyphenationFrequency="none"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:padding="12dp"
+            android:scrollbars="vertical"
+            android:textColor="@color/background_card"
+            android:textColorHint="@color/text_hint"
+            android:textSize="12sp"
+            android:typeface="monospace" />
+
+        <TextView
+            android:id="@+id/btnPastePrivateKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="10dp"
+            android:text="Paste"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvOwnWalletWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This is one of your own wallets"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#F44336"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount (MRS)"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:inputType="numberDecimal"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#636366"
+        android:background="@drawable/input_background"
+        android:padding="12dp"
+        android:hint="Enter amount" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fee (MRS, min: halving-based)"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etFee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:inputType="numberDecimal"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#636366"
+        android:background="@drawable/input_background"
+        android:padding="12dp"
+        android:text=""
+        android:hint="Minimum: 1" />
+
+    <TextView
+        android:id="@+id/tvHighFeeWarning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="High commission only gives priority if the network is busy"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#FFB74D"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:text="Cancel"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/secondary_button_background" />
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Send"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/send_button_background" />
+
+    </LinearLayout>
+
+</LinearLayout>

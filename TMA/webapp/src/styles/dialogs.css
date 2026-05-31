@@ -1,0 +1,395 @@
+/* Custom dialogs (Android-aligned) */
+.tma-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-dialog {
+  width: 100%;
+  max-width: 400px;
+  max-height: min(90vh, 640px);
+  overflow-y: auto;
+  border-radius: 16px;
+  background: #1c1c1e;
+  border: 1px solid #3a3a3c;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  padding: 28px;
+  color: #ffffff;
+}
+
+.tma-dialog-title {
+  margin: 0 0 24px;
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.tma-dialog-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #8e8e93;
+}
+
+.tma-dialog-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tma-dialog-inp {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 9px 10px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #ffffff;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.tma-dialog-row > .tma-dialog-inp {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.tma-dialog-inp::placeholder {
+  color: #636366;
+}
+
+.tma-dialog-inp--wide {
+  width: 100%;
+  min-height: 43px;
+  margin-bottom: 8px;
+}
+
+.tma-dialog-inp--wide.tma-dialog-inp-mono {
+  min-height: 52px;
+}
+
+.tma-dialog-inp--tall {
+  min-height: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.tma-dialog-inp--import-name {
+  min-height: 36px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.tma-dialog-inp--import-pk {
+  min-height: 42px;
+}
+
+.tma-dialog-paste {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 10px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #bc5a2b;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tma-dialog-paste:active {
+  opacity: 0.75;
+}
+
+.tma-dialog-warn {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: #f44336;
+  display: none;
+}
+
+.tma-dialog-warn--hint {
+  color: #ffb74d;
+}
+
+.tma-dialog-warn.is-visible {
+  display: block;
+}
+
+.tma-dialog-warn--fee {
+  color: #ffb74d;
+  margin-bottom: 16px;
+}
+
+.tma-dialog-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.tma-dialog-btn {
+  flex: 1;
+  min-height: 48px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-dialog-btn-secondary {
+  color: #ffffff;
+  background: #2c2c2e;
+  border: 0.5px solid #48484a;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.tma-dialog-btn-close {
+  color: #8e8e93;
+  background: #2c2c2e;
+  border: 0.5px solid #48484a;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tma-dialog-btn-primary {
+  color: #ffffff;
+  background: #bc5a2b;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tma-dialog-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tma-dialog-btn:active {
+  opacity: 0.9;
+  transform: scale(0.99);
+}
+
+.tma-dialog-recv-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 9px 10px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+}
+
+.tma-dialog-addr-txt {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  word-break: break-all;
+  color: #ffffff;
+  user-select: text;
+}
+
+.tma-dialog-copy-ico {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bc5a2b;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tma-dialog-copy-ico:active {
+  opacity: 0.75;
+}
+
+.tma-dialog-hint {
+  margin: 0 0 24px;
+  font-size: 13px;
+  color: #8e8e93;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.tma-dialog-hint--center {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.tma-dialog-hint--tight {
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.tma-dialog-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.tma-dialog-head-row .tma-dialog-title {
+  margin: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.tma-dialog-x {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #8e8e93;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-dialog-x:active {
+  opacity: 0.65;
+}
+
+.tma-dialog-info-box {
+  background: rgba(255, 149, 0, 0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.tma-dialog-info-txt {
+  font-size: 12px;
+  color: #8e8e93;
+  line-height: 1.35;
+}
+
+.tma-dialog-warn--seed {
+  display: block;
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: #ff9500;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.tma-dialog--sheet {
+  max-height: min(88vh, 640px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tma-wallet-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tma-wallet-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: var(--text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-wallet-row.is-active {
+  border-color: var(--btn-fill);
+  background: rgba(188, 90, 43, 0.12);
+}
+
+.tma-wallet-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.tma-wallet-row-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.tma-wallet-row-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tma-wallet-row-addr {
+  font-size: 11px;
+  color: #aeaeb2;
+  word-break: break-all;
+}
+
+.tma-wallet-row-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+.tma-dialog--alert {
+  max-width: 320px;
+}
+
+.tma-dialog-alert-msg {
+  margin: 8px 0 20px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #fff;
+  white-space: pre-wrap;
+  text-align: center;
+}
+
+.tma-dialog-actions--alert,
+.tma-dialog-actions--confirm {
+  justify-content: center;
+  gap: 10px;
+}
+
+.tma-dialog-actions--confirm .tma-dialog-btn {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:padding="8dp"
+        android:background="@drawable/dialog_background"
+        android:gravity="center_vertical">
+
+        <!-- Transaction Type Icon -->
+        <ImageView
+            android:id="@+id/transactionTypeIcon"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/circle_background"
+            android:layout_marginEnd="16dp"
+            android:padding="13dp"
+            android:scaleType="centerInside"
+            android:contentDescription="Transaction type icon" />
+
+        <!-- Transaction Details -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Type and Amount Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingEnd="5dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/transactionTypeText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Transaction Type"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/background_card" />
+
+                <TextView
+                    android:id="@+id/transactionAmountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="8dp"
+                    android:text="+100 MRS"
+                    android:textColor="#FF4CAF50"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Address -->
+            <TextView
+                android:id="@+id/transactionAddressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="mrs1234...5678"
+                android:textSize="12sp"
+                android:textColor="#B8B8B8"
+                android:layout_marginTop="4dp" />
+
+            <!-- Time and Status Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingEnd="5dp"
+                android:paddingBottom="1dp"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/transactionTimeText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Dec 15, 2023 14:30"
+                    android:textSize="10sp"
+                    android:textColor="#B8B8B8" />
+
+                <TextView
+                    android:id="@+id/transactionStatusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Success"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_confirmed"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/transactionConfirmationsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6 confirmations"
+                    android:textSize="12sp"
+                    android:textColor="@color/background_card" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

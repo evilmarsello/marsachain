@@ -1,0 +1,199 @@
+/* Settings tab — Android fragment_settings */
+.tma-settings-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+/* Main Settings tab — fill panel so Exit stays at bottom */
+.content-with-nav:has(> .tma-settings-scroll) {
+  display: flex;
+  flex-direction: column;
+}
+
+#tma-panel > .tma-settings-scroll {
+  flex: 1;
+  min-height: 0;
+  gap: 10px;
+}
+
+#tma-panel > .tma-settings-scroll > .tma-settings-brand--top {
+  margin-top: 0;
+  margin-bottom: 2px;
+  padding: 0 0 4px;
+}
+
+#tma-panel > .tma-settings-scroll > .tma-settings-card--exit {
+  margin-top: auto;
+}
+
+#tma-panel > .tma-settings-scroll > .tma-settings-version {
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.tma-settings-card--lang {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.tma-settings-card--lang .tma-lang-picker-row {
+  margin-top: 0;
+  min-height: 40px;
+}
+
+.tma-settings-card {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.tma-settings-card-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.tma-settings-hint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #8e8e93;
+}
+
+.tma-settings-btn {
+  display: block;
+  width: 100%;
+  min-height: 45px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.tma-settings-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.tma-settings-btn-warn {
+  background: linear-gradient(180deg, #bc5a2b 0%, #bc5a2b 100%);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tma-settings-btn-outline {
+  background: rgba(37, 0, 0, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+}
+
+.tma-settings-btn-secondary {
+  flex: 1;
+  min-height: 45px;
+  font-size: 15px;
+  background: #2c2c2e;
+  border: 0.5px solid #48484a;
+}
+
+.tma-settings-row-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.tma-settings-info-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tma-settings-info-btns .tma-settings-btn-secondary {
+  min-height: 40px;
+  padding: 8px 5px;
+  font-size: 12px;
+  line-height: 1.25;
+  text-wrap: balance;
+  hyphens: auto;
+}
+
+.tma-lang-picker-row {
+  margin-top: 0;
+  min-height: 44px;
+}
+
+.tma-settings-brand--top {
+  flex-shrink: 0;
+}
+
+.tma-lang-select {
+  flex-shrink: 0;
+  max-width: 62%;
+  min-width: 7.5em;
+  padding: 4px 28px 4px 8px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #8e8e93;
+  text-align: right;
+  text-align-last: right;
+  border: none;
+  border-radius: 8px;
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238e8e93' d='M1 1l4 4 4-4'/%3E%3C/svg%3E")
+    no-repeat right 4px center;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tma-lang-select:focus {
+  outline: none;
+  color: #ffffff;
+}
+
+.tma-settings-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 8px 0;
+}
+
+.tma-settings-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.tma-settings-logoname {
+  width: 200px;
+  max-width: 55vw;
+  height: auto;
+  object-fit: contain;
+}
+
+.tma-settings-version {
+  margin: 0;
+  padding: 12px 8px 8px;
+  text-align: right;
+  font-size: 11px;
+  color: #6c6c70;
+}
+
+.tma-dialog-actions--reset {
+  flex-direction: row;
+}
+
+.tma-reset-countdown {
+  margin-left: 14px;
+  font-weight: 600;
+}
+

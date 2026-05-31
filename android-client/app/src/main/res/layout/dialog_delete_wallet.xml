@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🗑️ Delete Wallet"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Warning Icon -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/warning_background"
+        android:padding="16dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/warning"
+            android:textSize="24sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="This action cannot be undone!"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Wallet Info -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/wallet_info_background"
+        android:padding="16dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/walletNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Main Wallet"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/walletAddressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="mrs1234567890abcdef..."
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:textColor="#8E8E93"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Balance -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💰"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Balance: "
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:textColor="#8E8E93" />
+
+            <TextView
+                android:id="@+id/walletBalanceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 coins"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#34C759" />
+
+        </LinearLayout>
+
+        <!-- Private Key -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Private Key:"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#8E8E93"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Press and hold to reveal"
+            android:textSize="11sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#636366"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/privateKeyText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="mrs1234567890abcdef..."
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:textColor="#8E8E93"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:background="@drawable/blur_background"
+                android:padding="8dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="8dp">
+
+                <TextView
+                    android:id="@+id/btnShowPrivateKey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Show"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#007AFF"
+                    android:background="@drawable/show_button_background"
+                    android:padding="8dp"
+                    android:gravity="center"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/btnCopyPrivateKey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Copy"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#8E8E93"
+                    android:background="@drawable/copy_button_background"
+                    android:padding="8dp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Message -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Are you sure you want to delete this wallet? All data will be permanently lost."
+        android:textSize="14sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#8E8E93"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginEnd="15dp"
+            android:background="?attr/selectableItemBackground"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:padding="9dp"
+            android:text="Cancel"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:background="@drawable/delete_button_background"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:padding="9dp"
+            android:text="Delete"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

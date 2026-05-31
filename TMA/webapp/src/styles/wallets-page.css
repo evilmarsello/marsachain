@@ -1,0 +1,502 @@
+.tma-wallets-page {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.tma-wallets-page .tma-wallets-card,
+.tma-wallets-page .tma-wallets-card-mid,
+.tma-wallets-page .tma-wallets-card-name,
+.tma-wallets-page .tma-wallets-card-addr,
+.tma-wallets-page .tma-wallets-card-bal {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.tma-wallets-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px;
+}
+
+.tma-wallets-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tma-wallets-back {
+  font-size: 32px;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  padding: 4px 12px 4px 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-wallets-title {
+  flex: 1;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.tma-wallets-sort {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 18px;
+  padding: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tma-wallets-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tma-wallets-list::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.tma-wallets-list.is-reordering {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.tma-wallets-list.is-reordering > .tma-wallets-card {
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tma-wallets-card-placeholder {
+  flex-shrink: 0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  background: rgba(188, 90, 43, 0.1);
+  border: 2px dashed rgba(188, 90, 43, 0.35);
+  transition: height 0.18s ease;
+}
+
+.tma-wallets-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #1c1c1e;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.tma-wallets-card.is-reorder-ghost {
+  position: fixed;
+  z-index: 2000;
+  margin: 0;
+  pointer-events: none;
+  touch-action: none;
+  transform: scale(1.08);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  opacity: 0.98;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.tma-wallets-card.is-reorder-active:not(.is-reorder-ghost) {
+  touch-action: none;
+}
+
+.tma-wallets-card.is-dragging:not(.is-reorder-ghost) {
+  opacity: 0.92;
+}
+
+.tma-wallets-card-icon {
+  width: 40px;
+  height: 40px;
+  margin: 6px 16px 6px 6px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #bc5a2b;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tma-wallets-card-icon-id {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  user-select: none;
+}
+
+.tma-wallets-card-icon-svg {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.tma-wallets-card-mid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tma-wallets-card-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.tma-wallets-active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c759;
+  flex-shrink: 0;
+}
+
+.tma-wallets-card-addr {
+  font-size: 12px;
+  color: #8e8e93;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tma-wallets-card-bal {
+  font-size: 12px;
+  color: #34c759;
+  margin-top: 1px;
+}
+
+.tma-wallets-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-width: 36px;
+  padding-left: 4px;
+  position: relative;
+}
+
+.tma-wallets-more {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.tma-wallets-miner-badge {
+  font-size: 8px;
+  font-weight: 600;
+  color: #ffffff;
+  border: 0.7px solid #bc5a2b;
+  background: #1c1c1e;
+  border-radius: 8px;
+  padding: 3px 5px;
+  margin-top: 4px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  max-width: 100%;
+  text-align: center;
+  word-break: break-word;
+}
+
+.tma-wallet-opts-pop {
+  position: absolute;
+  z-index: 10;
+  background: #2c2c2e;
+  border-radius: 12px;
+  border: 1px solid #3a3a3c;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  min-width: 210px;
+  max-width: min(92vw, 320px);
+  overflow: hidden;
+}
+
+/* Sort menu: shrink to label width (not the 210px wallet-actions minimum) */
+.tma-wallet-opts-pop.tma-wallet-sort-pop {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: auto;
+  min-width: 0;
+  max-width: min(92vw, 280px);
+}
+
+.tma-wallet-sort-pop .tma-wallet-opts-row {
+  width: auto;
+  max-width: 100%;
+  white-space: nowrap;
+  align-self: stretch;
+  box-sizing: border-box;
+}
+
+.tma-wallet-opts-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tma-wallet-opts-row:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tma-wallet-opts-row--danger {
+  color: #ff3b30;
+}
+
+.tma-wallet-opts-row svg {
+  flex-shrink: 0;
+  color: #8e8e93;
+}
+
+.tma-wallet-opts-ico {
+  width: 22px;
+  text-align: center;
+  color: #8e8e93;
+  flex-shrink: 0;
+}
+
+.tma-wallets-empty {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  display: none;
+}
+
+.tma-wallets-empty-ico {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.tma-wallets-empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.tma-wallets-empty-sub {
+  font-size: 14px;
+  color: #8e8e93;
+}
+
+.tma-pk-wallet-block {
+  margin-bottom: 20px;
+}
+
+.tma-pk-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.tma-pk-addr {
+  font-size: 12px;
+  color: #8e8e93;
+  word-break: break-all;
+}
+
+.tma-pk-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.tma-pk-hold-hint {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #636366;
+  text-align: center;
+}
+
+.tma-press-hold-reveal {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.tma-press-hold-reveal.is-revealed {
+  color: #fff;
+}
+
+.tma-pk-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: #ffffff;
+  word-break: break-all;
+  max-height: 96px;
+  overflow-y: auto;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+}
+
+.tma-pk-warn {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: rgba(255, 149, 0, 0.12);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #ff9500;
+}
+
+.tma-del-warn-banner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 149, 0, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.tma-del-info-block {
+  background: #2c2c2e;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #3a3a3c;
+}
+
+.tma-del-bal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.tma-del-bal-lab {
+  color: #8e8e93;
+  flex: 1;
+}
+
+.tma-del-bal-val {
+  color: #34c759;
+  font-weight: 600;
+}
+
+.tma-del-pk-lab {
+  font-size: 12px;
+  color: #8e8e93;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.tma-del-pk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tma-del-pk {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #8e8e93;
+  background: #1a1a1a;
+  padding: 8px;
+  border-radius: 6px;
+  word-break: break-all;
+  letter-spacing: 0.12em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tma-del-pk.is-revealed {
+  font-size: 10px;
+  letter-spacing: normal;
+  text-align: left;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.tma-del-pk-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tma-del-pk-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #3a3a3c;
+  color: #007aff;
+}
+
+.tma-del-pk-btn--muted {
+  color: #8e8e93;
+}
+
+.tma-del-confirm-txt {
+  font-size: 14px;
+  color: #8e8e93;
+  margin: 0 0 24px;
+}
+
+.tma-dialog-btn.tma-del-go {
+  background: #ff3b30;
+  color: #ffffff;
+  border: none;
+}
+

@@ -1,0 +1,71 @@
+/* Sub-pages (My Wallets, History) — between app header and bottom nav */
+.tma-shell-page {
+  position: fixed;
+  top: var(--tma-chrome-top);
+  bottom: var(--tma-chrome-bottom);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Поверх оверлея пулов (z-index 2100) при клике на «Статистика» в шапке */
+.tma-statistics-page {
+  z-index: 3200;
+}
+
+.tma-shell-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 24px 16px 16px;
+}
+
+.tma-shell-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.tma-shell-back {
+  font-size: 32px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--btn-fill);
+  cursor: pointer;
+  padding: 0;
+}
+
+.tma-shell-title {
+  flex: 1;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tma-shell-header-spacer {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+html.tma-shell-scroll-lock #tma-panel {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+html.tma-shell-scroll-lock .top-bar {
+  touch-action: none;
+}
+

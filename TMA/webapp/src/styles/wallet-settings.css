@@ -1,0 +1,179 @@
+/* Wallet settings */
+.tma-wallet-settings-page .tma-shell-inner,
+.tma-wallet-trash-page .tma-shell-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tma-settings-scroll {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.tma-settings-intro {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.tma-settings-card {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 20px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.tma-settings-card-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.tma-settings-card-body {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.tma-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.tma-settings-row-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.tma-settings-row-spacer {
+  flex: 1;
+}
+
+.tma-settings-info {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--btn-fill);
+  background: transparent;
+  color: var(--btn-fill);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tma-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.tma-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.tma-switch-track {
+  position: absolute;
+  inset: 0;
+  background: #3a3a3c;
+  border-radius: 16px;
+  transition: background 0.2s;
+}
+
+.tma-switch-track::before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.tma-switch input:checked + .tma-switch-track {
+  background: var(--btn-fill);
+}
+
+.tma-switch input:checked + .tma-switch-track::before {
+  transform: translateX(22px);
+}
+
+.tma-settings-open-trash,
+.tma-trash-clear {
+  width: 100%;
+}
+
+.tma-wallet-trash-page {
+  z-index: 35;
+}
+
+.tma-trash-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.tma-trash-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px 8px;
+}
+
+.tma-trash-card {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.tma-trash-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tma-trash-name {
+  font-weight: 700;
+  color: #fff;
+}
+
+.tma-trash-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tma-trash-addr {
+  font-size: 11px;
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+
+.tma-trash-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tma-trash-actions .btn {
+  flex: 1;
+  margin-top: 0;
+}
+

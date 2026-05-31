@@ -1,0 +1,67 @@
+/* Social media tiles — Settings → Information */
+.tma-social-media-page .tma-shell-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tma-social-grid-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 24px;
+}
+
+.tma-social-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: min(100%, 220px);
+  margin: 0 auto;
+}
+
+.tma-social-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  aspect-ratio: 1;
+  padding: 12px 8px;
+  text-decoration: none;
+  color: #ffffff;
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 18px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.tma-social-tile:active {
+  transform: scale(0.97);
+  background: #3a3a3c;
+}
+
+.tma-social-tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: #ffffff;
+}
+
+.tma-social-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.tma-social-tile-label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  color: #aeaeb2;
+}

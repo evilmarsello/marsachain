@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1AFFFFFF"
+    android:layout_marginBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/ipTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif"
+            android:text="" />
+
+        <ImageView
+            android:id="@+id/connectedIndicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_check_circle"
+            android:visibility="gone"
+            android:contentDescription="Connected" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/loadTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textColor="#8E8E93"
+        android:fontFamily="sans-serif"
+        android:visibility="gone"
+        android:text="45/150 miners · 105 slots free" />
+
+</LinearLayout>
+

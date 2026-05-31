@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="4dp"
+            android:text="Wallets you delete from &quot;My Wallets&quot; stay here for about 30 days, then are removed automatically. Swipe left on a row to delete permanently."
+            android:textColor="#8E8E93"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textTrashEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:paddingVertical="16dp"
+            android:text="Bin is empty"
+            android:textColor="#8E8E93"
+            android:textSize="15sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trashRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
+
+        <Button
+            android:id="@+id/buttonClearTrash"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/wallet_action_button"
+            android:fontFamily="sans-serif-medium"
+            android:text="Empty bin completely"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

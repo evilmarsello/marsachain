@@ -1,0 +1,37 @@
+/* Pull to refresh */
+.tma-ptr-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tma-ptr-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px;
+  transform: translateY(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.tma-ptr-indicator.is-visible {
+  opacity: 1;
+}
+
+.tma-ptr-indicator.is-ready {
+  color: var(--accent-text);
+}
+
+.tma-ptr-indicator.is-loading {
+  color: var(--btn-fill);
+}
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Кольцо: центр прозрачный (под кнопку), затем насыщенный #FF8400, дальше затухание наружу (не «круг с ярким центром»). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="400dp"
+    android:height="400dp"
+    android:viewportWidth="400"
+    android:viewportHeight="400"
+    tools:targetApi="24">
+
+    <path
+        android:pathData="M200,0 C310.46,0 400,89.54 400,200 C400,310.46 310.46,400 200,400 C89.54,400 0,310.46 0,200 C0,89.54 89.54,0 200,0 Z"
+        android:fillType="nonZero">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="200"
+                android:centerY="200"
+                android:gradientRadius="200">
+                <item
+                    android:offset="0.70"
+                    android:color="#00FF8400" />
+                <item
+                    android:offset="0.80"
+                    android:color="#BC5A2B" />
+                <item
+                    android:offset="0.96"
+                    android:color="#4DBC5A2B" />
+                <item
+                    android:offset="1"
+                    android:color="#00FF8400" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

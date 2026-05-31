@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="primary_color">#FF9500</color> <!-- Оранжевый цвет приложения -->
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Transaction Colors -->
+    <color name="color_send">#FFFFFF</color>
+    <color name="color_receive">#FF4CAF50</color>
+    <color name="color_mining">#FFFFFF</color>
+    <color name="color_internal">#FFFFFF</color>
+    <color name="color_unknown">#FF9E9E9E</color>
+
+    <!-- Status Colors -->
+    <color name="color_confirmed">#FF4CAF50</color>
+    <color name="color_pending">#BC5A2B</color>
+    <color name="color_failed">#FFF44336</color>
+
+    <!-- Text Colors -->
+    <color name="text_secondary">#FF757575</color>
+    <color name="text_hint">#FFBDBDBD</color>
+
+    <!-- Background Colors -->
+    <color name="background_card">#FFFFFFFF</color>
+
+    <!-- Mining progress ring (вдоль окружности кнопки) -->
+    <color name="mining_ring_progress">#FF30D158</color>
+    <color name="mining_ring_track">#33FFFFFF</color>
+</resources>

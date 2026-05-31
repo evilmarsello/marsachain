@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Large Screen Sizes -->
+    <dimen name="mining_button_size">@dimen/mining_button_size_large</dimen>
+    <dimen name="mining_button_text">@dimen/mining_button_text_large</dimen>
+    <dimen name="mining_glow_size">@dimen/mining_glow_size_large</dimen>
+    <dimen name="card_padding">@dimen/card_padding_large</dimen>
+    <dimen name="balance_text">@dimen/balance_text_large</dimen>
+    <dimen name="button_height">@dimen/button_height_large</dimen>
+    <dimen name="margin">@dimen/margin_large</dimen>
+</resources>

@@ -1,0 +1,17 @@
+/node_modules/
+/webapp/node_modules/
+/webapp/dist/
+/webapp/public/kotlin/*.js
+/webapp/public/kotlin/*.js.map
+**/build/
+**/.gradle/
+.kotlin/
+*.iml
+.idea/
+.DS_Store
+local.properties
+webapp/.env
+marsa-pool-api/.env
+marsa-pool-api/node_modules/
+server-optional/.env
+server-optional/node_modules/

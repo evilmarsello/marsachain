@@ -1,0 +1,2 @@
+# Секреты не коммитить: скопируйте в local.properties и подставьте путь к SDK
+sdk.dir=/Users/YOU/Library/Android/sdk

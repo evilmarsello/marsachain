@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Disclaimer"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="This client and the Marsa blockchain were built by an independent developer. The developer has no access to your coins, cannot move funds on your behalf, and cannot control the network—consensus and validation are decentralized among participants.\n\nYou alone are responsible for your keys, backups, and decisions. Any loss of coins cannot be reimbursed or compensated by the developer or this app."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="About Marsa Chain"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Marsa Chain Client is a wallet and node companion for the Marsa network. You can mine, follow balances and history, send and receive transfers, manage several addresses, and configure how you connect to the chain."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Features evolve between releases; always keep backups of anything you cannot afford to lose."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="24-word seed phrase and HD wallets"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Your 24 English words are the BIP39 seed phrase (mnemonic): they protect one master secret on this device. From that secret the app derives the wallet seed and hierarchical (HD) wallets along a fixed path. Each HD slot has an index: 0, 1, 2, … — think of it as an id that grows when you add more HD wallets."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="After first setup you usually see wallet index 0. Each time you create another HD wallet (while the seed phrase is already stored), the app uses the next free index and shows a new address. The seed phrase itself does not change; only the counter advances."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="If you reinstall and restore with the same 24-word seed phrase, the app initially recreates only index 0 in the list. Coins that lived on index 1, 2, … are still on-chain. Tap Create again, in order, to rebuild those same indexes and addresses."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Settings → Reset with seed phrase wipes local wallets, transaction cache, and the stored seed before you start fresh or enter an existing phrase. Export any imported private keys first—they are not carried by the 24 words."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Imported wallets"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Import by private key adds a standalone wallet. It does not share the HD index sequence and is not rebuilt when you only restore the 24-word seed phrase. Keep a copy of each imported key you still need."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Private keys"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="A private key is full control of one address. Anyone who learns it can move your funds. Never share it, avoid untrusted screenshots or chat logs, and store backups offline when possible."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvAboutVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:paddingTop="4dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="8dp"
+            android:textColor="#6C6C70"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

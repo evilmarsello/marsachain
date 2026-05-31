@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Mining: stake first"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Marsa mining is not “free hashing.” Your address must publish an on-chain MINER_STAKE transaction (a dedicated transaction type). That locks stake for a fixed number of blocks and tells the network you intend to participate. Only after the validator sees an active stake will the client receive mining credits and be allowed to request work."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="If there is no MINER_STAKE, the wallet cannot mine—there is nothing to “boost” with hardware until that prerequisite is satisfied."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Challenge, commitment, nonce"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="When you mine, the app talks to a validator node. The node issues a challenge: an unpredictable payload plus metadata (for example a difficulty in bits and an expiry time). The client must respond with a proof-of-work style solution tied to that challenge."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Technically: the client picks a secret nonce, optionally registers a commitment (a hash of the nonce) when requesting the challenge so the node knows you already fixed your randomness, then searches for a nonce such that a cryptographic hash of (challenge material concatenated with the nonce) satisfies the required leading-zero bits pattern. That is standard partial-hash proof-of-work: you grind hashes until one is “small enough.”"
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="If no solution is found before limits kick in, the client can abandon the challenge (a signed abandon message) so the node can free the slot—challenges are tracked per address and the node caps how many unfinished challenges you may hold."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="A winning hash is submitted with the nonce and signatures so validators can verify it deterministically against the same challenge they issued."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Why a fast PC or GPU is not a silver bullet"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Throughput is bounded by rules on the node: you receive discrete challenges, each spends credits tied to your stake, and only a limited number of unfinished challenges may exist per address. You cannot open thousands of parallel puzzles without the network agreeing."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="A faster machine mainly means you test more nonces per second on the current challenge—helpful, but it does not replace stake, signatures, or validator policy. This is closer to “lottery tickets per credit under consensus rules” than to classic global hashrate warfare."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Other technologies in this client"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="• Wallets: Ed25519 keys; HD derivation follows SLIP-0010 from a BIP39 seed with a fixed path for Marsa.\n• Storage: seed is kept encrypted (Keystore-backed container) after onboarding; imported keys are stored with the wallet database on device.\n• Network: HTTPS JSON APIs toward validators you configure under Connections; messages for mining and transfers are signed with your local keys."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="In plain language"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4dp"
+                android:text="Think of mining as: put collateral on-chain → the network gives you limited puzzle tickets → each ticket is a short race to find a lucky hash → you submit proof. Validators check everything publicly. Buying a bigger hammer helps a little inside each ticket, but the game is structured so the network—not raw hardware alone—stays in charge."
+                android:textColor="#8E8E93"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

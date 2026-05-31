@@ -1,0 +1,19 @@
+{
+  "name": "marsa-pool-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "migrate": "node src/migrate.mjs",
+    "seed": "node src/seed.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@noble/ed25519": "^3.1.0",
+    "@noble/hashes": "^2.2.0",
+    "pg": "^8.13.1"
+  }
+}

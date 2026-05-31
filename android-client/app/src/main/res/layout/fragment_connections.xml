@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin">
+
+        <!-- Connection Mode Selection -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="@dimen/card_padding"
+            android:layout_marginBottom="@dimen/margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connection Mode"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp" />
+
+            <RadioGroup
+                android:id="@+id/connectionModeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/autoConnectRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Auto Connect"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#FFFFFF"
+                    android:buttonTint="@drawable/radio_button_tint"
+                    android:padding="12dp"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/manualConnectRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Manual Connect"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#FFFFFF"
+                    android:buttonTint="@drawable/radio_button_tint"
+                    android:padding="12dp" />
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <!-- Auto Connect Settings -->
+        <LinearLayout
+            android:id="@+id/autoConnectSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="@dimen/card_padding"
+            android:layout_marginBottom="@dimen/margin"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto Connect Servers"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="The app will automatically connect to one of these servers:"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:textColor="#8E8E93"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Auto Select Toggle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
+                android:background="@drawable/card_background">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Auto-select working server"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FFFFFF" />
+
+                <Switch
+                    android:id="@+id/autoSelectSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@drawable/switch_thumb_tint"
+                    android:trackTint="@drawable/switch_track_tint"
+                    android:checked="true" />
+
+            </LinearLayout>
+
+            <!-- Connection Status Indicator -->
+            <LinearLayout
+                android:id="@+id/connectionStatusLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/card_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical">
+
+                <View
+                    android:id="@+id/connectionStatusIndicator"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="@drawable/circle_background"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/connectionStatusText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Checking connection..."
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#8E8E93" />
+
+                <ProgressBar
+                    android:id="@+id/connectionProgressBar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:indeterminateTint="#BC5A2B"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/autoIpsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/loadFromNodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="Load validators from node"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/send_button_background"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/addAutoIpButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="Add Server"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/send_button_background" />
+
+        </LinearLayout>
+
+        <!-- Manual Connect Settings -->
+        <LinearLayout
+            android:id="@+id/manualConnectSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="@dimen/card_padding"
+            android:layout_marginBottom="@dimen/margin"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manual Connection"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IP Address"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/manualIpEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Enter host/domain (optionally host:port)"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#8E8E93"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Use domain/IP. Port is not required."
+                android:textSize="13sp"
+                android:fontFamily="sans-serif"
+                android:textColor="#8E8E93"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Manual Connection Status Indicator -->
+            <LinearLayout
+                android:id="@+id/manualConnectionStatusLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/card_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <View
+                    android:id="@+id/manualConnectionStatusIndicator"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="@drawable/circle_background"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/manualConnectionStatusText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Not connected"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#8E8E93" />
+
+                <ProgressBar
+                    android:id="@+id/manualConnectionProgressBar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:indeterminateTint="#BC5A2B"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/connectManualButton"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="Connect"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/send_button_background" />
+
+                <Button
+                    android:id="@+id/disconnectManualButton"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="Disconnect"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/danger_button_background"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+

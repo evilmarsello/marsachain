@@ -1,0 +1,132 @@
+.pool-detail-page .pool-detail-scroll {
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+}
+
+.pool-detail-section {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #1c1c1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pool-detail-section--miner {
+  border-color: rgba(255, 132, 0, 0.25);
+}
+
+.pool-detail-h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pool-detail-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.pool-detail-stat-lab {
+  color: var(--label-secondary);
+  flex: 1;
+  min-width: 0;
+}
+
+.pool-detail-stat-val {
+  font-weight: 700;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.pool-detail-meta {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--label-secondary);
+}
+
+.pool-detail-balance-card {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 132, 0, 0.12);
+}
+
+.pool-detail-balance-lab {
+  margin: 0;
+  font-size: 12px;
+  color: var(--label-secondary);
+}
+
+.pool-detail-balance-val {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--btn-fill, #ff8400);
+}
+
+.pool-detail-balance-sub {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--label-secondary);
+  line-height: 1.35;
+}
+
+.pool-detail-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--label-secondary);
+}
+
+.pool-detail-share-hint {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--label-secondary);
+}
+
+.pool-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pool-detail-actions .pools-btn {
+  width: 100%;
+}
+
+.pool-detail-withdraw-hint,
+.pool-detail-footer-hint {
+  margin: -4px 0 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--label-secondary);
+  text-align: center;
+}
+
+.pool-detail-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--separator, rgba(255, 255, 255, 0.12));
+}
+
+.pool-detail-footer .pools-btn {
+  width: 100%;
+}
+
+.pool-detail-footer .pools-btn:disabled {
+  opacity: 0.45;
+}
+
+.pools-card-actions--single .pools-btn {
+  width: 100%;
+}

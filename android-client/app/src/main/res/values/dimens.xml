@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Алиасы по умолчанию (normal), если нет small/large/xlarge -->
+    <dimen name="mining_button_size">@dimen/mining_button_size_normal</dimen>
+    <dimen name="mining_glow_size">@dimen/mining_glow_size_normal</dimen>
+    <dimen name="mining_button_text">@dimen/mining_button_text_normal</dimen>
+
+    <!-- Mining Button Sizes -->
+    <dimen name="mining_button_size_small">215dp</dimen>
+    <dimen name="mining_button_size_normal">260dp</dimen>
+    <dimen name="mining_button_size_large">310dp</dimen>
+    
+    <!-- Mining Button Text Sizes -->
+    <dimen name="mining_button_text_small">50sp</dimen>
+    <dimen name="mining_button_text_normal">60sp</dimen>
+    <dimen name="mining_button_text_large">70sp</dimen>
+
+    <dimen name="mining_glow_size_small">230dp</dimen>
+    <dimen name="mining_glow_size_normal">275dp</dimen>
+    <dimen name="mining_glow_size_large">315dp</dimen>
+    
+    <!-- Card Sizes -->
+    <dimen name="card_padding_small">8dp</dimen>
+    <dimen name="card_padding_normal">12dp</dimen>
+    <dimen name="card_padding_large">16dp</dimen>
+    
+    <!-- Text Sizes -->
+    <dimen name="balance_text_small">18sp</dimen>
+    <dimen name="balance_text_normal">24sp</dimen>
+    <dimen name="balance_text_large">29sp</dimen>
+    
+    <!-- Button Heights -->
+    <dimen name="button_height_small">35dp</dimen>
+    <dimen name="button_height_normal">45dp</dimen>
+    <dimen name="button_height_large">55dp</dimen>
+    
+    <!-- Margins -->
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_normal">12dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+
+    <!-- Mining progress ring -->
+    <dimen name="mining_ring_stroke">6dp</dimen>
+
+    <!-- Default aliases (normal) when no small/large/xlarge qualifier matches -->
+    <dimen name="card_padding">@dimen/card_padding_normal</dimen>
+    <dimen name="balance_text">@dimen/balance_text_normal</dimen>
+    <dimen name="button_height">@dimen/button_height_normal</dimen>
+    <dimen name="margin">@dimen/margin_normal</dimen>
+</resources>

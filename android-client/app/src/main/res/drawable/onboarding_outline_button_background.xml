@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Same shadow offset as primary_button_background for aligned silhouette -->
+    <item android:top="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#1C1C1E" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+    <item android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#1C1C1E" />
+            <corners android:radius="14dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#BB5A2C" />
+        </shape>
+    </item>
+</layer-list>

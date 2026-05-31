@@ -1,0 +1,22 @@
+{
+  "name": "marsa-tma-webapp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "predev": "cd .. && ./gradlew :shared:syncKotlinJsToWebapp --no-daemon",
+    "dev": "vite",
+    "prebuild": "cd .. && ./gradlew :shared:jsBrowserProductionWebpack :shared:syncKotlinJsToWebapp --no-daemon",
+    "build": "vite build",
+    "preview": "vite preview",
+    "setup:env": "node scripts/copy-env-example.mjs"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.3",
+    "vite": "^6.0.1"
+  },
+  "dependencies": {
+    "@noble/ed25519": "^3.1.0",
+    "@noble/hashes": "^2.2.0"
+  }
+}
