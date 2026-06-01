@@ -15,7 +15,7 @@ import java.util.*
 
 class TransactionAdapter(
     private var transactions: List<TransactionEntity>,
-    var userAddresses: List<String>, // был val, теперь var
+    var userAddresses: List<String>, // was val, now var
     private val onTransactionClick: (TransactionEntity) -> Unit
 ) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
@@ -41,11 +41,11 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactions[position]
         
-        // Определяем тип транзакции для пользователя
+        // Determine transaction type for user
         val transactionType = getTransactionTypeForUser(transaction)
         val displayAmount = getDisplayAmount(transaction)
         
-        // Устанавливаем иконку и текст типа
+        // Set icon and type label
         when (transactionType) {
             "send" -> {
                 holder.typeIcon.setImageResource(R.drawable.send_money)
@@ -80,7 +80,7 @@ class TransactionAdapter(
             }
         }
         
-        // Адресный маршрут (короткий вид)
+        // Address route (short form)
         val shortFrom = formatAddress(transaction.fromAddress)
         val shortTo = formatAddress(transaction.toAddress)
         val routeText: String = when (transactionType) {
@@ -90,7 +90,7 @@ class TransactionAdapter(
             else -> "$shortFrom → $shortTo"
         }
         holder.addressText.text = routeText
-        // Можно стилизовать разным цветом, если есть желание: например, для send/receive
+        // Can style with different colors if desired, e.g. send/receive
         when (transactionType) {
             "send" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_send))
             "receive" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_send))
@@ -99,10 +99,10 @@ class TransactionAdapter(
             else -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_unknown))
         }
         
-        // Устанавливаем время
+        // Set time
         holder.timeText.text = dateFormat.format(Date(transaction.timestamp))
         
-        // Устанавливаем статус
+        // Set status
         val displayStatus = when {
             transaction.type == "mining" -> "Success ⚒"
             chainHeight != null && transaction.blockHeight != null -> {
@@ -122,7 +122,7 @@ class TransactionAdapter(
             else -> holder.statusText.setTextColor(holder.itemView.context.getColor(R.color.color_confirmed))
         }
         
-        // Устанавливаем подтверждения (Bitcoin-style)
+        // Set confirmations (Bitcoin-style)
         if (transaction.type != "mining") {
             val conf = when {
                 chainHeight != null && transaction.blockHeight != null -> {
@@ -140,7 +140,7 @@ class TransactionAdapter(
             holder.confirmationsText.visibility = View.GONE
         }
         
-        // Обработчик клика
+        // Click handler
         holder.itemView.setOnClickListener {
             onTransactionClick(transaction)
         }

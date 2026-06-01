@@ -30,7 +30,7 @@ const ALLOWED = (process.env.ALLOWED_ORIGINS || "http://127.0.0.1:5173,http://lo
   .map((s) => s.trim())
   .filter(Boolean);
 
-/** CORS: только перечисленные Origin (в проде задайте ALLOWED_ORIGINS с доменом Mini App). */
+/** CORS: only listed origins (in production set ALLOWED_ORIGINS to your Mini App domain). */
 function cors(req) {
   const origin = req.headers.origin;
   if (!origin) {

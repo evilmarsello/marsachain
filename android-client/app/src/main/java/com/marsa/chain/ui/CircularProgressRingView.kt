@@ -10,9 +10,9 @@ import androidx.core.content.ContextCompat
 import com.marsa.chain.R
 
 /**
- * Кольцо прогресса вдоль окружности (для кнопки майнинга).
- * progress 0f..1f — заполнение по часовой стрелке от верхней точки.
- * Когда progress == 0, ничего не рисуется.
+ * Progress ring along circle (mining button).
+ * progress 0f..1f — fill clockwise from top.
+ * When progress == 0, nothing is drawn.
  */
 class CircularProgressRingView @JvmOverloads constructor(
     context: Context,
@@ -53,11 +53,11 @@ class CircularProgressRingView @JvmOverloads constructor(
         val cx = w / 2f
         val cy = h / 2f
         rect.set(cx - r, cy - r, cx + r, cy + r)
-        // Фоновое кольцо (тонкое, полупрозрачное)
+        // Background ring (thin, semi-transparent)
         ringPaint.color = trackColor
         ringPaint.strokeWidth = strokeWidthPx * 0.6f
         canvas.drawArc(rect, startAngle, 360f, false, ringPaint)
-        // Заполняемая дуга
+        // Filled arc
         ringPaint.color = progressColor
         ringPaint.strokeWidth = strokeWidthPx
         val sweep = 360f * progress.coerceIn(0f, 1f)
@@ -65,6 +65,6 @@ class CircularProgressRingView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val startAngle = -90f // верх
+        private const val startAngle = -90f // top
     }
 }

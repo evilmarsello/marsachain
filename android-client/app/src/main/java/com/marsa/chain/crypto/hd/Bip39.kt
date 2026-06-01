@@ -10,7 +10,7 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
 /**
- * BIP39: 24 слова, английский словарь, checksum, PBKDF2 seed.
+ * BIP39: 24 words, English wordlist, checksum, PBKDF2 seed.
  */
 object Bip39 {
 
@@ -25,7 +25,7 @@ object Bip39 {
         return list
     }
 
-    /** Для unit-тестов без Android Context. */
+    /** For unit tests without Android Context. */
     fun loadWordListFromLines(lines: List<String>): List<String> =
         lines.map { it.trim().lowercase() }.filter { it.isNotEmpty() }
             .also { require(it.size == 2048) }

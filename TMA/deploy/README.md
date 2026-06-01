@@ -3,8 +3,8 @@
 ## TMA static
 
 1. `cd webapp && npm run build`
-2. Залить `dist/*` и `public/kotlin/` на document root.
-3. nginx: `/fullnode/`, `/mining/`, `/api/pool/`, `/telegram/` — см. `hestia-nginx-marsa.conf`, `nginx.example.conf`.
+2. Upload `dist/*` and `public/kotlin/` to the document root.
+3. nginx: `/fullnode/`, `/mining/`, `/api/pool/`, `/telegram/` — see `hestia-nginx-marsa.conf`, `nginx.example.conf`.
 
 ## Pool API
 
@@ -16,10 +16,10 @@ export MINING_NODE_URL=http://your-mining-node/
 ./deploy-pool-api-to-vps.sh
 ```
 
-SSH-ключ на хосте. После деплоя — `POOL_TREASURY_KEYS` в `/opt/marsa-pool-api/.env`.
+SSH key on the host. After deploy — set `POOL_TREASURY_KEYS` in `/opt/marsa-pool-api/.env`.
 
 ## Checklist
 
-- HTTPS + домен в BotFather
-- `BOT_TOKEN` в `server-optional`, `ALLOWED_ORIGINS` = origin Mini App
-- Pool: Postgres + migrate/seed + treasury keys + fullnode с pool params
+- HTTPS + domain in BotFather
+- `BOT_TOKEN` in `server-optional`, `ALLOWED_ORIGINS` = Mini App origin
+- Pool: Postgres + migrate/seed + treasury keys + fullnode with pool params

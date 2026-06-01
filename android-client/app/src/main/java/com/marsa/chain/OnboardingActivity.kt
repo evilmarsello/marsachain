@@ -32,8 +32,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 /**
- * Первый запуск: предупреждения → 24 слова → проверка 3 слов → сид в [SeedVault] + HD#0.
- * Либо восстановление по фразе (см. ТЗ).
+ * First launch: warnings → 24 words → verify 3 words → seed in [SeedVault] + HD#0.
+ * Or restore by phrase (see spec).
  */
 class OnboardingActivity : AppCompatActivity() {
 
@@ -167,7 +167,7 @@ class OnboardingActivity : AppCompatActivity() {
         showMnemonicDisplayStep()
     }
 
-    /** Показ сетки слов без перегенерации (например после ошибки проверки). */
+    /** Show word grid without regenerating (e.g. after verification error). */
     private fun showMnemonicDisplayStep() {
         require(mnemonicWords.size == 24)
         populateMnemonicGrid(mnemonicWords)

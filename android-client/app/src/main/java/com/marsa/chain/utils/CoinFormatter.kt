@@ -5,29 +5,29 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 /**
- * Утилита для форматирования монет.
- * Минимальные единицы (wei): 1 монета = [WEI_PER_COIN] (10^8, как у сатоши).
+ * Coin formatting utility.
+ * Smallest units (wei): 1 coin = [WEI_PER_COIN] (10^8, like satoshis).
  */
 object CoinFormatter {
     const val COIN_DECIMAL_DIGITS = 8
     const val WEI_PER_COIN = 100_000_000L
 
     /**
-     * Конвертирует wei в монеты (BigDecimal для точности).
+     * Converts wei to coins (BigDecimal for precision).
      */
     fun nanosToCoins(nanos: Long): BigDecimal {
         return BigDecimal(nanos).divide(BigDecimal(WEI_PER_COIN), COIN_DECIMAL_DIGITS, RoundingMode.HALF_UP)
     }
 
     /**
-     * Конвертирует монеты в wei.
+     * Converts coins to wei.
      */
     fun coinsToNanos(coins: Double): Long {
         return (coins * WEI_PER_COIN).toLong()
     }
 
     /**
-     * Форматирует wei для отображения.
+     * Formats wei for display.
      */
     fun format(nanos: Long): String {
         if (nanos == 0L) {
@@ -57,7 +57,7 @@ object CoinFormatter {
     }
 
     /**
-     * Форматирует wei с указанным количеством знаков после запятой.
+     * Formats wei with given decimal places.
      */
     fun format(nanos: Long, decimals: Int): String {
         if (nanos == 0L) {
@@ -70,7 +70,7 @@ object CoinFormatter {
     }
 
     /**
-     * @deprecated Используйте format() вместо этого. MRS уже отображается в UI.
+     * @deprecated Use format() instead. MRS is shown in UI separately.
      */
     @Deprecated("Use format() instead", ReplaceWith("format(nanos)"))
     fun formatWithSuffix(nanos: Long): String {
@@ -78,7 +78,7 @@ object CoinFormatter {
     }
 
     /**
-     * Парсит строку с монетами (например, "1.5" или "5000.00") в wei.
+     * Parses coin string (e.g. "1.5" or "5000.00") to wei.
      */
     fun parseToNanos(coinsString: String): Long? {
         return try {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Кольцо: центр прозрачный (под кнопку), затем насыщенный #FF8400, дальше затухание наружу (не «круг с ярким центром»). -->
+<!-- Ring: transparent center (under button), then saturated #FF8400, fade outward (not bright-center disc). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:tools="http://schemas.android.com/tools"

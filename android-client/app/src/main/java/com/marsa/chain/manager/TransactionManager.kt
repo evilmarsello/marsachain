@@ -12,21 +12,21 @@ class TransactionManager(private val context: Context) {
     private val transactionsDao = database.transactionsDao()
 
     /**
-     * Получить все транзакции для одного адреса
+     * Get all transactions for one address
      */
     fun getTransactionsForAddress(address: String): Flow<List<TransactionEntity>> {
         return transactionsDao.getTransactionsForAddress(address)
     }
 
     /**
-     * Получить все транзакции для списка адресов (всех кошельков пользователя)
+     * Get all transactions for address list (all user wallets)
      */
     fun getTransactionsForAddresses(addresses: List<String>): Flow<List<TransactionEntity>> {
         return transactionsDao.getTransactionsForAddresses(addresses)
     }
 
     /**
-     * Получить транзакцию по ID
+     * Get transaction by ID
      */
     suspend fun getTransactionById(txid: String): TransactionEntity? {
         return withContext(Dispatchers.IO) {
@@ -35,7 +35,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Добавить новую транзакцию
+     * Add new transaction
      */
     suspend fun addTransaction(transaction: TransactionEntity) {
         withContext(Dispatchers.IO) {
@@ -44,7 +44,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Обновить статус транзакции
+     * Update transaction status
      */
     suspend fun updateTransactionStatus(
         txid: String, 
@@ -58,7 +58,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Обновить транзакцию
+     * Update transaction
      */
     suspend fun updateTransaction(transaction: TransactionEntity) {
         withContext(Dispatchers.IO) {
@@ -67,7 +67,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Удалить транзакцию
+     * Delete transaction
      */
     suspend fun deleteTransaction(txid: String) {
         withContext(Dispatchers.IO) {
@@ -76,7 +76,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Получить количество транзакций для адреса
+     * Get transaction count for address
      */
     suspend fun getTransactionCount(address: String): Int {
         return withContext(Dispatchers.IO) {
@@ -85,7 +85,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Получить общую сумму полученных средств
+     * Get total received amount
      */
     suspend fun getTotalReceived(address: String): Long {
         return withContext(Dispatchers.IO) {
@@ -94,7 +94,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Получить общую сумму отправленных средств
+     * Get total sent amount
      */
     suspend fun getTotalSent(address: String): Long {
         return withContext(Dispatchers.IO) {
@@ -103,7 +103,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Создать транзакцию отправки
+     * Create send transaction
      */
     fun createSendTransaction(
         txid: String,
@@ -125,7 +125,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Создать транзакцию получения
+     * Create receive transaction
      */
     fun createReceiveTransaction(
         txid: String,
@@ -141,13 +141,13 @@ class TransactionManager(private val context: Context) {
             amount = amount,
             fee = fee,
             timestamp = System.currentTimeMillis(),
-            status = "confirmed", // Полученные транзакции считаем подтвержденными
+            status = "confirmed", // Treat received txs as confirmed
             type = "receive"
         )
     }
 
     /**
-     * Создать транзакцию майнинга
+     * Create mining transaction
      */
     fun createMiningTransaction(
         txid: String,
@@ -170,7 +170,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Очистить старые демо-транзакции, если они остались в БД
+     * Clear old demo txs if left in DB
      */
     suspend fun clearDemoTransactions() {
         withContext(Dispatchers.IO) {
@@ -185,7 +185,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Определить тип транзакции для пользователя
+     * Determine user-facing transaction type
      */
     fun getTransactionTypeForUser(transaction: TransactionEntity, userAddresses: List<String>): String {
         val isFromUser = userAddresses.contains(transaction.fromAddress)
@@ -193,7 +193,7 @@ class TransactionManager(private val context: Context) {
         
         return when {
             transaction.type == "mining" -> "mining"
-            isFromUser && isToUser -> "internal" // Перевод между своими кошельками
+            isFromUser && isToUser -> "internal" // Transfer between own wallets
             isFromUser -> "send"
             isToUser -> "receive"
             else -> "unknown"
@@ -201,7 +201,7 @@ class TransactionManager(private val context: Context) {
     }
 
     /**
-     * Получить отображаемую сумму для пользователя
+     * Get display amount for user
      */
     fun getDisplayAmount(transaction: TransactionEntity, userAddresses: List<String>): Long {
         val isFromUser = userAddresses.contains(transaction.fromAddress)
@@ -209,9 +209,9 @@ class TransactionManager(private val context: Context) {
         
         return when {
             transaction.type == "mining" -> transaction.amount
-            isFromUser && isToUser -> transaction.amount // Внутренний перевод - показываем сумму
-            isFromUser -> -(transaction.amount + transaction.fee) // Отправка - отрицательная сумма
-            isToUser -> transaction.amount // Получение - положительная сумма
+            isFromUser && isToUser -> transaction.amount // Internal transfer — show amount
+            isFromUser -> -(transaction.amount + transaction.fee) // Send — negative amount
+            isToUser -> transaction.amount // Receive — positive amount
             else -> 0L
         }
     }

@@ -9,27 +9,27 @@ TMA/
 └── deploy/           nginx snippets, deploy scripts
 ```
 
-## Быстрый dev
+## Quick dev
 
 ```bash
 cd webapp
 npm install
 cp .env.example .env   # upstream fullnode / mining / pool
-npm run dev            # predev собирает shared → public/kotlin/
+npm run dev            # predev builds shared → public/kotlin/
 ```
 
-Vite проксирует `/fullnode`, `/mining`, `/api/pool`, `/telegram` на targets из `.env`.
+Vite proxies `/fullnode`, `/mining`, `/api/pool`, `/telegram` to targets from `.env`.
 
-Production: `npm run build` → `dist/` + `public/kotlin/` на статический хост; браузер ходит same-origin (см. `.env.production`, `deploy/`).
+Production: `npm run build` → `dist/` + `public/kotlin/` on a static host; the browser uses same-origin paths (see `.env.production`, `deploy/`).
 
 ## Pool backend
 
-Отдельный сервис, нужен для официальных пулов и withdraw. [`marsa-pool-api/README.md`](marsa-pool-api/README.md).
+Separate service, required for official pools and withdrawals. [`marsa-pool-api/README.md`](marsa-pool-api/README.md).
 
 ## Telegram validation
 
-Опционально для prod: [`server-optional/README.md`](server-optional/README.md).
+Optional in production: [`server-optional/README.md`](server-optional/README.md).
 
-## Деплой
+## Deploy
 
 [`deploy/README.md`](deploy/README.md).

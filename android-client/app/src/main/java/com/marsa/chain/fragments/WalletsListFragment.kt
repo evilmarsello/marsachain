@@ -256,7 +256,7 @@ class WalletsListFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Убираем белый фон по углам
+        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
@@ -317,7 +317,7 @@ class WalletsListFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Убираем белый фон по углам
+        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnShowPrivateKey).visibility = View.GONE
@@ -487,8 +487,8 @@ class WalletsAdapter(
                 try {
                     val info = withContext(Dispatchers.IO) { api.getMiningInfo(address) }
                     if (adapterPosition == RecyclerView.NO_POSITION) return@launch
-                    // has_stake на ноде = stakeInfo.isActive(height): заморожена сумма и height < unlock_block.
-                    // Не путаем с «можно майнить сейчас» (кредиты > 0) — бейдж про действующий MINER_STAKE в цепи.
+                    // has_stake on node = stakeInfo.isActive(height): frozen amount and height < unlock_block.
+                    // Do not confuse with can mine now (credits > 0) — badge is on-chain MINER_STAKE.
                     val show = info?.has_stake == true &&
                         (info.unlock_block?.let { info.current_height < it } != false)
                     walletMinerStakeBadge.visibility = if (show) View.VISIBLE else View.GONE

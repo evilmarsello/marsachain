@@ -38,7 +38,7 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
-        // Инициализируем кошельки и мигрируем старые данные
+        // Initialize wallets and migrate legacy data
         initializeWallets()
         
         setupTabs()
@@ -48,7 +48,7 @@ class MainActivity : FragmentActivity() {
         setBackButtonVisible(false)
     }
 
-    /** Кнопка «Назад» и лого в шапке не показываются одновременно — стрелка сдвигается к левому краю без лого. */
+    /** Back button and header logo are not shown together — arrow moves to left edge without logo. */
     private fun setBackButtonVisible(visible: Boolean) {
         binding.backButton.visibility = if (visible) View.VISIBLE else View.GONE
         binding.headerLogo.visibility = if (visible) View.GONE else View.VISIBLE
@@ -74,10 +74,10 @@ class MainActivity : FragmentActivity() {
             try {
                 val walletManager = WalletManager(this@MainActivity)
                 
-                // Сначала пытаемся мигрировать старый кошелек
+                // First try to migrate legacy wallet
                 walletManager.migrateOldWallet()
                 
-                // Затем проверяем, есть ли активный кошелек
+                // Then check for an active wallet
                 val activeWallet = walletManager.getActiveWallet()
                 if (activeWallet != null) {
                     android.util.Log.d("MainActivity", "✅ Active wallet found: ${activeWallet.address}")
@@ -182,7 +182,7 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    /** Обновляет заголовок и кнопку «Назад» по текущему видимому фрагменту (после pop или смены вкладки). */
+    /** Updates title and Back button for current visible fragment (after pop or tab change). */
     private fun updateTitleAndBackButtonFromVisibleFragment() {
         val frag = supportFragmentManager.findFragmentById(R.id.contentFrame)
         currentFragment = frag

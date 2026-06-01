@@ -15,8 +15,8 @@ private val json = Json {
 class FullnodeRepository(private val client: HttpClient) {
 
     /**
-     * @param baseUrl базовый URL ноды, с завершающим / или без
-     * @return null если нода недоступна или success=false
+     * @param baseUrl node base URL, with or without trailing /
+     * @return null if node is unreachable or success=false
      */
     suspend fun fetchStatus(baseUrl: String): StatusDto? {
         val url = normalizeBaseUrl(baseUrl) + "status"
@@ -32,8 +32,8 @@ class FullnodeRepository(private val client: HttpClient) {
     suspend fun isNodeHealthy(baseUrl: String): Boolean = fetchStatus(baseUrl) != null
 
     /**
-     * GET /wallet/balance?address=… (как Android `getWalletBalance`).
-     * @return null при ошибке сети или success=false
+     * GET /wallet/balance?address=… (same as Android `getWalletBalance`).
+     * @return null on network error or success=false
      */
     suspend fun fetchWalletBalance(baseUrl: String, address: String): WalletBalanceDto? {
         val trimmed = address.trim()
@@ -74,8 +74,8 @@ class FullnodeRepository(private val client: HttpClient) {
     }
 
     /**
-     * GET /mempool — снимок очереди (read-only), как в `ApiServer::handleGetMempool`.
-     * @return null при ошибке сети или success=false
+     * GET /mempool — queue snapshot (read-only), see `ApiServer::handleGetMempool`.
+     * @return null on network error or success=false
      */
     suspend fun fetchMempool(baseUrl: String): MempoolSnapshotDto? {
         val root = normalizeBaseUrl(baseUrl)
@@ -90,8 +90,8 @@ class FullnodeRepository(private val client: HttpClient) {
     }
 
     /**
-     * GET /account/mining_info?address=… (как Android `getMiningInfo`).
-     * @return null при ошибке сети или success=false
+     * GET /account/mining_info?address=… (same as Android `getMiningInfo`).
+     * @return null on network error or success=false
      */
     suspend fun fetchMiningInfo(baseUrl: String, address: String): MinerStakeInfoDto? {
         val trimmed = address.trim()
@@ -109,8 +109,8 @@ class FullnodeRepository(private val client: HttpClient) {
     }
 
     /**
-     * GET /validators (как Android `getValidators`).
-     * @return null при ошибке сети или success=false
+     * GET /validators (same as Android `getValidators`).
+     * @return null on network error or success=false
      */
     suspend fun fetchValidators(baseUrl: String): ValidatorsResponseDto? {
         val root = normalizeBaseUrl(baseUrl)
@@ -124,7 +124,7 @@ class FullnodeRepository(private val client: HttpClient) {
         }
     }
 
-    /** GET /mining/stats (как Android `getMiningStats`). */
+    /** GET /mining/stats (same as Android `getMiningStats`). */
     suspend fun fetchMiningStats(baseUrl: String): MiningStatsDto? {
         val root = normalizeBaseUrl(baseUrl)
         val url = "${root}mining/stats"

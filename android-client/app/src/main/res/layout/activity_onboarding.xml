@@ -8,7 +8,7 @@
     android:filterTouchesWhenObscured="true"
     android:orientation="vertical">
 
-    <!-- Верхняя панель: только заголовок текущего шага (без лого) -->
+    <!-- Top bar: current step title only (no logo) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             android:textSize="15sp" />
     </LinearLayout>
 
-    <!-- Лого по центру, под ним wordmark по центру; ниже — приветствие -->
+    <!-- Logo centered, wordmark below centered; greeting below -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

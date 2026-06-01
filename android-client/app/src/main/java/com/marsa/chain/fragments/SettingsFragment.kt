@@ -159,7 +159,7 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Тот же префикс txid, что и для MINER_STAKE в MiningFragment: … + tx_type + data (для unstake data = "0").
+     * Same txid prefix as MINER_STAKE in MiningFragment: … + tx_type + data (for unstake data = "0").
      */
     private fun buildMinerUnstakeTransactionRequest(
         from: String,

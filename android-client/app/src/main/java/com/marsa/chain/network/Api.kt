@@ -15,7 +15,7 @@ object Api {
 
     private val gson = Gson()
 
-    // BODY засоряет логи при опросе /status каждые 5–10 сек; NONE оставляет только логи приложения
+    // BODY clutters logs polling /status every 5–10s; NONE keeps app logs only
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.NONE
     }
@@ -23,7 +23,7 @@ object Api {
     private val defaultClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS) // Увеличено для mining submit
+        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS) // Increased for mining submit
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
@@ -48,15 +48,15 @@ data class HeaderDTO(
     val nonce: Int
 )
 
-/** commitment = H(nonce) hex (64 символа), опционально — для защиты от перебора nonce. */
+/** commitment = H(nonce) hex (64 chars), optional — anti nonce brute-force. */
 data class ChallengeRequest(val address: String, val pubKey: String, val commitment: String? = null)
 
-/** bits — compact target на момент выдачи (как на ноде); для локального PoW до submit. */
+/** bits — compact target at issue time (as on node); for local PoW before submit. */
 data class ChallengeResponse(val challengeId: String, val challenge: String, val expiresAt: Long, val bits: Int? = null)
 
 /**
- * Ответ ноды: при success=false поля error/reason есть, data может отсутствовать в JSON.
- * Не использовать non-null data — иначе Gson падает на теле ошибки и клиент видит лишь generic catch.
+ * Node response: when success=false error/reason present, data may be missing in JSON.
+ * Do not use non-null data — Gson fails on error body and client only sees generic catch.
  */
 data class ApiResponse<T>(
     val success: Boolean = false,
@@ -79,7 +79,7 @@ data class MiningSubmitRequest(
     val nonce: String
 )
 
-/** POST /mining/challenge/abandon — закрыть challenge без блока (не прошёл локальный PoW). */
+/** POST /mining/challenge/abandon — close challenge without block (local PoW failed). */
 data class ChallengeAbandonRequest(
     val address: String,
     val challengeId: String,
@@ -89,9 +89,9 @@ data class ChallengeAbandonRequest(
 
 data class ChallengeAbandonResult(val abandoned: Boolean? = null)
 
-/** Константы майнинг-API (синхронно с fullnode). */
+/** Mining API constants (in sync with fullnode). */
 object MiningApi {
-    /** UTF-8 строка для Ed25519; нода проверяет Crypto::verify(pubKey, message, signature). */
+    /** UTF-8 string for Ed25519; node verifies Crypto::verify(pubKey, message, signature). */
     fun abandonSignMessage(address: String, challengeId: String): String =
         "marsa:mining:abandon:v1:$challengeId:$address"
 }
@@ -107,17 +107,17 @@ data class MerkleProof(
     val height: Int
 )
 
-/** height, target, bits/difficulty — для отображения сложности на клиенте (майнинг не использует bits для фильтрации). */
+/** height, target, bits/difficulty — for client difficulty display (mining does not filter by bits). */
 data class StatusDTO(val height: Int, val target: Int, val difficulty: Int? = null, val bits: Int? = null)
 
-// Старый формат (для обратной совместимости)
+// Legacy format (backward compatible)
 data class BalanceDTO(val address: String, val balance: Long)
 
-// Новый формат с поддержкой дробных монет
+// New format with fractional coins
 data class WalletBalanceDTO(
     val address: String,
-    val balance: String, // Форматированная строка (например, "5000.00")
-    val balance_wei: String? = null, // минимальные единицы (wei), 1 монета = 10^8 wei
+    val balance: String, // Formatted string (e.g. "5000.00")
+    val balance_wei: String? = null, // smallest units (wei), 1 coin = 10^8 wei
     val frozen_balance: String? = null,
     val frozen_balance_wei: String? = null,
     val available_balance: String? = null,
@@ -179,7 +179,7 @@ data class AddressTxDTO(
     val type: String
 )
 
-/** Ответ GET /validators: список валидаторов ноды (для проверки «есть ли активный стейк» и выбора ноды по загрузке). */
+/** GET /validators response: node validators (check active stake and pick by load). */
 data class ValidatorDTO(
     val node_id: String?,
     val wallet_address: String?,
@@ -202,16 +202,16 @@ data class ValidatorsResponseDTO(
 )
 
 // ========================================================================
-// MINER_STAKE: Информация о майнинговом стейке
+// MINER_STAKE: mining stake info
 // ========================================================================
 
-/** Информация о MINER_STAKE для адреса (соответствует API ноды) */
+/** MINER_STAKE info for address (matches node API) */
 data class MinerStakeInfoDTO(
     val address: String,
     val current_height: Int,
     val miner_stake_active: Boolean,
     val has_stake: Boolean,
-    // Если есть stake:
+    // If stake exists:
     val staked_amount: Long? = null,  // wei
     val staked_amount_formatted: String? = null,
     val unlock_block: Int? = null,
@@ -229,7 +229,7 @@ data class MinerStakeInfoDTO(
     val can_unstake: Boolean? = null,
     val blocks_until_can_unstake: Int? = null,
     val min_miner_stake_lock_blocks: Int? = null,
-    // Если нет stake:
+    // If no stake:
     val min_stake_amount: Long? = null,
     val min_stake_formatted: String? = null,
     val min_stake_duration: Int? = null,
@@ -277,11 +277,11 @@ interface FullnodeService {
         @Query("limit") limit: Int? = null
     ): ApiResponse<List<AddressTxDTO>>
 
-    /** Список валидаторов ноды. Нода подходит для майнинга, если есть хотя бы один валидатор с is_active. */
+    /** Node validator list. Node OK for mining if at least one validator has is_active. */
     @GET("validators")
     suspend fun getValidators(): ApiResponse<ValidatorsResponseDTO>
     
-    /** Получить информацию о MINER_STAKE для адреса */
+    /** Get MINER_STAKE info for address */
     @GET("account/mining_info")
     suspend fun getMiningInfo(@Query("address") address: String): ApiResponse<MinerStakeInfoDTO>
 }

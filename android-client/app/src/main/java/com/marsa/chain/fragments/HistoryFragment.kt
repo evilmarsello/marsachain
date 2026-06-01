@@ -35,7 +35,7 @@ class HistoryFragment : Fragment() {
     private lateinit var addresses: List<String>
     private var adapter: TransactionAdapter? = null
     
-    // Пагинация
+    // Pagination
     private var currentPage = 0
     private val pageSize = 10
     private var isLoading = false
@@ -65,45 +65,45 @@ class HistoryFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
-        // Кнопки фильтров
+        // Filter buttons
         var filterAll = view.findViewById<Button>(R.id.filterAllButton)
         var filterSent = view.findViewById<Button>(R.id.filterSentButton)
         var filterReceived = view.findViewById<Button>(R.id.filterReceivedButton)
         var filterMining = view.findViewById<Button>(R.id.filterMiningButton)
 
-        // Назначаем обработчики кликов СРАЗУ
+        // Assign click handlers immediately
         filterAll.setOnClickListener {
             android.util.Log.d("HistoryFragment", "CLICK: filterAll")
             currentFilter = "all"
-            currentPage = 0 // Сброс пагинации при смене фильтра
+            currentPage = 0 // Reset pagination on filter change
             updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
             updateFilteredList(recycler, emptyState)
         }
         filterSent.setOnClickListener {
             android.util.Log.d("HistoryFragment", "CLICK: filterSent")
             currentFilter = "send"
-            currentPage = 0 // Сброс пагинации при смене фильтра
+            currentPage = 0 // Reset pagination on filter change
             updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
             updateFilteredList(recycler, emptyState)
         }
         filterReceived.setOnClickListener {
             android.util.Log.d("HistoryFragment", "CLICK: filterReceived")
             currentFilter = "receive"
-            currentPage = 0 // Сброс пагинации при смене фильтра
+            currentPage = 0 // Reset pagination on filter change
             updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
             updateFilteredList(recycler, emptyState)
         }
         filterMining.setOnClickListener {
             android.util.Log.d("HistoryFragment", "CLICK: filterMining")
             currentFilter = "mining"
-            currentPage = 0 // Сброс пагинации при смене фильтра
+            currentPage = 0 // Reset pagination on filter change
             updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
             updateFilteredList(recycler, emptyState)
         }
 
-        // Остальное — загрузка данных
+        // Rest — data loading
         lifecycleScope.launch {
-            // Очистить всю историю транзакций перед загрузкой
+            // Clear all tx history before load
             withContext(Dispatchers.IO) { transactionManager.clearAllTransactions() }
             val wallets = withContext(Dispatchers.IO) { walletManager.getAllWallets().first() }
             addresses = wallets.map { it.address }
@@ -114,7 +114,7 @@ class HistoryFragment : Fragment() {
             )
             recycler.adapter = adapter
 
-            // Добавляем слушатель прокрутки для подгрузки данных
+            // Add scroll listener for loading more
             recycler.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -125,7 +125,7 @@ class HistoryFragment : Fragment() {
                         val totalItemCount = layoutManager.itemCount
                         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                         
-                        // Если пользователь приближается к концу списка (осталось 3 элемента)
+                        // When user nears list end (3 items left)
                         if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 3 && firstVisibleItemPosition >= 0) {
                             loadMoreTransactions()
                         }
@@ -133,7 +133,7 @@ class HistoryFragment : Fragment() {
                 }
             })
 
-            // Немедленный одноразовый reconciliation: обновляем blockHeight из /address/transactions
+            // Immediate one-shot reconciliation: update blockHeight from /address/transactions
             launch(Dispatchers.IO) {
                 try {
                     val snapshot = transactionManager.getTransactionsForAddresses(addresses).first()
@@ -149,7 +149,7 @@ class HistoryFragment : Fragment() {
                         }
                     }
                     
-                    // Сразу после reconciliation запрашиваем chainHeight
+                    // Right after reconciliation fetch chainHeight
                     val status = runCatching { api.getStatus() }.getOrNull()
                     val chainHeight = (status?.get("height") as? Int)
                     if (chainHeight != null && chainHeight >= 0) {
@@ -209,14 +209,14 @@ class HistoryFragment : Fragment() {
                     }
                 }
             }
-            // Триггерим отображение истории сразу после загрузки
+            // Trigger history display right after load
             transactionManager.getTransactionsForAddresses(addresses).collect { list ->
                 allTransactions = list
                 latestTransactions = list
                 updateFilteredList(recycler, emptyState)
             }
 
-            // Попробуем поднять весь контейнер с фильтрами (родитель кнопок)
+            // Try raising entire filter container (buttons parent)
             val filtersContainer = (filterAll.parent as? View)
             filtersContainer?.let { fc ->
                 fc.isClickable = true
@@ -227,7 +227,7 @@ class HistoryFragment : Fragment() {
                 fc.requestLayout()
                 fc.invalidate()
 
-                // Подвинем список ниже панели фильтров через padding (надёжнее чем margin)
+                // Push list below filter bar via padding (more reliable than margin)
                 fc.post {
                     recycler.clipToPadding = false
                     val topPadding = fc.height.coerceAtLeast(8)
@@ -238,7 +238,7 @@ class HistoryFragment : Fragment() {
                 }
             }
 
-            // Гарантируем кликабельность и видимость поверх списка
+            // Ensure clickable and visible above list
             listOf(filterAll, filterSent, filterReceived, filterMining).forEach { btn ->
                 btn?.isClickable = true
                 btn?.isEnabled = true
@@ -248,19 +248,19 @@ class HistoryFragment : Fragment() {
                 try { btn!!.translationZ = 18f } catch (_: Throwable) {}
             }
 
-            // Также снизим Z у списка, чтобы не перекрывал клики
+            // Also lower list Z so it does not steal clicks
             try { androidx.core.view.ViewCompat.setElevation(recycler, 0f) } catch (_: Throwable) {}
             try { recycler.translationZ = 0f } catch (_: Throwable) {}
 
-            // Устанавливаем начальное состояние - активна только кнопка "All"
+            // Set initial state — only All button active
             updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState) // чтобы ALL сработал на самом первом отображении
+            updateFilteredList(recycler, emptyState) // so ALL works on first display
 
             fun applyFilter(list: List<TransactionEntity>): List<TransactionEntity> = when (currentFilter) {
                 "send" -> list.filter { getTransactionTypeForUser(it, addresses) == "send" }
                 "receive" -> list.filter { getTransactionTypeForUser(it, addresses) == "receive" }
                 "mining" -> list.filter { getTransactionTypeForUser(it, addresses) == "mining" }
-                // Исправлено: ALL теперь показывает все пользовательские типы транзакций, в том числе "received"
+                // Fixed: ALL now shows all user tx types including received
                 else -> list.filter {
                     val t = getTransactionTypeForUser(it, addresses)
                     t == "send" || t == "receive" || t == "internal" || t == "mining"
@@ -271,7 +271,7 @@ class HistoryFragment : Fragment() {
                 adapter?.updateUserAddresses(addresses)
                 val filtered = applyFilter(allTransactions)
                 
-                // Применяем пагинацию: показываем только первые (currentPage + 1) * pageSize элементов
+                // Apply pagination: show only first (currentPage + 1) * pageSize items
                 val paginatedList = filtered.take((currentPage + 1) * pageSize)
                 hasMoreData = paginatedList.size < filtered.size
                 
@@ -286,12 +286,12 @@ class HistoryFragment : Fragment() {
                 }
             }
             
-            // Стартуем единый "умный" цикл: опрос высоты
+            // Start single smart loop: height polling
             if (confirmationsJob == null) {
                 confirmationsJob = lifecycleScope.launch(Dispatchers.IO) {
                     while (isActive) {
                         try {
-                            // Получаем текущую высоту (1 запрос)
+                            // Fetch current height (1 request)
                             val status = runCatching { api.getStatus() }.getOrNull()
                             val chainHeight = (status?.get("height") as? Int) ?: lastChainHeight
                             if (chainHeight >= 0) {
@@ -303,7 +303,7 @@ class HistoryFragment : Fragment() {
 
                         } catch (_: Exception) { /* ignore single cycle errors */ }
 
-                        kotlinx.coroutines.delay(3000) // Опрашиваем /status каждые 3 секунды
+                        kotlinx.coroutines.delay(3000) // Poll /status every 3 seconds
                     }
                 }
             }
@@ -312,7 +312,7 @@ class HistoryFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Очищаем кэш транзакций при закрытии приложения
+        // Clear tx cache on app close
         lifecycleScope.launch(Dispatchers.IO) {
             transactionManager.clearAllTransactions()
         }
@@ -366,7 +366,7 @@ class HistoryFragment : Fragment() {
         isLoading = true
         currentPage++
         
-        // Обновляем список с новой страницей
+        // Refresh list with new page
         view?.let { v ->
             val recycler = v.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.transactionsRecyclerView)
             val emptyState = v.findViewById<LinearLayout>(R.id.emptyStateLayout)
@@ -390,7 +390,7 @@ class HistoryFragment : Fragment() {
     }
     
     private fun updateFilterButtons(currentFilter: String, filterAll: Button, filterSent: Button, filterReceived: Button, filterMining: Button) {
-        // Сбрасываем все кнопки в неактивное состояние
+        // Reset all buttons to inactive
         filterAll.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
         filterAll.setTextColor(requireContext().getColor(R.color.background_card))
         
@@ -403,7 +403,7 @@ class HistoryFragment : Fragment() {
         filterMining.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
         filterMining.setTextColor(requireContext().getColor(R.color.background_card))
         
-        // Активируем выбранную кнопку
+        // Activate selected button
         when (currentFilter) {
             "all" -> {
                 filterAll.background = requireContext().getDrawable(R.drawable.send_button_background)

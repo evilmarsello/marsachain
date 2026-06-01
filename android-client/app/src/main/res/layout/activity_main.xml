@@ -20,7 +20,7 @@
             android:layout_height="28dp"
             android:background="#1C1C1E" />
 
-        <!-- Title and status row: заголовок всегда по центру экрана, кнопки по краям -->
+        <!-- Title and status row: title always screen-centered, buttons at edges -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"

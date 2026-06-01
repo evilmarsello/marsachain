@@ -21,7 +21,7 @@ export type DeletedWalletRow = {
 
 export type TmaWalletRow = {
   id: string;
-  /** `watch` = только адрес из старой версии Mini App (без seed в localStorage). */
+  /** `watch` = address only from older Mini App (no seed in localStorage). */
   kind: "hd" | "import" | "watch";
   hdIndex: number | null;
   address: string;
@@ -59,7 +59,7 @@ export function readSeedBytes(): Uint8Array | null {
   }
 }
 
-/** Записывает seed и проверяет чтение тем же кодом, что и при загрузке. */
+/** Writes seed and verifies read with the same code as on load. */
 function writeSeedBytesVerified(seed: Uint8Array): { ok: boolean; encoded?: string } {
   try {
     const enc = b64Encode(seed);
@@ -313,7 +313,7 @@ export function persistSeedAndInitHdZero(seed: Uint8Array): boolean {
   return rebuildWalletListForSeed(seed);
 }
 
-/** Если seed уже в localStorage, а HD#0 нет или адрес не совпадает с выводом из seed — починить список. */
+/** If seed is in localStorage but HD#0 is missing or address mismatches seed derivation — repair list. */
 export function ensureHdWalletListFromStoredSeed(): void {
   try {
     const seed = readSeedBytes();
@@ -336,8 +336,8 @@ export function ensureHdWalletListFromStoredSeed(): void {
 const LS_LEGACY_ADDR = "tma_wallet_address";
 
 /**
- * Старая сессия: онбординг пройден, адрес в поле сохранён, но seed и `tma_wallets_v1` ещё не писались.
- * Добавляем один watch-кошелёк, чтобы «My Wallets» не был пустым; HD / New Wallet — после повторного restore seed.
+ * Legacy session: onboarding done, address saved, but seed and `tma_wallets_v1` were not written yet.
+ * Add one watch wallet so My Wallets is not empty; HD / New Wallet after re-restoring seed.
  */
 export function migrateWatchOnlyFromLegacyAddress(): void {
   if (readSeedBytes()) return;

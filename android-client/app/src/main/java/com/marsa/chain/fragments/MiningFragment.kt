@@ -51,22 +51,22 @@ class MiningFragment : Fragment() {
     private var blocksMined = 0
     private var totalRewards = 0L
     private var miningInProgress = false
-    /** Завершение последней попытки (finally) — ограничение частоты тапов. */
+    /** Last attempt finished (finally) — tap rate limit. */
     private var lastMiningTapCompletedAtMs = 0L
     private var progressRingJob: Job? = null
     
-    // MINER_STAKE: Информация о майнинговом стейке
+    // MINER_STAKE: mining stake info
     private var minerStakeInfo: com.marsa.chain.network.MinerStakeInfoDTO? = null
 
-    /** nonce, challenge, baseUrl ноды (challenge живёт в памяти этой ноды). Соответствует MAX_PENDING_CHALLENGES на сервере. */
+    /** nonce, challenge, node baseUrl (challenge lives in this node's memory). Matches MAX_PENDING_CHALLENGES on server. */
     private val pendingMiningSlots = ArrayDeque<Triple<String, ChallengeResponse, String>>()
     private val pendingMiningLock = Any()
 
-    /** Координаты последнего тапа по кнопке майнинга (экран), чтобы чип появлялся из точки нажатия. -1 = не задано. */
+    /** Last mining button tap coordinates (screen) so chip appears at press point. -1 = unset. */
     private var lastMiningTapScreenX: Float = -1f
     private var lastMiningTapScreenY: Float = -1f
 
-    /** Текущий Toast — отменяем перед новым, показываем не дольше 1 сек, чтобы сообщения не копились. */
+    /** Current Toast — cancel before new, show at most 1s so messages do not stack. */
     private var currentToast: Toast? = null
 
     private fun showShortToast(message: CharSequence) {
@@ -82,7 +82,7 @@ class MiningFragment : Fragment() {
         }, 1500)
     }
 
-    /** Хэш и результат майнинга: появляется из точки нажатия и быстро уходит вверх. */
+    /** Hash and mining result: appears at tap point and moves up quickly. */
     private fun showMiningResultFloating(hashHex: String, success: Boolean, rewardMrs: String? = null) {
         if (!isAdded || _binding == null) return
         val content = activity?.window?.decorView?.findViewById<ViewGroup>(android.R.id.content) ?: return
@@ -163,13 +163,13 @@ class MiningFragment : Fragment() {
         // Refresh data when fragment becomes visible
         loadData()
         
-        // Запускаем периодическое обновление высоты блоков каждые 5 секунд
+        // Start periodic block height refresh every 5 seconds
         startHeightUpdates()
     }
     
     override fun onPause() {
         super.onPause()
-        // Останавливаем обновление высоты блоков при паузе
+        // Stop block height refresh on pause
         stopHeightUpdates()
     }
     
@@ -190,8 +190,8 @@ class MiningFragment : Fragment() {
                             loadMinerStakeInfo()
                         }
                     }
-                    // Кликер тапает вхолостую при 0 кредитов — без этого после REFILL_BLOCK UI не обновится,
-                    // пока не уйти с экрана (loadMinerStakeInfo раньше вызывался только из loadData / майнинг).
+                    // Tap spam at 0 credits — without this UI won't refresh after REFILL_BLOCK until leaving screen
+                    // (loadMinerStakeInfo was only called from loadData / mining).
                     val waitingRefill = minerStakeInfo?.has_stake == true &&
                         (minerStakeInfo?.available_credits ?: 1L) <= 0L
                     if (waitingRefill) {
@@ -213,7 +213,7 @@ class MiningFragment : Fragment() {
         // Load initial balance
         loadData()
         
-        // Mining button: тап без удержания, анимация нажатия
+        // Mining button: tap without hold, press animation
         binding.miningButton.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -261,7 +261,7 @@ class MiningFragment : Fragment() {
     }
     
     /**
-     * Загружает информацию о MINER_STAKE для активного кошелька
+     * Loads MINER_STAKE info for active wallet
      */
     private suspend fun loadMinerStakeInfo() {
         try {
@@ -281,8 +281,8 @@ class MiningFragment : Fragment() {
                 minerStakeInfo = fresh
                 updateMinerStakeUI(minerStakeInfo)
             } else {
-                // Кэш только для того же адреса — иначе после смены кошелька показывались бы чужой стейк/кредиты,
-                // а challenge шёл бы на новый address → «Challenge failed» на сервере.
+                // Cache only for same address — else after wallet switch wrong stake/credits would show,
+                // and challenge would go to new address → Challenge failed on server.
                 val cached = minerStakeInfo
                 if (cached != null && cached.address == activeWallet.address) {
                     updateMinerStakeUI(cached)
@@ -306,7 +306,7 @@ class MiningFragment : Fragment() {
         }
     }
     
-    /** Подпись серой, значение (число) белым. */
+    /** Gray label, white value (number). */
     private fun labelGrayValueWhite(label: String, value: String): CharSequence {
         val full = label + value
         return SpannableStringBuilder(full).apply {
@@ -316,39 +316,39 @@ class MiningFragment : Fragment() {
     }
 
     /**
-     * Обновляет UI на основе информации о MINER_STAKE
+     * Updates UI from MINER_STAKE info
      */
     private fun updateMinerStakeUI(info: com.marsa.chain.network.MinerStakeInfoDTO?) {
         if (_binding == null) return
         if (info == null || !info.has_stake) {
             binding.minerStakeStatusText?.text = labelGrayValueWhite("Mining Stake: ", "Not Active")
             
-            // Скрываем счётчик кредитов
+            // Hide credits counter
             binding.miningCreditsText?.visibility = View.GONE
             
-            // Показываем сообщение о создании MINER_STAKE
+            // Show MINER_STAKE creation message
             binding.creditsRefillText?.text = "Create MINER_STAKE to start mining"
             binding.creditsRefillText?.visibility = View.VISIBLE
             
             binding.miningButton.isEnabled = false
             
-            // Показываем темный overlay для затемнения
+            // Show dark overlay for dimming
             binding.miningButtonDimOverlay?.visibility = View.VISIBLE
             
-            // Показываем overlay кнопку создания MINER_STAKE
+            // Show MINER_STAKE create overlay button
             binding.createMinerStakeButton?.visibility = View.VISIBLE
             binding.createMinerStakeButton?.setOnClickListener {
                 showCreateMinerStakeDialog()
             }
             
-            // Скрываем unlock text и cost per credit
+            // Hide unlock text and cost per credit
             binding.minerStakeUnlockText?.visibility = View.GONE
             binding.minerStakeCostPerCreditText?.visibility = View.GONE
             
             binding.miningBlockRateText?.visibility = View.GONE
             
         } else {
-            // Случай B/C: Есть активный MINER_STAKE
+            // Case B/C: active MINER_STAKE
             val stakedFormatted = info.staked_amount_formatted ?: "0"
             val creditsLeft = info.available_credits ?: 0
             val totalCredits = info.total_credits_per_window ?: 0
@@ -357,7 +357,7 @@ class MiningFragment : Fragment() {
             
             binding.minerStakeStatusText?.text = labelGrayValueWhite("Mining Stake: ", "$stakedFormatted MRS")
             
-            // Стоимость 1 кредита (1 генерация хэша) — зафиксирована при создании стейка
+            // Cost of 1 credit (1 hash attempt) — fixed at stake creation
             val costFormatted = info.freeze_cost_formatted ?: "—"
             binding.minerStakeCostPerCreditText?.text = labelGrayValueWhite("1 credit (1 hash): ", "$costFormatted MRS")
             binding.minerStakeCostPerCreditText?.visibility = View.VISIBLE
@@ -383,9 +383,9 @@ class MiningFragment : Fragment() {
                 binding.minerStakeUnlockText?.visibility = View.GONE
             }
             
-            // Отображаем кредиты под кнопкой (как у остальных полей: подпись серая, число белое)
+            // Show credits below button (same as other fields: gray label, white value)
             if (creditsLeft > 0) {
-                // Случай B: Есть кредиты в окне
+                // Case B: credits in window
                 binding.miningCreditsText?.text =
                     labelGrayValueWhite("Mining Credits: ", "$creditsLeft / $totalCredits")
                 binding.miningCreditsText?.visibility = View.VISIBLE
@@ -393,12 +393,12 @@ class MiningFragment : Fragment() {
                 binding.creditsRefillText?.visibility = View.GONE
                 binding.miningButton.isEnabled = true
             } else {
-                // Случай C: Кредиты исчерпаны
+                // Case C: credits exhausted
                 binding.miningCreditsText?.text =
                     labelGrayValueWhite("Mining Credits: ", "0 / $totalCredits")
                 binding.miningCreditsText?.visibility = View.VISIBLE
                 
-                // Показываем сообщение о refill только когда кредиты исчерпаны
+                // Show refill message only when credits exhausted
                 binding.creditsRefillText?.text = "Wait for refill: $blocksUntilRefill blocks (~${secondsUntilRefill}s)"
                 binding.creditsRefillText?.visibility = View.VISIBLE
                 
@@ -407,15 +407,15 @@ class MiningFragment : Fragment() {
 
             binding.miningBlockRateText?.visibility = View.GONE
             
-            // Скрываем темный overlay
+            // Hide dark overlay
             binding.miningButtonDimOverlay?.visibility = View.GONE
             
-            // Скрываем overlay кнопку создания MINER_STAKE
+            // Hide MINER_STAKE create overlay button
             binding.createMinerStakeButton?.visibility = View.GONE
         }
     }
 
-    /** После попытки майнинга: снова включить кнопку только если есть кредиты. */
+    /** After mining attempt: re-enable button only if credits remain. */
     private fun applyMiningButtonEnabledAfterAttempt() {
         if (_binding == null) return
         val info = minerStakeInfo
@@ -426,7 +426,7 @@ class MiningFragment : Fragment() {
     }
     
     /**
-     * Показывает диалог создания MINER_STAKE транзакции
+     * Shows MINER_STAKE transaction dialog
      */
     private fun showCreateMinerStakeDialog() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -444,13 +444,13 @@ class MiningFragment : Fragment() {
                 if (_binding == null) return@launch
                 val balanceFormatted = CoinFormatter.format(currentBalance)
                 
-                // Получаем параметры из mining_info
-                val minStakeAmount = minerStakeInfo?.min_stake_amount ?: (100L * CoinFormatter.WEI_PER_COIN) // 100 монет в wei
-                // Duration устанавливается нодой (120 блоков), клиент не может изменить
-                val duration = 120 // блоков (соответствует MINER_STAKE_DURATION на ноде)
+                // Read params from mining_info
+                val minStakeAmount = minerStakeInfo?.min_stake_amount ?: (100L * CoinFormatter.WEI_PER_COIN) // 100 coins in wei
+                // Duration set by node (120 blocks), client cannot change
+                val duration = 120 // blocks (matches MINER_STAKE_DURATION on node)
                 val unlockBlock = (minerStakeInfo?.current_height ?: 0) + duration
                 
-                // Создаём диалог с custom layout
+                // Create dialog with custom layout
                 val dialogView = layoutInflater.inflate(R.layout.dialog_create_miner_stake, null)
                 
                 val tvBalanceInfo = dialogView.findViewById<android.widget.TextView>(R.id.tvBalanceInfo)
@@ -462,7 +462,7 @@ class MiningFragment : Fragment() {
                     .setView(dialogView)
                     .create()
                 
-                // Убираем белый фон по углам
+                // Remove white corner background
                 dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 
                 dialogView.findViewById<android.view.View>(R.id.btnCancel).setOnClickListener {
@@ -494,7 +494,7 @@ class MiningFragment : Fragment() {
     }
     
     /**
-     * Создаёт и отправляет MINER_STAKE транзакцию.
+     * Creates and sends MINER_STAKE transaction.
      */
     private fun createMinerStakeTransaction(
         wallet: com.marsa.chain.data.WalletInfo,
@@ -519,7 +519,7 @@ class MiningFragment : Fragment() {
                 val currentHeight = (status?.get("height") as? Int) ?: 0
                 val fee = 0L
                 
-                // Создаём транзакцию (duration НЕ передаём - устанавливается нодой)
+                // Build transaction (do NOT pass duration — set by node)
                 val txRequest = createMinerStakeTransactionRequest(
                     wallet.address,
                     wallet.publicKey,
@@ -536,12 +536,12 @@ class MiningFragment : Fragment() {
                 if (result != null) {
                     showShortToast("Sent. Mining to confirm...")
                     
-                    // Обновляем баланс (fee = 0, поэтому вычитаем только stakeAmount)
+                    // Refresh balance (fee = 0, subtract only stakeAmount)
                     withContext(Dispatchers.IO) {
                         walletManager.updateWalletBalance(wallet.address, currentBalance - stakeAmount)
                     }
                     
-                    // Обновляем UI сразу
+                    // Refresh UI immediately
                     loadBalanceData()
                     
                     viewLifecycleOwner.lifecycleScope.launch confirmStake@{
@@ -574,7 +574,7 @@ class MiningFragment : Fragment() {
     }
     
     /**
-     * Создаёт TransactionRequest для MINER_STAKE
+     * Builds TransactionRequest for MINER_STAKE
      */
     private fun createMinerStakeTransactionRequest(
         from: String,
@@ -584,20 +584,20 @@ class MiningFragment : Fragment() {
         fee: Long,
         currentHeight: Int
     ): com.marsa.chain.network.TransactionRequest {
-        // ШАГ 1: Создаем данные для txid
+        // STEP 1: build txid data
         val txidData = StringBuilder()
-        txidData.append(from).append(fee.toString()) // Только fee (value=0 для MINER_STAKE)
+        txidData.append(from).append(fee.toString()) // Fee only (value=0 for MINER_STAKE)
         txidData.append(from).append("0") // to=from, value=0
         txidData.append(fee.toString())
-        txidData.append("10") // tx_type = 10 для MINER_STAKE
-        txidData.append(stakeAmount.toString()) // data = сумма стейка
+        txidData.append("10") // tx_type = 10 for MINER_STAKE
+        txidData.append(stakeAmount.toString()) // data = stake amount
         
-        // ШАГ 2: Вычисляем txid (SHA256)
+        // STEP 2: compute txid (SHA256)
         val txidBytes = java.security.MessageDigest.getInstance("SHA-256")
             .digest(txidData.toString().toByteArray())
         val txid = txidBytes.joinToString("") { String.format("%02x", it) }
         
-        // ШАГ 3: Подписываем txid
+        // STEP 3: sign txid
         val keyPair = com.marsa.chain.crypto.KeyPair.fromPrivateKey(privateKey)
             ?: throw Exception("Failed to create KeyPair")
         
@@ -606,7 +606,7 @@ class MiningFragment : Fragment() {
         
         val signature = Base64.encodeToString(signatureBytes, Base64.NO_WRAP)
         
-        // ШАГ 4: Создаём транзакцию с metadata (как в STAKE транзакциях)
+        // STEP 4: build transaction with metadata (same as STAKE transactions)
         return com.marsa.chain.network.TransactionRequest(
             txid = txid,
             inputs = listOf(
@@ -619,15 +619,15 @@ class MiningFragment : Fragment() {
             ),
             outputs = listOf(
                 com.marsa.chain.network.TransactionOutput(
-                    value = 0, // Для MINER_STAKE value=0 (монеты замораживаются, а не переводятся)
-                    address = from // Адрес владельца
+                    value = 0, // For MINER_STAKE value=0 (coins frozen, not transferred)
+                    address = from // Owner address
                 )
             ),
             fee = fee,
             tx_type = 10, // MINER_STAKE
-            data = stakeAmount.toString(), // Сумма стейка в data (в wei)
+            data = stakeAmount.toString(), // Stake amount in data (wei)
             metadata = mapOf(
-                // Duration НЕ передаём - устанавливается нодой (MINER_STAKE_DURATION)
+                // Do NOT pass duration — set by node (MINER_STAKE_DURATION)
                 "current_height" to currentHeight,
                 "stake_type" to "miner"
             )
@@ -700,7 +700,7 @@ class MiningFragment : Fragment() {
                 val address = activeWallet.address
                 val pubKey = activeWallet.publicKey
 
-                // Смена кошелька: сбросить очередь challenge (они привязаны к адресу на ноде).
+                // Wallet switch: reset challenge queue (bound to address on node).
                 if (minerStakeInfo?.address != address) {
                     synchronized(pendingMiningLock) { pendingMiningSlots.clear() }
                     loadMinerStakeInfo()
@@ -773,7 +773,7 @@ class MiningFragment : Fragment() {
                 if (bitsForPow != null) {
                     val compact = bitsForPow.toLong() and 0xFFFFFFFFL
                     if (!DifficultyDisplay.hashMeetsTarget(clientHashHex, compact)) {
-                        // Одна анимация на одну реальную попытку (один challenge → один проверенный хэш).
+                        // One animation per real attempt (one challenge → one verified hash).
                         showMiningResultFloating(clientHashHex, false)
                         val abandonMsg = MiningApi.abandonSignMessage(address, challengeResp.challengeId)
                         val abandonSig = keyPair?.sign(abandonMsg.toByteArray(StandardCharsets.UTF_8))
@@ -849,7 +849,7 @@ class MiningFragment : Fragment() {
                         loadBalanceData()
                     }
                 } else {
-                    // PoW локально ок, блок не принят — без летающего чипа (не путать с неудачным PoW).
+                    // PoW OK locally, block rejected — no flying chip (not failed PoW).
                 }
                 
             } catch (e: Exception) {
@@ -895,55 +895,55 @@ class MiningFragment : Fragment() {
     }
     
     /**
-     * Вычисляет награду за блок на основе высоты с учетом халвинга
-     * Использует ту же логику, что и сервер (Reward::getBlockReward)
+     * Computes block reward from height with halving
+     * Uses same logic as server (Reward::getBlockReward)
      * 
-     * @param height Высота блока
-     * @return Награда в nanos (90% от полной награды, так как 10% идет валидаторам)
+     * @param height Block height
+     * @return Reward in nanos (90% of full reward; 10% to validators)
      */
     private fun calculateBlockReward(height: Int): Long {
-        // Константы из сервера
-        val INITIAL_REWARD = CoinFormatter.coinsToNanos(10000.0) // как Reward::INITIAL_REWARD на ноде
-        val HALVING_INTERVAL = 1_050_000 // как Reward::HALVING_INTERVAL на ноде
-        val MIN_REWARD = INITIAL_REWARD / 10 // Минимум 10% от начальной награды
+        // Constants from server
+        val INITIAL_REWARD = CoinFormatter.coinsToNanos(10000.0) // same as Reward::INITIAL_REWARD on the node
+        val HALVING_INTERVAL = 1_050_000 // same as Reward::HALVING_INTERVAL on the node
+        val MIN_REWARD = INITIAL_REWARD / 10 // Minimum 10% of initial reward
         
         if (height == 0) {
             // Genesis block
             val fullReward = INITIAL_REWARD
-            return (fullReward * 0.9).toLong() // Майнер получает 90%
+            return (fullReward * 0.9).toLong() // Miner gets 90%
         }
         
-        // Вычисляем количество халвингов
+        // Compute halving count
         val halvingCount = (height - 1) / HALVING_INTERVAL
         
         if (halvingCount == 0) {
             val fullReward = INITIAL_REWARD
-            return (fullReward * 0.9).toLong() // Майнер получает 90%
+            return (fullReward * 0.9).toLong() // Miner gets 90%
         }
         
-        // Прогрессивная модель халвинга: 50% → 40% → 30% → 20% → 10% (минимум)
+        // Progressive halving: 50% → 40% → 30% → 20% → 10% (floor)
         var reward = INITIAL_REWARD.toDouble()
         val minReward = MIN_REWARD.toDouble()
         
-        // Применяем халвинги с прогрессивным уменьшением
+        // Apply halvings with progressive reduction
         for (i in 1..halvingCount) {
             val reductionPercent = getReductionPercent(i)
             reward = reward * (1.0 - reductionPercent)
             
-            // Никогда не опускаемся ниже минимума (10% от начальной награды)
+            // Never go below minimum (10% of initial reward)
             if (reward < minReward) {
                 reward = minReward
-                break // Достигли минимума, прекращаем уменьшение
+                break // Hit minimum, stop reducing
             }
         }
         
-        // Майнер получает 90% от полной награды (10% идет валидаторам)
+        // Miner gets 90% of full reward (10% to validators)
         return (reward * 0.9).toLong()
     }
     
     /**
-     * Возвращает процент уменьшения награды для конкретного халвинга
-     * 1-й халвинг: 50%, 2-й: 40%, 3-й: 30%, 4-й: 20%, 5+й: 10%
+     * Returns reward reduction percent for a given halving
+     * 1st halving: 50%, 2nd: 40%, 3rd: 30%, 4th: 20%, 5th+: 10%
      */
     private fun getReductionPercent(halvingNumber: Int): Double {
         return when (halvingNumber) {
@@ -951,7 +951,7 @@ class MiningFragment : Fragment() {
             2 -> 0.40 // 40%
             3 -> 0.30 // 30%
             4 -> 0.20 // 20%
-            else -> 0.10 // 10% для всех последующих
+            else -> 0.10 // 10% for all later
         }
     }
 
@@ -967,9 +967,9 @@ class MiningFragment : Fragment() {
 
     companion object {
         private const val MAX_PENDING_ON_SERVER = 1
-        /** Минимум между завершением попытки и новым тапом (мс). */
+        /** Minimum between attempt end and new tap (ms). */
         private const val MIN_MINING_COOLDOWN_MS = 400L
-        /** Летящий чип: было 1400 мс / 380 px по Y; +30% время и путь → та же скорость, выше уходит. */
+        /** Flying chip: was 1400ms / 380px Y; +30% time and distance → same speed, goes higher. */
         private const val MINING_FLOAT_DURATION_MS = 1820L
         private const val MINING_FLOAT_TRANSLATE_Y_PX = -494f
 
@@ -977,7 +977,7 @@ class MiningFragment : Fragment() {
     }
 
     /**
-     * Один challenge за раз: POST /mining/challenge/request (нода снимает предыдущий неиспользованный).
+     * One challenge at a time: POST /mining/challenge/request (node drops previous unused).
      */
     private suspend fun refillPendingMiningSlots(
         miningNodes: List<String>,

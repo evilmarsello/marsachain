@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Узел-валидатор с загрузкой (для выбора наименее загруженного). */
+/** Validator node with load (pick least loaded). */
 data class ValidatorNodeInfo(
     val ip: String,
     val apiPort: Int,
@@ -17,7 +17,7 @@ data class ValidatorNodeInfo(
     val loadPercent: Int = 0
 ) {
     val url: String get() = "http://$ip:$apiPort/"
-    /** Legacy-формат вида "host:PORT". */
+    /** Legacy format "host:PORT". */
     val hostPort: String get() = "$ip:$apiPort"
 }
 
@@ -61,7 +61,7 @@ class ConnectionManager(context: Context) {
     fun getAutoIps(): List<String> {
         val json = prefs.getString(KEY_AUTO_IPS, null)
         if (json == null || json.isEmpty()) {
-            // Если нет сохраненных, возвращаем дефолтные
+            // If none saved, return defaults
             setAutoIps(DEFAULT_AUTO_IPS)
             return DEFAULT_AUTO_IPS
         }
@@ -77,7 +77,7 @@ class ConnectionManager(context: Context) {
         prefs.edit().putString(KEY_AUTO_IPS, JSONArray(ips).toString()).apply()
     }
 
-    /** Список валидаторов с загрузкой (загружается с ноды через «Загрузить с ноды»). */
+    /** Validator list with load (fetched from node via Load from node). */
     fun getValidatorNodes(): List<ValidatorNodeInfo> {
         val json = prefs.getString(KEY_VALIDATOR_NODES, null) ?: return emptyList()
         return try {
@@ -115,7 +115,7 @@ class ConnectionManager(context: Context) {
             })
         }
         prefs.edit().putString(KEY_VALIDATOR_NODES, arr.toString()).apply()
-        // По умолчанию для внешних подключений используем хост без явного порта (80/443 через proxy).
+        // By default external connections use host without explicit port (80/443 via proxy).
         setAutoIps(nodes.map { it.ip })
     }
     
@@ -132,7 +132,7 @@ class ConnectionManager(context: Context) {
     }
     
     fun isAutoSelectEnabled(): Boolean {
-        return prefs.getBoolean(KEY_AUTO_SELECT_ENABLED, true) // По умолчанию включено
+        return prefs.getBoolean(KEY_AUTO_SELECT_ENABLED, true) // Enabled by default
     }
     
     fun setAutoSelectEnabled(enabled: Boolean) {
@@ -163,7 +163,7 @@ class ConnectionManager(context: Context) {
                 if (selectedIp != null && getAutoIps().contains(selectedIp)) {
                     return toBaseUrl(selectedIp)
                 }
-                // Auto-select: при наличии списка валидаторов выбираем наименее загруженный (больше всего свободных слотов)
+                // Auto-select: when validator list exists pick least loaded (most free slots)
                 val nodes = getValidatorNodes()
                 if (nodes.isNotEmpty()) {
                     val best = nodes.filter { it.isActive && !it.isOverloaded }.maxByOrNull { it.minerSlotsFree }
@@ -176,7 +176,7 @@ class ConnectionManager(context: Context) {
         }
     }
 
-    /** Все кандидаты нод для майнинга: в manual — одна нода, в auto — все из списка. Используется для выбора ноды с активным валидатором. */
+    /** All mining node candidates: manual — one node, auto — all in list. Used to pick a node with an active validator. */
     fun getCandidateBaseUrls(): List<String> {
         fun toBaseUrl(endpoint: String): String {
             val value = endpoint.trim()

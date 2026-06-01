@@ -1,4 +1,4 @@
-/** Доля пула от block reward — 90%, как у solo MINER_STAKE (10% валидаторам). Комиссии блока — валидаторам, не в казну. */
+/** Pool share of block reward — 90%, same as solo MINER_STAKE (10% to validators). Block fees go to validators, not treasury. */
 export const POOL_MINER_REWARD_NUM = 9n;
 export const POOL_MINER_REWARD_DEN = 10n;
 

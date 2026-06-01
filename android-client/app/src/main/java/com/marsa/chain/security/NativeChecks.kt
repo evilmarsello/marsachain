@@ -5,8 +5,8 @@ import java.io.File
 import java.io.FileInputStream
 
 /**
- * Раньше вызывался JNI-модуль с неверными именами символов; логика перенесена в Kotlin,
- * чтобы не тянуть NDK и не ломать :app:packageDebug на машинах без корректной multi-ABI сборки.
+ * Previously called a JNI module with wrong symbol names; logic moved to Kotlin
+ * to avoid NDK and broken :app:packageDebug on machines without proper multi-ABI builds.
  */
 class NativeChecks {
 

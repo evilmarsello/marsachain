@@ -220,7 +220,7 @@
 
         </LinearLayout>
 
-        <!-- Circular Mining Button with Glow Effect - Outside Card (квадрат = круг свечения без растяжения в эллипс) -->
+        <!-- Circular Mining Button with Glow Effect - Outside Card (square = glow circle without ellipse stretch) -->
         <FrameLayout
             android:layout_width="@dimen/mining_glow_size"
             android:layout_height="@dimen/mining_glow_size"
@@ -229,7 +229,7 @@
 
             <!-- Glow Effect Background -->
 
-            <!-- Кольцо прогресса при ожидании ответа (проверка ноды, challenge, submit) -->
+            <!-- Progress ring while waiting (node check, challenge, submit) -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -255,7 +255,7 @@
                 android:textSize="@dimen/mining_button_text"
                 android:textStyle="bold" />
 
-            <!-- Темный overlay для затемнения кнопки майнинга -->
+            <!-- Dark overlay to dim mining button -->
             <View
                 android:id="@+id/miningButtonDimOverlay"
                 android:layout_width="@dimen/mining_glow_size"
@@ -264,7 +264,7 @@
                 android:background="#80000000"
                 android:visibility="gone" />
 
-            <!-- Overlay: Create MINER_STAKE Button (показывается поверх кнопки майнинга) -->
+            <!-- Overlay: Create MINER_STAKE Button (shown above mining button) -->
             <Button
                 android:id="@+id/createMinerStakeButton"
                 android:layout_width="wrap_content"
@@ -283,7 +283,7 @@
 
         </FrameLayout>
 
-        <!-- Mining Credits (под кнопкой майнинга) -->
+        <!-- Mining Credits (below mining button) -->
         <TextView
             android:id="@+id/miningCreditsText"
             android:layout_width="wrap_content"
@@ -309,7 +309,7 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Credits Status Text (под кнопкой майнинга) -->
+        <!-- Credits Status Text (below mining button) -->
         <TextView
             android:id="@+id/creditsRefillText"
             android:layout_width="wrap_content"

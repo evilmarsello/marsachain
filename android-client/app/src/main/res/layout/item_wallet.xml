@@ -70,7 +70,7 @@
 
         </LinearLayout>
 
-        <!-- ⋮ по вертикали по центру строки; MINER_STAKE под меню, ближе к нижней границе карточки -->
+        <!-- ⋮ vertically centered in row; MINER_STAKE under menu, near card bottom -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

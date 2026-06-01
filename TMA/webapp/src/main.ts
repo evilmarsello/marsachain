@@ -249,7 +249,7 @@ function renderFatalFallback(root: HTMLElement, err: unknown): void {
   });
 }
 
-/** Как Android `CoinFormatter.WEI_PER_COIN`. */
+/** Same as Android `CoinFormatter.WEI_PER_COIN`. */
 const WEI_PER_COIN = 100_000_000;
 
 function isValidMrsAddress(address: string): boolean {
@@ -271,7 +271,7 @@ function getMrsAddressErrorMessage(address: string): string {
   return tr.addrInvalidFormat;
 }
 
-/** Как Android `WalletFragment.computeMinFeeCoins` / Reward::getMinimumTransactionFee. */
+/** Same as Android `WalletFragment.computeMinFeeCoins` / Reward::getMinimumTransactionFee. */
 function computeMinFeeCoins(height: number): number {
   const initial = 1.0;
   if (height <= 0) return initial;
@@ -549,7 +549,7 @@ function compactToTarget(compact: bigint): bigint {
   return nWord << BigInt(8 * (nSize - 3));
 }
 
-/** Как Android `DifficultyDisplay.formatCompactBits`. */
+/** Same as Android `DifficultyDisplay.formatCompactBits`. */
 function formatCompactBits(bits: number | undefined): string {
   if (bits == null || !Number.isFinite(bits)) return "2";
   const compact = BigInt(bits >>> 0);
@@ -867,7 +867,7 @@ let balanceRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 let walletDashSeq = 0;
 let walletTxBgSeq = 0;
 let miningDashSeq = 0;
-/** Последний адрес, для которого успешно подтянули баланс с ноды на вкладке Wallet. */
+/** Last address whose balance was successfully fetched from the node on the Wallet tab. */
 let lastWalletFetchedAddr = "";
 
 function walletExistsInRows(address: string, rows: ReturnType<typeof loadWalletRows>): boolean {
@@ -2415,7 +2415,7 @@ function queueWalletTxBackgroundSync(addr: string, parentSeq: number): void {
       render(root);
     })
     .catch(() => {
-      /* оставляем кэш на экране */
+      /* keep cache on screen */
     });
 }
 

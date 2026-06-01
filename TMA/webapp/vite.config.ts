@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) => {
   if (PLACEHOLDER.test(readTarget)) {
     // eslint-disable-next-line no-console
     console.error(
-      "\n\x1b[31m[marsa-tma] В VITE_FULLNODE_PROXY_TARGET похоже остался ШАБЛОН, а не реальный IP/домен.\x1b[0m",
-      `\n\x1b[31mСейчас: ${readTarget}\x1b[0m`,
-      "\nОткройте webapp/.env и подставьте адрес ноды (как в настройках Android).",
-      "\nСтрока YOUR_VPS_IP в DNS не существует → getaddrinfo ENOTFOUND.\n",
+      "\n\x1b[31m[marsa-tma] VITE_FULLNODE_PROXY_TARGET looks like a placeholder, not a real IP/domain.\x1b[0m",
+      `\n\x1b[31mCurrent value: ${readTarget}\x1b[0m`,
+      "\nEdit webapp/.env and set your node address (same as in Android Connections).",
+      "\nYOUR_VPS_IP does not resolve in DNS → getaddrinfo ENOTFOUND.\n",
     );
   }
 
@@ -47,13 +47,13 @@ export default defineConfig(({ mode }) => {
         name: "marsa-cache-boot",
         configureServer() {
           // eslint-disable-next-line no-console
-          console.log(`[marsa-tma] Прокси /fullnode → ${readTarget}`);
+          console.log(`[marsa-tma] Proxy /fullnode → ${readTarget}`);
           // eslint-disable-next-line no-console
-          console.log(`[marsa-tma] Прокси /mining → ${miningTarget}`);
+          console.log(`[marsa-tma] Proxy /mining → ${miningTarget}`);
           // eslint-disable-next-line no-console
-          console.log(`[marsa-tma] Прокси /telegram → ${telegramApi}`);
+          console.log(`[marsa-tma] Proxy /telegram → ${telegramApi}`);
           // eslint-disable-next-line no-console
-          console.log(`[marsa-tma] Прокси /api/pool → ${poolApi}`);
+          console.log(`[marsa-tma] Proxy /api/pool → ${poolApi}`);
           // eslint-disable-next-line no-console
           console.log(`[marsa-tma] build id ${buildId}`);
         },

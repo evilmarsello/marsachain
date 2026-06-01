@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    // Kotlin/JS добавляет репозиторий Node.js — FAIL_ON_PROJECT_REPOS ломает webpack/npm задачи
+    // Kotlin/JS adds Node.js repo — FAIL_ON_PROJECT_REPOS breaks webpack/npm tasks
     repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()

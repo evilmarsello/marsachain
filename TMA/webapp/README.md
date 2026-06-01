@@ -8,9 +8,9 @@ cp .env.example .env
 npm run dev
 ```
 
-`predev` / `prebuild` вызывают `../gradlew :shared:syncKotlinJsToWebapp` — нужен JDK и Gradle из каталога `TMA/`.
+`predev` / `prebuild` run `../gradlew :shared:syncKotlinJsToWebapp` — requires JDK and Gradle from the `TMA/` directory.
 
-## Прокси (dev)
+## Proxy (dev)
 
 | Path | Env |
 |------|-----|
@@ -19,11 +19,11 @@ npm run dev
 | `/api/pool` | `VITE_POOL_PROXY_TARGET` |
 | `/telegram` | `VITE_TELEGRAM_VALIDATE_TARGET` |
 
-В prod (`npm run build`) upstream задаёт nginx; в bundle остаются только `VITE_*_BASE` из `.env.production`.
+In production (`npm run build`) nginx sets upstreams; the bundle only keeps `VITE_*_BASE` from `.env.production`.
 
-## Нюанс с портом ноды
+## Node port note
 
-Как в Android: если API снаружи на **80/443** через nginx, а fullnode слушает **8080** только локально — в `.env` указывайте внешний URL **без `:8080`**. Проверка: `curl` с dev-машины на тот же host, что в `VITE_FULLNODE_PROXY_TARGET`.
+Same as Android: if the API is exposed on **80/443** via nginx but fullnode listens on **8080** locally — use the public URL **without `:8080`** in `.env`. Verify with `curl` from your dev machine to the same host as `VITE_FULLNODE_PROXY_TARGET`.
 
 ## Production build
 
@@ -31,4 +31,4 @@ npm run dev
 npm run build
 ```
 
-Артефакты: `dist/` и `public/kotlin/shared.js`. HTML/`index.html` — `Cache-Control: no-store` (см. deploy snippets).
+Artifacts: `dist/` and `public/kotlin/shared.js`. Set `Cache-Control: no-store` on HTML/`index.html` (see deploy snippets).

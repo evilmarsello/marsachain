@@ -3,13 +3,13 @@ package com.marsa.chain.manager
 import android.content.Context
 
 /**
- * Локальные настройки кошелька (не в Room).
+ * Local wallet settings (not in Room).
  */
 class WalletPreferences(context: Context) {
 
     private val sp = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    /** При нехватке средств на активном — добрать со следующих кошельков отдельными транзакциями. */
+    /** If active wallet lacks funds — top up from others via separate txs. */
     var autoCascadeSend: Boolean
         get() = sp.getBoolean(KEY_AUTO_CASCADE_SEND, false)
         set(value) {

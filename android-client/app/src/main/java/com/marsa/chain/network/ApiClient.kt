@@ -14,7 +14,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import com.marsa.chain.utils.CoinFormatter
 import retrofit2.HttpException
 
-/** Результат POST challenge/request: успех, лимит на блок (HTTP 429), иная ошибка. */
+/** POST challenge/request result: success, per-block limit (HTTP 429), other error. */
 sealed class ChallengeRequestOutcome {
     data class Success(val challenge: ChallengeResponse) : ChallengeRequestOutcome()
     object BlockRateLimited : ChallengeRequestOutcome()
@@ -27,18 +27,18 @@ class ApiClient(context: Context? = null) {
     private var baseUrl: String = connectionManager?.getCurrentBaseUrl() ?: "http://10.0.2.2/"
     private var service = Api.serviceFor(baseUrl)
 
-    /** Кэш списка нод с валидаторами (текущая первая) для мгновенного переключения при сбое. */
+    /** Cache of nodes with validators (current first) for instant failover. */
     @Volatile
     private var miningNodesCache: List<String>? = null
-    /** Время последнего заполнения кэша (мс) — при повторном нажатии «майнить» возвращаем кэш без проверки валидатора. */
+    /** Last cache fill time (ms) — on repeat mine tap return cache without validator check. */
     @Volatile
     private var miningNodesCacheTimeMs: Long = 0L
-    /** TTL кэша нод для майнинга (мс). Пока не истёк — не вызываем hasActiveValidator при каждом нажатии. */
+    /** Mining node cache TTL (ms). Until expiry skip hasActiveValidator on every tap. */
     private val miningNodesCacheTtlMs = 15_000L
     private val checkTimeoutMs = 2500L
 
     /**
-     * Нода отдаёт HTTP 429 при переполнении очереди challenge на адрес или лимите кредитов на блок.
+     * Node returns HTTP 429 when challenge queue per address or per-block credit limit is full.
      */
     private fun logMiningChallengeHttpError(where: String, e: Exception) {
         if (e is HttpException && e.code() == 429) {
@@ -48,9 +48,9 @@ class ApiClient(context: Context? = null) {
                 ""
             }
             if (body.contains("Rate limit", ignoreCase = true)) {
-                Log.d(tag, "$where: HTTP 429 — лимит кредитов на блок (rate limit)")
+                Log.d(tag, "$where: HTTP 429 — per-block credit limit (rate limit)")
             } else {
-                Log.d(tag, "$where: HTTP 429 — очередь challenge на адрес заполнена (см. MAX_PENDING_CHALLENGES на ноде)")
+                Log.d(tag, "$where: HTTP 429 — challenge queue per address full (see MAX_PENDING_CHALLENGES on node)")
             }
         } else {
             Log.e(tag, "$where error: ${e.message}", e)
@@ -96,7 +96,7 @@ class ApiClient(context: Context? = null) {
         }
     }
 
-    /** Запрос challenge с указанной ноды. commitment = H(nonce) hex (64 символа) — опционально, для защиты от перебора. */
+    /** Request challenge from given node. commitment = H(nonce) hex (64 chars) — optional brute-force protection. */
     suspend fun requestChallengeFrom(
         baseUrl: String,
         address: String,
@@ -145,7 +145,7 @@ class ApiClient(context: Context? = null) {
         submitMiningResultTo(baseUrl, req)
     }
 
-    /** Отправка результата майнинга на указанную ноду (та же, с которой брали challenge). */
+    /** Submit mining result to given node (same as challenge source). */
     suspend fun submitMiningResultTo(baseUrl: String, req: MiningSubmitRequest): MiningSubmitResponse? = withContext(Dispatchers.IO) {
         return@withContext try {
             val svc = Api.serviceFor(baseUrl)
@@ -158,8 +158,8 @@ class ApiClient(context: Context? = null) {
     }
 
     /**
-     * Явное закрытие challenge (легче, чем фиктивный mining/submit).
-     * Старые ноды без маршрута — false (вызывающий может сделать fallback на submit).
+     * Explicit challenge close (lighter than fake mining/submit).
+     * Old nodes without route — false (caller may fallback to submit).
      */
     suspend fun abandonChallengeTo(
         baseUrl: String,
@@ -278,7 +278,7 @@ class ApiClient(context: Context? = null) {
         }
     }
 
-    /** Проверка: есть ли у ноды активный валидатор со стейком (блоки можно отправлять на майнинг). */
+    /** Check node has active staked validator (can submit mining blocks). */
     suspend fun hasActiveValidator(baseUrl: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val svc = Api.serviceFor(baseUrl)
@@ -290,7 +290,7 @@ class ApiClient(context: Context? = null) {
         }
     }
 
-    /** Список нод с активным валидатором: текущая первая, остальные — запас. При повторных нажатиях в течение TTL возвращаем кэш без проверки валидатора (ускоряет майнинг). */
+    /** List of nodes with active validator: current first, rest backup. Within TTL, repeat taps return cache without validator check (faster mining). */
     suspend fun getMiningNodesOrdered(): List<String> = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         val cached = miningNodesCache
@@ -301,7 +301,7 @@ class ApiClient(context: Context? = null) {
         val current = baseUrl
         val candidates = cm.getCandidateBaseUrls()
         val others = candidates.filter { it != current }
-        // Быстрый путь: текущая нода с валидатором
+        // Fast path: current node with validator
         if (hasActiveValidator(current)) {
             val fallback = miningNodesCache?.filter { it != current } ?: emptyList()
             miningNodesCache = listOf(current) + fallback
@@ -312,7 +312,7 @@ class ApiClient(context: Context? = null) {
             }
             return@withContext listOf(current) + fallback
         }
-        // Текущая не подходит — проверяем остальные параллельно (таймаут на каждую)
+        // Current unsuitable — check others in parallel (timeout each)
         val validOthers = getOtherValidNodesParallel(others)
         miningNodesCache = validOthers
         miningNodesCacheTimeMs = if (validOthers.isNotEmpty()) now else 0L
@@ -334,13 +334,13 @@ class ApiClient(context: Context? = null) {
         results.filterNotNull()
     }
 
-    /** Первая нода для майнинга (удобный метод). */
+    /** First mining node (convenience). */
     suspend fun getBaseUrlForMining(): String? = getMiningNodesOrdered().firstOrNull()
 
-    /** Запасные ноды для майнинга (из кэша), чтобы переключиться при сбое без повторной проверки. */
+    /** Backup mining nodes (from cache) for failover without re-check. */
     fun getCachedMiningFallbackUrls(): List<String> = miningNodesCache?.drop(1) ?: emptyList()
     
-    /** Получить информацию о MINER_STAKE для адреса */
+    /** Get MINER_STAKE info for address */
     suspend fun getMiningInfo(address: String): MinerStakeInfoDTO? = withContext(Dispatchers.IO) {
         return@withContext try {
             val resp = service.getMiningInfo(address)
@@ -351,7 +351,7 @@ class ApiClient(context: Context? = null) {
         }
     }
 
-    /** Получить список валидаторов с указанной ноды (для загрузки списка узлов и загрузки). */
+    /** Get validators from node (for node list and load). */
     suspend fun getValidatorsFrom(baseUrl: String): ValidatorsResponseDTO? = withContext(Dispatchers.IO) {
         try {
             val resp = Api.serviceFor(baseUrl).getValidators()

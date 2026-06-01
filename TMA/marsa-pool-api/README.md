@@ -1,8 +1,8 @@
 # marsa-pool-api
 
-Node 20+, PostgreSQL. Индексирует блоки с mining-ноды, ведёт shares/owed (PPLNC), подписывает withdraw с treasury-ключей.
+Node 20+, PostgreSQL. Indexes blocks from the mining node, tracks shares/owed (PPLNC), signs withdrawals with treasury keys.
 
-## Запуск
+## Run
 
 ```bash
 cp .env.example .env
@@ -14,9 +14,9 @@ npm start   # :8788
 
 ## Treasury keys
 
-`POOL_TREASURY_KEYS` — пять base64 Ed25519 секретов через запятую, порядок `pool_id` 0..4. Только в `.env` на сервере.
+`POOL_TREASURY_KEYS` — five comma-separated base64 Ed25519 secrets, order `pool_id` 0..4. Server `.env` only.
 
-При старте срабатывает **Treasury Key Guard (TKG-v1)** — 5 этапов проверки; без `withdraw_signing_enabled` выплаты не подписываются. Подробно: [`SECURITY.md`](SECURITY.md).
+On startup **Treasury Key Guard (TKG-v1)** runs a 5-stage check; without `withdraw_signing_enabled` payouts are not signed. Details: [`SECURITY.md`](SECURITY.md).
 
 ```bash
 curl -sS http://127.0.0.1:8788/health | jq .treasury_guard
@@ -24,7 +24,7 @@ curl -sS http://127.0.0.1:8788/health | jq .treasury_guard
 
 ## Withdraw
 
-- Net минимум **100 MRS**, комиссия сети **1 MRS** → gross owed ≥ **101 MRS**.
+- Minimum net **100 MRS**, network fee **1 MRS** → gross owed ≥ **101 MRS**.
 
 ## nginx
 
@@ -35,13 +35,13 @@ location /api/pool/ {
 }
 ```
 
-TMA в prod: `VITE_POOL_API_BASE=/api/pool` (same-origin).
+TMA in production: `VITE_POOL_API_BASE=/api/pool` (same-origin).
 
-## Деплой
+## Deploy
 
 ```bash
 DEPLOY_HOST=your.host READ_NODE_URL=http://... MINING_NODE_URL=http://... \
   ./deploy/deploy-pool-api-to-vps.sh
 ```
 
-На хосте после установки вручную дописать `POOL_TREASURY_KEYS` в `/opt/marsa-pool-api/.env`.
+After install, add `POOL_TREASURY_KEYS` manually to `/opt/marsa-pool-api/.env` on the host.

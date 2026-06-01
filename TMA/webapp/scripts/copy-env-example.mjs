@@ -8,14 +8,14 @@ const target = path.join(webapp, ".env");
 const example = path.join(webapp, ".env.example");
 
 if (fs.existsSync(target)) {
-  console.log(".env уже существует — не перезаписываю. Удалите файл вручную, если нужна копия заново.");
+  console.log(".env already exists — not overwriting. Delete it manually if you need a fresh copy.");
   process.exit(0);
 }
 if (!fs.existsSync(example)) {
-  console.error("Нет файла .env.example");
+  console.error("Missing .env.example");
   process.exit(1);
 }
 fs.copyFileSync(example, target);
-console.log("Создан .env из .env.example.");
-console.log("ВАЖНО: откройте webapp/.env и в VITE_FULLNODE_PROXY_TARGET подставьте реальный IP/домен ноды.");
-console.log("Не оставляйте YOUR_VPS_IP — в DNS такого имени нет (ENOTFOUND).");
+console.log("Created .env from .env.example.");
+console.log("IMPORTANT: edit webapp/.env and set a real node IP/domain in VITE_FULLNODE_PROXY_TARGET.");
+console.log("Do not leave YOUR_VPS_IP — that hostname does not exist in DNS (ENOTFOUND).");

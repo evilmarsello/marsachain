@@ -49,12 +49,12 @@ class WalletFragment : Fragment() {
     private lateinit var walletPreferences: WalletPreferences
     private lateinit var transactionManager: TransactionManager
     
-    // Минимальная комиссия: та же логика, что Reward::getMinimumTransactionFee (fullnode/include/Reward.h).
+    // Minimum fee: same logic as Reward::getMinimumTransactionFee (fullnode/include/Reward.h).
     private fun computeMinFeeCoins(height: Int): Double {
-        val initial = 1.0 // 1 монета; на ноде INITIAL_MIN_FEE = 1 * WEI_PER_COIN
+        val initial = 1.0 // 1 coin; on node INITIAL_MIN_FEE = 1 * WEI_PER_COIN
         if (height <= 0) return initial
-        // Обязательно совпадать с Reward::HALVING_INTERVAL (1_050_000), иначе при пустом поле комиссии
-        // клиент шлёт заниженный min (например 0.21 при высоте 92 при ошибочном interval=30).
+        // Must match Reward::HALVING_INTERVAL (1_050_000), else empty fee field
+        // client sends too-low min (e.g. 0.21 at height 92 with wrong interval=30).
         val interval = 1_050_000
         val halvingCount = (height - 1) / interval
         var fee = initial
@@ -71,7 +71,7 @@ class WalletFragment : Fragment() {
         return fee
     }
     
-    // Safe function to show Toast (Room/сеть часто в Dispatchers.IO — Toast только с main thread)
+    // Safe function to show Toast (Room/network often on Dispatchers.IO — Toast only on main thread)
     private fun showToast(message: String) {
         if (!isAdded || context == null) return
         val appCtx = requireContext().applicationContext
@@ -124,7 +124,7 @@ class WalletFragment : Fragment() {
         
         
         binding.transactionHistoryButton.setOnClickListener {
-            // Открываем History через MainActivity для правильной навигации
+            // Open History via MainActivity for correct navigation
             val mainActivity = requireActivity() as? MainActivity
             mainActivity?.showHistoryFragment()
         }
@@ -151,7 +151,7 @@ class WalletFragment : Fragment() {
             (requireActivity() as? MainActivity)?.showWalletSettingsFragment()
         }
         
-        // Убираем демо-транзакции; используем реальные данные истории
+        // Remove demo txs; use real history data
     }
 
     override fun onResume() {
@@ -193,7 +193,7 @@ class WalletFragment : Fragment() {
                             walletManager.updateWalletBalance(wallet.address, balanceResp.balance)
                         }
                     } else {
-                        // Если кошелек не найден на сервере, устанавливаем баланс 0
+                        // If wallet not on server, set balance 0
                         android.util.Log.w("WalletFragment", "Wallet ${wallet.address} not found on server, setting balance to 0")
                         withContext(Dispatchers.IO) {
                             walletManager.updateWalletBalance(wallet.address, 0L)
@@ -214,7 +214,7 @@ class WalletFragment : Fragment() {
         }
     }
 
-    /** Вставка первого текстового фрагмента из буфера обмена в поле. */
+    /** Paste first text clip from clipboard into field. */
     private fun pasteClipboardPlainTextInto(target: EditText) {
         val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = cm.primaryClip ?: return
@@ -258,7 +258,7 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // ✅ Убираем белый фон по углам
+        // ✅ Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // Add real-time warning for own wallets
@@ -275,18 +275,18 @@ class WalletFragment : Fragment() {
                         val address = s?.toString()?.trim() ?: ""
                         
                         if (address.isEmpty()) {
-                            // Поле пустое - скрываем все предупреждения
+                            // Empty field — hide all warnings
                             tvOwnWalletWarning.visibility = View.GONE
                         } else if (!AddressValidator.isValidAddress(address)) {
-                            // Адрес невалидный - показываем ошибку валидации
+                            // Invalid address — show validation error
                             tvOwnWalletWarning.text = "Address must start with 'mrs' and be 43 characters long"
                             tvOwnWalletWarning.visibility = View.VISIBLE
                         } else if (AddressValidator.isOwnWallet(address, userWallets)) {
-                            // Адрес валидный, но это ваш кошелек - показываем предупреждение
+                            // Valid address but yours — show warning
                             tvOwnWalletWarning.text = "This is one of your own wallets"
                             tvOwnWalletWarning.visibility = View.VISIBLE
                         } else {
-                            // Адрес валидный и это чужой кошелек - скрываем предупреждения
+                            // Valid foreign address — hide warnings
                             tvOwnWalletWarning.visibility = View.GONE
                         }
                     }
@@ -303,17 +303,17 @@ class WalletFragment : Fragment() {
         dialogView.findViewById<View>(R.id.btnSend).setOnClickListener {
             lifecycleScope.launch {
             val recipient = etRecipient.text.toString().trim()
-            // Парсим монеты и конвертируем в nanos
+            // Parse coins and convert to nanos
             val amountNanos = CoinFormatter.parseToNanos(etAmount.text.toString().trim()) ?: 0L
             val feeInput = etFee.text.toString().trim()
-                // Получаем текущую высоту для расчета минимальной комиссии (как на ноде)
+                // Get current height for minimum fee (same as on the node)
                 val status = runCatching { api.getStatus() }.getOrNull()
                 val height = (status?.get("height") as? Int) ?: 0
                 val minFeeCoins = computeMinFeeCoins(height)
                 val minFeeNanos = CoinFormatter.coinsToNanos(minFeeCoins.toDouble())
-                val feeNanos = CoinFormatter.parseToNanos(feeInput) ?: minFeeNanos // По умолчанию minFee
+                val feeNanos = CoinFormatter.parseToNanos(feeInput) ?: minFeeNanos // Default minFee
             
-            // Логируем для отладки (можно убрать позже)
+            // Log for debugging (can remove later)
             android.util.Log.d("WalletFragment", "Fee input: '$feeInput' -> feeWei: $feeNanos (${feeNanos / CoinFormatter.WEI_PER_COIN.toDouble()} coins)")
             
             if (recipient.isEmpty()) {
@@ -382,7 +382,7 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // ✅ Убираем белый фон по углам
+        // ✅ Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
@@ -549,22 +549,22 @@ class WalletFragment : Fragment() {
         return true
     }
 
-    // КАК В TON/ETHEREUM: Создаем и подписываем транзакцию локально (приватный ключ не покидает клиент)
+    // Like TON/Ethereum: build and sign tx locally (private key never leaves client)
     private fun createTransaction(from: String, to: String, amount: Long, fee: Long, publicKey: String, privateKey: String): TransactionRequest {
-        // ШАГ 1: Создаем транзакцию БЕЗ подписи для вычисления txid
-        // txid вычисляется из всех данных транзакции (inputs, outputs, fee, tx_type) БЕЗ подписи
+        // STEP 1: build unsigned tx to compute txid
+        // txid from all tx fields (inputs, outputs, fee, tx_type) WITHOUT signature
         val txidData = StringBuilder()
         txidData.append(from).append((amount + fee).toString())
         txidData.append(to).append(amount.toString())
         txidData.append(fee.toString())
-        txidData.append("0") // tx_type = 0 для REGULAR транзакций
+        txidData.append("0") // tx_type = 0 for REGULAR txs
         
-        // ШАГ 2: Вычисляем SHA256 хеш (txid) - как в GUI
+        // STEP 2: compute SHA256 hash (txid) - same as GUI
         val txidBytes = java.security.MessageDigest.getInstance("SHA-256")
             .digest(txidData.toString().toByteArray())
         val txid = txidBytes.joinToString("") { String.format("%02x", it) }
         
-        // ШАГ 3: Подписываем txid используя Ed25519 (как в GUI и TON/Ethereum)
+        // STEP 3: sign txid with Ed25519 (same as GUI and TON/Ethereum)
         val keyPair = KeyPair.fromPrivateKey(privateKey)
         if (keyPair == null) {
             throw Exception("Failed to create KeyPair from private key")
@@ -575,7 +575,7 @@ class WalletFragment : Fragment() {
             throw Exception("Failed to sign transaction")
         }
         
-        // Кодируем подпись в base64
+        // Encode signature as base64
         val signature = Base64.encodeToString(signatureBytes, Base64.NO_WRAP)
         
         return TransactionRequest(
@@ -584,7 +584,7 @@ class WalletFragment : Fragment() {
                 TransactionInput(
                     address = from,
                     amount = amount + fee,
-                    signature = signature, // КАК В TON/ETHEREUM: Реальная Ed25519 подпись txid
+                    signature = signature, // Like TON/Ethereum: real Ed25519 txid signature
                     pubKey = publicKey
                 )
             ),
@@ -605,7 +605,7 @@ class WalletFragment : Fragment() {
                 if (activeWallet != null) {
                     val address = activeWallet.address
                     
-                    // Создаем несколько демо-транзакций
+                    // Create several demo transactions
                     val demoTransactions = listOf(
                         transactionManager.createReceiveTransaction(
                             txid = "demo_receive_1",
@@ -623,7 +623,7 @@ class WalletFragment : Fragment() {
                         transactionManager.createMiningTransaction(
                             txid = "demo_mining_1",
                             minerAddress = address,
-                            reward = CoinFormatter.coinsToNanos(9000.0), // доля майнера после 10% валидатору
+                            reward = CoinFormatter.coinsToNanos(9000.0), // miner share after 10% to validator
                             blockHeight = 1001
                         ),
                         transactionManager.createReceiveTransaction(
@@ -641,7 +641,7 @@ class WalletFragment : Fragment() {
                         )
                     )
                     
-                    // Добавляем транзакции в базу данных
+                    // Add transactions to database
                     for (transaction in demoTransactions) {
                         transactionManager.addTransaction(transaction)
                     }
@@ -715,10 +715,10 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Убираем белый фон по углам
+        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Обработчики кнопок
+        // Button handlers
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
             dialog.dismiss()
         }
@@ -736,16 +736,16 @@ class WalletFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Показываем статус загрузки
+            // Show loading status
             showStatusMessage(tvStatusMessage, "🔄 Validating private key...", true)
             
-            // Тестируем генерацию адреса
+            // Test address generation
             val testAddress = com.marsa.chain.crypto.KeyPair.testAddressGeneration(privateKey)
             android.util.Log.d("WalletFragment", "🔍 Test Address Generation:")
             android.util.Log.d("WalletFragment", "🔍 Private Key: $privateKey")
             android.util.Log.d("WalletFragment", "🔍 Generated Address: $testAddress")
             
-            // Валидируем приватный ключ
+            // Validate private key
             lifecycleScope.launch {
                 try {
                     val isValid = walletManager.validatePrivateKey(privateKey)
@@ -756,7 +756,7 @@ class WalletFragment : Fragment() {
 
                     showStatusMessage(tvStatusMessage, "🔄 Importing wallet...", true)
 
-                    // Импортируем кошелек
+                    // Import wallet
                     val importedWallet = walletManager.importWallet(
                         privateKey = privateKey,
                         name = if (walletName.isNotEmpty()) walletName else null
@@ -765,13 +765,13 @@ class WalletFragment : Fragment() {
                     if (importedWallet != null) {
                         showStatusMessage(tvStatusMessage, "✅ Wallet imported successfully!", true)
                         
-                        // Закрываем диалог через 2 секунды
+                        // Close dialog after 2 seconds
                         kotlinx.coroutines.delay(2000)
                         dialog.dismiss()
                         
                         showToast( "Wallet '${importedWallet.name}' imported successfully!\nAddress: ${importedWallet.address}")
                         
-                        // Обновляем баланс после импорта
+                        // Refresh balance after import
                         loadBalance()
                     } else {
                         showStatusMessage(tvStatusMessage, "❌ Failed to import wallet. It may already exist.", false)

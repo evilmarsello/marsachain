@@ -30,7 +30,7 @@ export function setTxScanChainHeight(height: number): void {
   if (height > 0) knownChainHeight = Math.floor(height);
 }
 
-/** Синхронизировать с GET /status до первой загрузки tx (иначе legacy-скан блоков). */
+/** Sync with GET /status before first tx load (otherwise legacy block scan). */
 export function setAddrTxIndexReady(ready: boolean | null): void {
   knownAddrTxIndexReady = ready;
 }

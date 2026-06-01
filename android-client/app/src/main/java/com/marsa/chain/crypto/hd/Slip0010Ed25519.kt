@@ -7,7 +7,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * SLIP-0010 деривация для кривой ed25519 (hardened-only дети).
+ * SLIP-0010 derivation for ed25519 curve (hardened-only children).
  * https://github.com/satoshilabs/slips/blob/master/slip-0010.md
  */
 object Slip0010Ed25519 {
@@ -25,15 +25,15 @@ object Slip0010Ed25519 {
     private fun ser32Be(i: Int): ByteArray =
         ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(i).array()
 
-    /** Master (k, c) от сида (BIP39 даёт 64 байта; тесты SLIP — произвольная длина как в векторах). */
+    /** Master (k, c) from seed (BIP39 yields 64 bytes; SLIP tests use arbitrary length as in vectors). */
     fun masterFromSeed(seed: ByteArray): Pair<ByteArray, ByteArray> {
         val i = hmac512(ED25519_SEED, seed)
         return i.copyOfRange(0, 32) to i.copyOfRange(32, 64)
     }
 
     /**
-     * Hardened child для ed25519: по SLIP-0010 п. 118 — дочерний ключ **это I_L** (первые 32 байта HMAC),
-     * без сложения с k_par (это относится к secp256k1 / NIST).
+     * Hardened child for ed25519: per SLIP-0010 §118 — child key **is I_L** (first 32 HMAC bytes),
+     * without adding k_par (that applies to secp256k1 / NIST).
      */
     fun deriveChildHardened(kPar: ByteArray, cPar: ByteArray, index: Int): Pair<ByteArray, ByteArray> {
         val data = ByteArray(1 + 32 + 4)
@@ -47,7 +47,7 @@ object Slip0010Ed25519 {
     }
 
     /**
-     * Путь вида m/44'/78213'/0'/0'/0' — все сегменты hardened (с ').
+     * Path like m/44'/78213'/0'/0'/0' — all segments hardened (with ').
      */
     fun derivePath(seed: ByteArray, path: String): ByteArray {
         val segments = path.trim().split("/").filter { it.isNotEmpty() && it != "m" }

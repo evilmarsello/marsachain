@@ -2,10 +2,10 @@ export interface NodeInfo {
   connected: boolean;
   height?: number;
   target?: number;
-  /** Compact bits с ноды (отображение сложности как в Android). */
+  /** Compact bits from node (difficulty display same as Android). */
   bits?: number;
   difficulty?: number;
-  /** Индекс /address/transactions готов — быстрые запросы по limit, без скана блоков. */
+  /** /address/transactions index ready — fast limit queries, no block scan. */
   addrTxIndexReady?: boolean;
 }
 
@@ -19,11 +19,11 @@ export interface TmaSharedBridge {
   fetchMiningStatsJson: (baseUrl: string) => Promise<string>;
 }
 
-/** Минимум полей Telegram WebApp SDK, которые использует клиент */
+/** Minimum Telegram WebApp SDK fields used by the client */
 export interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
-  /** Сырая строка query для серверной проверки (пустая вне Telegram) */
+  /** Raw query string for server validation (empty outside Telegram) */
   initData: string;
   initDataUnsafe?: { user?: { language_code?: string; id?: number; first_name?: string } };
   themeParams?: Record<string, string | undefined>;

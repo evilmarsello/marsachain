@@ -53,7 +53,7 @@ kotlin {
 
 val syncKotlinJsToWebapp by tasks.registering(Sync::class) {
     group = "build"
-    description = "Копирует JS-бандл shared в webapp/public для Vite"
+    description = "Copies shared JS bundle to webapp/public for Vite"
     dependsOn("jsBrowserProductionWebpack")
     from(layout.buildDirectory.dir("kotlin-webpack/js/productionExecutable"))
     into(rootProject.layout.projectDirectory.dir("webapp/public/kotlin"))

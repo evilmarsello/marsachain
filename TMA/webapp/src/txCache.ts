@@ -4,7 +4,7 @@ const TX_CACHE_PREFIX = "tma_tx_cache_v4:";
 const HISTORY_CACHE_PREFIX = "tma_hist_cache_v2:";
 const BAL_CACHE_PREFIX = "tma_bal_cache_v2:";
 
-/** Не чаще этого интервала ходим на ноду за балансом (кроме pull / send / import). */
+/** Do not fetch balance from node more often than this (except pull / send / import). */
 export const BALANCE_STALE_MS = 90_000;
 
 type TxCacheBlob = {

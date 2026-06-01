@@ -47,7 +47,7 @@ body {
   -webkit-touch-callout: none;
 }
 
-/* Высота строки шапки: tokens.css → --tma-top-bar-inset-top (на .top-bar) и --tma-top-bar-body */
+/* Header row height: tokens.css → --tma-top-bar-inset-top (on .top-bar) and --tma-top-bar-body */
 .top-bar-row {
   display: grid;
   grid-template-columns: 30px 1fr 36px;
@@ -135,7 +135,7 @@ body {
   overscroll-behavior-y: auto;
 }
 
-/* Карточка как card_background.xml: 20dp, #1C1C1E, обводка #2C2C2E */
+/* Card like card_background.xml: 20dp, #1C1C1E, border #2C2C2E */
 .card {
   background: var(--card);
   border-radius: 20px;
@@ -172,7 +172,7 @@ body {
   opacity: 0.95;
 }
 
-/* Верхний блок в духе fragment_mining: две колонки */
+/* Top block like fragment_mining: two columns */
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -286,7 +286,7 @@ body {
   color: #f44336;
 }
 
-/* Акцент цифр как primary_color в Android */
+/* Number accent like Android primary_color */
 .value.accent {
   color: var(--accent-text);
 }
@@ -297,7 +297,7 @@ body {
   word-break: break-all;
 }
 
-/* Кнопка как primary_button: заливка #BC5A2B, лёгкая тень снизу */
+/* Button like primary_button: fill #BC5A2B, light bottom shadow */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -395,7 +395,7 @@ body {
   margin-top: 8px;
 }
 
-/* Нижние вкладки как activity_main.xml (#1C1C1E, 72dp, активный #BC5A2B) */
+/* Bottom tabs like activity_main.xml (#1C1C1E, 72dp, active #BC5A2B) */
 .bottom-nav {
   position: fixed;
   left: 0;
@@ -459,7 +459,7 @@ body {
   color: var(--btn-fill);
 }
 
-/* Белая PNG-иконка: цвет через mask = тот же var(), что и у SVG-вкладок */
+/* White PNG icon: color via mask = same var() as SVG tabs */
 .nav-ico-mining {
   display: block;
   width: 22px;

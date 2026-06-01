@@ -31,13 +31,13 @@ data class WalletInfo(
     val name: String = "Wallet ${address.takeLast(8)}",
     val createdAt: Long = System.currentTimeMillis(),
     val isActive: Boolean = false,
-    /** `hd` — из мнемоники (SLIP-0010); `imported` — импорт ключа или старые записи. */
+    /** `hd` — from mnemonic (SLIP-0010); `imported` — key import or legacy entries. */
     val walletType: String = "imported",
-    /** Индекс для `m/44'/78213'/0'/0'/index'`; null для импортированных. */
+    /** Index for `m/44'/78213'/0'/0'/index'`; null for imported. */
     val hdIndex: Int? = null
 )
 
-/** Кошелёк в корзине после удаления из списка (хранится ограниченное время). */
+/** Wallet in trash after removal from list (kept for limited time). */
 @Entity(tableName = "deleted_wallets")
 data class DeletedWalletInfo(
     @PrimaryKey val address: String,
@@ -209,7 +209,7 @@ abstract class AppDatabase : RoomDatabase() {
         
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Создаем новую таблицу кошельков
+                // Create new wallets table
                 database.execSQL("""
                     CREATE TABLE IF NOT EXISTS wallets (
                         address TEXT NOT NULL PRIMARY KEY,
@@ -225,7 +225,7 @@ abstract class AppDatabase : RoomDatabase() {
         
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Создаем таблицу транзакций
+                // Create transactions table
                 database.execSQL("""
                     CREATE TABLE IF NOT EXISTS transactions (
                         txid TEXT NOT NULL PRIMARY KEY,

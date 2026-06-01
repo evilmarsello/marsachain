@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 
 /**
- * Проверка initData по https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
+ * initData validation per https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
  * secret_key = HMAC_SHA256(key = "WebAppData", message = bot_token)
  * hash       = hex(HMAC_SHA256(key = secret_key, message = data_check_string))
  */

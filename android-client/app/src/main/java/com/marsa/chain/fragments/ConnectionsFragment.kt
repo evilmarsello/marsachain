@@ -92,12 +92,12 @@ class ConnectionsFragment : Fragment() {
         binding.autoSelectSwitch.setOnCheckedChangeListener { _, isChecked ->
             connectionManager.setAutoSelectEnabled(isChecked)
             if (isChecked) {
-                // Если включили auto-select - очищаем выбранный IP
+                // When auto-select enabled — clear selected IP
                 connectionManager.setSelectedAutoIp(null)
-                // Проверяем все IP и выбираем первый рабочий
+                // Check all IPs and pick first working one
                 findAndSelectWorkingServer()
             } else {
-                // Если выключили - используем текущий выбранный или первый из списка
+                // When disabled — use current selection or first in list
                 val currentSelected = connectionManager.getSelectedAutoIp()
                 if (currentSelected == null || !connectionManager.getAutoIps().contains(currentSelected)) {
                     connectionManager.setSelectedAutoIp(connectionManager.getAutoIps().firstOrNull())
@@ -219,7 +219,7 @@ class ConnectionsFragment : Fragment() {
         // Update all ApiClient instances
         updateApiClients()
         
-        // Check connection status (с учетом auto-select)
+        // Check connection status (with auto-select)
         if (connectionManager.isAutoSelectEnabled()) {
             findAndSelectWorkingServer()
         } else {
@@ -263,7 +263,7 @@ class ConnectionsFragment : Fragment() {
         // Update all ApiClient instances
         updateApiClients()
         
-        // Check connection and update UI (viewLifecycleOwner — отмена при уходе с экрана)
+        // Check connection and update UI (viewLifecycleOwner — cancel when leaving screen)
         viewLifecycleOwner.lifecycleScope.launch {
             delay(500) // Small delay for visual feedback
             if (_binding == null) return@launch
@@ -315,7 +315,7 @@ class ConnectionsFragment : Fragment() {
         binding.connectManualButton.visibility = View.GONE
         binding.disconnectManualButton.visibility = View.GONE
         
-        // Check connection in background (viewLifecycleOwner — отмена при уничтожении view, иначе NPE на binding)
+        // Check connection in background (viewLifecycleOwner — cancel when view destroyed, else NPE on binding)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val apiClient = ApiClient(requireContext())
@@ -363,7 +363,7 @@ class ConnectionsFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // Убираем белый фон по углам (как в dialog_create_wallet)
+        // Remove white corner background (same as dialog_create_wallet)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
         btnCancel.setOnClickListener {
@@ -391,7 +391,7 @@ class ConnectionsFragment : Fragment() {
             
             dialog.dismiss()
             
-            // Проверяем новый IP и если он рабочий - переключаемся на него (viewLifecycleOwner — отмена при уходе)
+            // Check new IP and switch if working (viewLifecycleOwner — cancel when leaving)
             viewLifecycleOwner.lifecycleScope.launch {
                 val testBaseUrl = "http://$fullAddress/"
                 val testClient = Api.serviceFor(testBaseUrl)
@@ -462,7 +462,7 @@ class ConnectionsFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // Убираем белый фон по углам
+        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
         btnCancel.setOnClickListener {
@@ -487,13 +487,13 @@ class ConnectionsFragment : Fragment() {
                 autoIpsList.addAll(connectionManager.getAutoIps())
                 autoIpsAdapter.notifyDataSetChanged()
                 
-                // Если это был выбранный IP - обновляем выбор
+                // If it was the selected IP — update selection
                 val currentSelected = connectionManager.getSelectedAutoIp()
                 if (currentSelected == ip) {
                     connectionManager.setSelectedAutoIp(newAddress)
                 }
                 
-                // Проверяем соединение с обновленным IP (viewLifecycleOwner — отмена при уходе)
+                // Check connection with updated IP (viewLifecycleOwner — cancel when leaving)
                 viewLifecycleOwner.lifecycleScope.launch {
                     val testBaseUrl = "http://$newAddress/"
                     val testClient = Api.serviceFor(testBaseUrl)
@@ -572,7 +572,7 @@ class ConnectionsFragment : Fragment() {
     }
     
     private fun startConnectionCheck() {
-        // Check connection status periodically (viewLifecycleOwner — отмена при уходе с экрана, иначе NPE на binding)
+        // Check connection status periodically (viewLifecycleOwner — cancel when leaving screen, else NPE on binding)
         connectionCheckJob?.cancel()
         connectionCheckJob = viewLifecycleOwner.lifecycleScope.launch {
             while (isActive && _binding != null) {
@@ -583,7 +583,7 @@ class ConnectionsFragment : Fragment() {
                         checkConnectionStatus()
                     }
                 }
-                delay(10000) // Check every 10 seconds (чтобы не перегружать)
+                delay(10000) // Check every 10 seconds (to avoid overload)
             }
         }
     }
@@ -604,13 +604,13 @@ class ConnectionsFragment : Fragment() {
             return
         }
         
-        // Если auto-select включен - ищем рабочий сервер
+        // If auto-select on — find working server
         if (connectionManager.isAutoSelectEnabled()) {
             findAndSelectWorkingServer()
             return
         }
         
-        // Иначе проверяем текущий выбранный IP
+        // Else check current selected IP
         val baseUrl = connectionManager.getCurrentBaseUrl()
         
         // Show checking state
@@ -619,7 +619,7 @@ class ConnectionsFragment : Fragment() {
         statusText.setTextColor(0xFF8E8E93.toInt())
         progressBar.visibility = View.VISIBLE
         
-        // Check connection in background (viewLifecycleOwner — отмена при уходе с экрана)
+        // Check connection in background (viewLifecycleOwner — cancel when leaving screen)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val apiClient = ApiClient(requireContext())
@@ -683,7 +683,7 @@ class ConnectionsFragment : Fragment() {
                         break
                     }
                 } catch (e: Exception) {
-                    // Продолжаем проверку следующего IP
+                    // Continue checking next IP
                 }
             }
             

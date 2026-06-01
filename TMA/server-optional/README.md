@@ -1,32 +1,32 @@
-# Сервер валидации Telegram `initData` (фаза 2)
+# Telegram `initData` validation server (phase 2)
 
-Минимальный **Node.js 20+** HTTP-сервер без внешних npm-зависимостей.
+Minimal **Node.js 20+** HTTP server with no external npm dependencies.
 
-## Что делает
+## What it does
 
-- **`POST /telegram/validate`** — тело JSON `{ "initData": "<строка из Telegram.WebApp.initData>" }`.  
-  Ответ при успехе: `{ "ok": true, "user": {...}, "query_id": "...", "auth_date": 123 }`.  
-  Алгоритм: [Validating data received via the Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app) (HMAC-SHA-256, `secret_key = HMAC_SHA256("WebAppData", bot_token)`).
-- Проверка **`auth_date`** на свежесть (`INIT_DATA_MAX_AGE_SEC`, по умолчанию 24 ч).
-- **`GET /health`** — `{ "ok": true }` для мониторинга.
-- **CORS**: только origin из `ALLOWED_ORIGINS` (в dev по умолчанию Vite `5173`). В проде добавьте `https://ваш-домен-mini-app`.
+- **`POST /telegram/validate`** — JSON body `{ "initData": "<string from Telegram.WebApp.initData>" }`.  
+  Success response: `{ "ok": true, "user": {...}, "query_id": "...", "auth_date": 123 }`.  
+  Algorithm: [Validating data received via the Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app) (HMAC-SHA-256, `secret_key = HMAC_SHA256("WebAppData", bot_token)`).
+- **`auth_date`** freshness check (`INIT_DATA_MAX_AGE_SEC`, default 24 h).
+- **`GET /health`** — `{ "ok": true }` for monitoring.
+- **CORS**: only origins listed in `ALLOWED_ORIGINS` (dev default includes Vite `5173`). In production add `https://your-mini-app-domain`.
 
-## Запуск
+## Run
 
 ```bash
 cd server-optional
 cp .env.example .env
-# Отредактируйте .env: BOT_TOKEN, при необходимости ALLOWED_ORIGINS и PORT
+# Edit .env: BOT_TOKEN, ALLOWED_ORIGINS and PORT if needed
 npm start
 ```
 
-Переменные можно не дублировать в shell: при старте читается файл **`server-optional/.env`** (если есть).
+Variables can live in **`server-optional/.env`** only (loaded at startup).
 
-## Безопасность
+## Security
 
-- **`BOT_TOKEN` только здесь** — не в репозитории, не в `webapp`, не в Telegram-клиентском JS.
-- Логи не содержат полного `initData` и токена.
+- **`BOT_TOKEN` only here** — not in the repo, not in `webapp`, not in client-side Telegram JS.
+- Logs do not include full `initData` or the bot token.
 
-## Опциональный прокси к fullnode
+## Optional fullnode proxy
 
-Отдельный прокси по-прежнему настраивается через **nginx** (см. `../deploy/nginx.example.conf`) или Vite в dev; этот сервер может оставаться только точкой валидации Telegram.
+Fullnode proxying is still done via **nginx** (see `../deploy/nginx.example.conf`) or Vite in dev; this service can stay validation-only.

@@ -1,20 +1,20 @@
-# Marsa Chain — клиенты
+# Marsa Chain — clients
 
-Три части инфраструктуры; **на GitHub — две**, нода — отдельно.
+Three infrastructure pieces; **two are published on GitHub**, the node is separate.
 
-## Что куда выкладывать
+## What goes where
 
-| # | Папка / репозиторий | GitHub | Содержимое |
-|---|---------------------|--------|------------|
-| 1 | **`app/` + корень Gradle** | да | Android SPV (`com.marsa.chain`), `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `gradle/` |
-| 2 | **`TMA/`** | да | Mini App (`webapp/`, `shared/`), `marsa-pool-api/`, `deploy/`, `server-optional/` |
-| 3 | **`fullnode/`** (из `Blockchain/fullnode`) | нет* | Нода + mining-api; кладёте **рядом** на сервере, свой билд/конфиг |
+| # | Folder / repository | GitHub | Contents |
+|---|---------------------|--------|----------|
+| 1 | **`app/` + Gradle root** | yes | Android SPV (`com.marsa.chain`), `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `gradle/` |
+| 2 | **`TMA/`** | yes | Mini App (`webapp/`, `shared/`), `marsa-pool-api/`, `deploy/`, `server-optional/` |
+| 3 | **`fullnode/`** (from `Blockchain/fullnode`) | no* | Node + mining-api; deploy **next to** the clients on your server, own build/config |
 
-\* Fullnode можно держать в приватном репо или tarball — публично клиентам не обязателен.
+\* Fullnode can live in a private repo or tarball — it does not have to be public for end users.
 
-### Как разрезать для двух репозиториев
+### Splitting into two repositories
 
-**Repo A — android** (корень = сейчас `android-client-copy/` без `TMA/`):
+**Repo A — android** (root = `android-client/` without `TMA/`):
 
 ```
 app/
@@ -27,7 +27,7 @@ README.md
 local.properties.example
 ```
 
-**Repo B — tma** (корень = содержимое `TMA/`):
+**Repo B — tma** (root = contents of `TMA/`):
 
 ```
 webapp/
@@ -39,12 +39,12 @@ README.md
 .gitignore
 ```
 
-**На сервере (рядом):**
+**On the server (side by side):**
 
 ```
-/opt/fullnode/          ← сборка из Blockchain/fullnode
-/opt/marsa-pool-api/    ← из repo B, .env с POOL_TREASURY_KEYS
-/var/www/tma/           ← webapp/dist из repo B
+/opt/fullnode/          ← build from Blockchain/fullnode
+/opt/marsa-pool-api/    ← from repo B, .env with POOL_TREASURY_KEYS
+/var/www/tma/           ← webapp/dist from repo B
 ```
 
 ## Android
@@ -54,24 +54,24 @@ cp local.properties.example local.properties   # sdk.dir
 ./gradlew :app:assembleDebug
 ```
 
-JDK 17. Список нод в приложении пуст по умолчанию — добавьте IP в Connections. IP без порта → `http://IP/` (80/nginx).
+JDK 17. The in-app node list is empty by default — add IPs under Connections. Host without a port → `http://IP/` (port 80 / nginx).
 
 ## TMA
 
-См. [`TMA/README.md`](TMA/README.md). Pool treasury: [`TMA/marsa-pool-api/SECURITY.md`](TMA/marsa-pool-api/SECURITY.md) (TKG-v1).
+See [`TMA/README.md`](TMA/README.md). Pool treasury security: [`TMA/marsa-pool-api/SECURITY.md`](TMA/marsa-pool-api/SECURITY.md) (TKG-v1).
 
-## Секреты (не в git)
+## Secrets (never commit)
 
-| Секрет | Где |
-|--------|-----|
-| `POOL_TREASURY_KEYS` | только `/opt/marsa-pool-api/.env` |
-| `BOT_TOKEN` | только `server-optional/.env` |
-| Ключи кошельков | устройство пользователя |
+| Secret | Where |
+|--------|-------|
+| `POOL_TREASURY_KEYS` | `/opt/marsa-pool-api/.env` only |
+| `BOT_TOKEN` | `server-optional/.env` only |
+| Wallet keys | on the user device |
 
-## Аудит перед push
+## Pre-push audit
 
 ```bash
-# из корня android-client-copy
+# from android-client root
 grep -rE '178\.212|168\.222|evil_mars|POOL_TREASURY_KEYS=[^$]' . --exclude-dir=node_modules || true
-git status   # нет local.properties, .env, app/build, node_modules
+git status   # no local.properties, .env, app/build, node_modules
 ```

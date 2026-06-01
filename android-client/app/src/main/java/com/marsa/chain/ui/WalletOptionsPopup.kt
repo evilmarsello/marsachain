@@ -20,12 +20,12 @@ class WalletOptionsPopup(
     private var popupWindow: PopupWindow? = null
     
     fun show(anchorView: View, wallet: WalletInfo) {
-        dismiss() // Закрываем предыдущий popup если есть
+        dismiss() // Dismiss previous popup if any
         
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.wallet_options_popup, null)
         
-        // Настройка popup window
+        // Configure popup window
         popupWindow = PopupWindow(
             popupView,
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -37,10 +37,10 @@ class WalletOptionsPopup(
             setBackgroundDrawable(context.getDrawable(android.R.color.transparent))
         }
         
-        // Настройка кнопок
+        // Configure buttons
         setupButtons(popupView, wallet)
         
-        // Показываем popup рядом с кнопкой
+        // Show popup near button
         showPopup(anchorView, popupView)
     }
     
@@ -69,7 +69,7 @@ class WalletOptionsPopup(
     }
     
     private fun showPopup(anchorView: View, popupView: View) {
-        // Измеряем размеры
+        // Measure sizes
         popupView.measure(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -78,7 +78,7 @@ class WalletOptionsPopup(
         val popupWidth = popupView.measuredWidth
         val popupHeight = popupView.measuredHeight
         
-        // Получаем координаты anchor view
+        // Get anchor view coordinates
         val location = IntArray(2)
         anchorView.getLocationOnScreen(location)
         val anchorX = location[0]
@@ -86,11 +86,11 @@ class WalletOptionsPopup(
         val anchorWidth = anchorView.width
         val anchorHeight = anchorView.height
         
-        // Вычисляем позицию popup
+        // Compute popup position
         val popupX = anchorX + anchorWidth - popupWidth
-        val popupY = anchorY + anchorHeight + 8 // 8dp отступ снизу
+        val popupY = anchorY + anchorHeight + 8 // 8dp bottom offset
         
-        // Показываем popup
+        // Show popup
         popupWindow?.showAtLocation(anchorView, Gravity.NO_GRAVITY, popupX, popupY)
     }
     

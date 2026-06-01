@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 
-/* Поверх оверлея пулов (z-index 2100) при клике на «Статистика» в шапке */
+/* Above pool overlay (z-index 2100) when tapping Statistics in header */
 .tma-statistics-page {
   z-index: 3200;
 }

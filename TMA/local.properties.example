@@ -1,2 +1,2 @@
-# Секреты не коммитить: скопируйте в local.properties и подставьте путь к SDK
+# Do not commit secrets: copy to local.properties and set your Android SDK path
 sdk.dir=/Users/YOU/Library/Android/sdk

@@ -5,18 +5,18 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 /**
- * Преобразование compact TARGET (bits) в человекочитаемое отображение сложности.
- * На ноде не делаем — только на клиенте.
- * Начальная сложность = 2 (~2 тапа на 1 блок). При росте: 2 × (initialTarget/currentTarget), например 2.2 при +10%.
+ * Convert compact TARGET (bits) to human-readable difficulty.
+ * Not on node — client only.
+ * Initial difficulty = 2 (~2 taps per block). As target tightens: 2 × (initialTarget/currentTarget), e.g. 2.2 at +10%.
  */
 object DifficultyDisplay {
     private const val INITIAL_TARGET_COMPACT = 0x207fffffL
-    /** Начальная сложность в отображении: «2» = ~2 тапа на 1 блок. */
+    /** Initial displayed difficulty: "2" = ~2 taps per block. */
     private const val INITIAL_DISPLAY_VALUE = 2.0
 
     /**
-     * Проверка PoW: hash (64 hex, big-endian) как число ≤ target из compact.
-     * Используется при майнинге (MiningManager, MiningFragment) и на ноде.
+     * PoW check: hash (64 hex, big-endian) as number ≤ compact target.
+     * Used in mining (MiningManager, MiningFragment) and on node.
      */
     fun hashMeetsTarget(hashHex: String, compactBits: Long): Boolean {
         if (hashHex.length != 64) return false
@@ -26,7 +26,7 @@ object DifficultyDisplay {
         return hashNum.compareTo(target) <= 0
     }
 
-    /** Декодирование compact в 256-битный target (BigInteger). */
+    /** Decode compact to 256-bit target (BigInteger). */
     fun compactToTarget(compact: Long): BigInteger {
         val nSize = (compact ushr 24).toInt() and 0xFF
         val nWord = compact and 0x7FFFFFL
@@ -38,8 +38,8 @@ object DifficultyDisplay {
     }
 
     /**
-     * Форматирует compact bits для отображения пользователю.
-     * Начальная сложность = 2; при росте target меньше → сложность = 2 × (initialTarget/currentTarget), например 2.2 при +10%.
+     * Format compact bits for user display.
+     * Initial difficulty = 2; smaller target → difficulty = 2 × (initialTarget/currentTarget), e.g. 2.2 at +10%.
      */
     fun formatCompactBits(bits: Int): String {
         val compact = bits.toLong() and 0xFFFFFFFFL

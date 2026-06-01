@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Алиасы по умолчанию (normal), если нет small/large/xlarge -->
+    <!-- Default aliases (normal) when no small/large/xlarge -->
     <dimen name="mining_button_size">@dimen/mining_button_size_normal</dimen>
     <dimen name="mining_glow_size">@dimen/mining_glow_size_normal</dimen>
     <dimen name="mining_button_text">@dimen/mining_button_text_normal</dimen>

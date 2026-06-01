@@ -65,7 +65,7 @@
 
         </LinearLayout>
 
-        <!-- Два ряда по 4 кнопки: одинаковые weight и горизонтальные отступы -->
+        <!-- Two rows of 4 buttons: equal weight and horizontal padding -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

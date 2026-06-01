@@ -20,7 +20,7 @@ private val outJson = Json {
 
 @Suppress("unused")
 fun main() {
-    // Пустой JS-объект; тип dynamic — без .asDynamic() на каждом присваивании (иначе падает в бандле).
+    // Empty JS object; dynamic type — avoids .asDynamic() on every assignment (otherwise bundle crashes).
     val bridge: dynamic = js("({})")
     bridge.fetchNodeInfoJson = { baseUrl: String ->
         scope.promise {

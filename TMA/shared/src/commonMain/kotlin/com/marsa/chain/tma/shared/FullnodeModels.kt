@@ -13,7 +13,7 @@ data class StatusDto(
     val addrTxIndexReady: Boolean? = null,
 )
 
-/** Ответ ноды: при success=false поле data может отсутствовать (как в Android / Gson). */
+/** Node response: when success=false, data may be absent (same as Android / Gson). */
 @Serializable
 data class StatusResponseEnvelope(
     val success: Boolean = false,
@@ -22,7 +22,7 @@ data class StatusResponseEnvelope(
     val reason: String? = null,
 )
 
-/** Как в Android `WalletBalanceDTO` (GET /wallet/balance). */
+/** Same as Android `WalletBalanceDTO` (GET /wallet/balance). */
 @Serializable
 data class WalletBalanceDto(
     val address: String,
@@ -42,7 +42,7 @@ data class WalletBalanceEnvelope(
     val reason: String? = null,
 )
 
-/** Как в Android `AddressTxDTO` (GET /address/transactions). */
+/** Same as Android `AddressTxDTO` (GET /address/transactions). */
 @Serializable
 data class AddressTxDto(
     val txid: String,
@@ -64,21 +64,21 @@ data class AddressTxListEnvelope(
     val reason: String? = null,
 )
 
-/** Элемент `inputs[]` в JSON транзакции из `GET /mempool` (см. `TxInput::toJson`). */
+/** `inputs[]` entry in transaction JSON from `GET /mempool` (see `TxInput::toJson`). */
 @Serializable
 data class MempoolInputDto(
     val address: String = "",
     val amount: Long = 0,
 )
 
-/** Элемент `outputs[]` в JSON транзакции из `GET /mempool` (см. `TxOutput::toJson`). */
+/** `outputs[]` entry in transaction JSON from `GET /mempool` (see `TxOutput::toJson`). */
 @Serializable
 data class MempoolOutputDto(
     val address: String = "",
     val value: Long = 0,
 )
 
-/** Транзакция в mempool (`Transaction::toJson`), для UI достаточно подмножества полей. */
+/** Mempool transaction (`Transaction::toJson`); UI needs only a subset of fields. */
 @Serializable
 data class MempoolTxDto(
     val txid: String,
@@ -88,7 +88,7 @@ data class MempoolTxDto(
     val outputs: List<MempoolOutputDto> = emptyList(),
 )
 
-/** Тело `data` ответа `GET /mempool` (см. `ApiServer::handleGetMempool`). */
+/** `data` body of `GET /mempool` response (see `ApiServer::handleGetMempool`). */
 @Serializable
 data class MempoolSnapshotDto(
     val count: Int,
@@ -104,7 +104,7 @@ data class MempoolEnvelope(
     val reason: String? = null,
 )
 
-/** Как Android `MinerStakeInfoDTO` (GET /account/mining_info). Поля опциональны — зависят от has_stake. */
+/** Same as Android `MinerStakeInfoDTO` (GET /account/mining_info). Fields are optional — depend on has_stake. */
 @Serializable
 data class MinerStakeInfoDto(
     val address: String = "",
@@ -145,7 +145,7 @@ data class MinerStakeInfoEnvelope(
     val reason: String? = null,
 )
 
-/** Элемент списка GET /validators (ядро полей — как в `ApiServer::handleGetValidators`; остальное опционально). */
+/** GET /validators list item (core fields — see `ApiServer::handleGetValidators`; rest optional). */
 @Serializable
 data class ValidatorDto(
     @SerialName("node_id") val nodeId: String? = null,
@@ -163,7 +163,7 @@ data class ValidatorDto(
     @SerialName("load_percent") val loadPercent: Int? = null,
 )
 
-/** Тело `data` ответа GET /validators (как Android `ValidatorsResponseDTO`). */
+/** `data` body of GET /validators response (same as Android `ValidatorsResponseDTO`). */
 @Serializable
 data class ValidatorsResponseDto(
     val total: Int,
@@ -178,7 +178,7 @@ data class ValidatorsEnvelope(
     val reason: String? = null,
 )
 
-/** GET /mining/stats (как Android `MiningStatsDTO`). */
+/** GET /mining/stats (same as Android `MiningStatsDTO`). */
 @Serializable
 data class MiningStatsDto(
     val activeMiners: Int = 0,

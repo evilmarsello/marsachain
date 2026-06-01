@@ -1,45 +1,45 @@
-# Иконки для Mini App (веб)
+# Mini App icons (web)
 
-## Почему не Android `.xml`
+## Why not Android `.xml`
 
-Файлы **Vector Drawable** (`res/drawable/*.xml`) и **mipmap** из Android Studio **браузер не открывает**. В вебе используют **SVG**, **PNG** (или **WebP**).
+**Vector Drawable** files (`res/drawable/*.xml`) and **mipmap** assets from Android Studio **are not used in the browser**. The web app uses **SVG**, **PNG** (or **WebP**).
 
-Рекомендация: экспорт из Figma / «Export» в Android Studio для вектора → **SVG**; для сложных растровых кнопок — **PNG @1x и @2x** (например `name.png` и `name@2x.png` или положить только `@2x` и задать `width`/`height` в CSS вполовину).
+Recommendation: export from Figma / Android Studio vector export → **SVG**; for complex raster buttons — **PNG @1x and @2x** (e.g. `name.png` and `name@2x.png`, or only `@2x` with half `width`/`height` in CSS).
 
-## Куда класть файлы
+## Where to put files
 
-Каталог **`webapp/public/icons/`** попадает в корень сайта как **`/icons/…`** (Vite копирует `public/` как есть).
+Directory **`webapp/public/icons/`** is served at **`/icons/…`** (Vite copies `public/` as-is).
 
-Пример в HTML/шаблоне:
+Example in HTML/template:
 
 ```html
 <img src="/icons/section-wallet.svg" alt="" width="22" height="22" loading="lazy" />
 ```
 
-## Имена (договорённость с кодом)
+## Names (convention with code)
 
-Добавляйте файлы по мере готовности; в разметке можно ссылаться на:
+Add files as needed; you can reference:
 
-| Файл (пример)        | Назначение                          |
-|---------------------|-------------------------------------|
-| `section-node.svg`  | блок «Нода / сеть»                  |
-| `section-wallet.svg`| кошелёк / баланс                    |
-| `section-mining.svg`| майнинг                             |
-| `section-mempool.svg` | mempool                           |
-| `section-validators.svg` | валидаторы                      |
-| `section-telegram.svg` | Telegram / безопасность          |
-| `app-logo.png`      | логотип в шапке (копия `res/drawable/logo.png` из Android) |
-| `ic_wallet.svg` / `.png` | нижняя вкладка «Кошелёк» (как в Android `@drawable/ic_wallet`) |
-| `ic_mining.svg`     | вкладка «Майнинг» / Mine           |
-| `ic_settings.svg`   | вкладка «Настройки»               |
+| File (example) | Purpose |
+|----------------|---------|
+| `section-node.svg` | “Node / network” block |
+| `section-wallet.svg` | wallet / balance |
+| `section-mining.svg` | mining |
+| `section-mempool.svg` | mempool |
+| `section-validators.svg` | validators |
+| `section-telegram.svg` | Telegram / security |
+| `app-logo.png` | header logo (copy of Android `res/drawable/logo.png`) |
+| `ic_wallet.svg` / `.png` | bottom tab “Wallet” (like Android `@drawable/ic_wallet`) |
+| `ic_mining.svg` | “Mining” tab |
+| `ic_settings.svg` | “Settings” tab |
 
-Сейчас вкладки используют **встроенные SVG** в коде; если положите файлы с этими именами, позже можно заменить разметку на `<img src="/icons/ic_wallet.svg" …>`.
+Tabs currently use **inline SVG** in code; if you add files with these names, you can switch to `<img src="/icons/ic_wallet.svg" …>` later.
 
-Имена **не обязаны** совпадать один в один — после добавления файла можно подключить его в `main.ts` (класс `card-ico` и т.д.) или в CSS как `background-image`.
+Names **do not have to match exactly** — after adding a file, wire it in `main.ts` (e.g. `card-ico` class) or CSS `background-image`.
 
-## Формат
+## Format
 
-- **SVG** — масштабируется, малый вес; следите за `viewBox` и цветом (можно `currentColor`, тогда цвет задаётся из CSS).
-- **PNG** — для теней/градиентов как на Android; для Retina удвоенный размер или отдельный `@2x`.
+- **SVG** — scales well, small size; check `viewBox` and color (`currentColor` lets CSS control fill).
+- **PNG** — shadows/gradients like Android; use 2× size or a separate `@2x` for Retina.
 
-Цвета бренда в приложении см. `android-client/app/src/main/res/values/colors.xml` и `drawable/primary_button_background.xml` (`#BC5A2B` кнопки, `#FF9500` акцент текста).
+Brand colors: `android-client/app/src/main/res/values/colors.xml` and `drawable/primary_button_background.xml` (`#BC5A2B` buttons, `#FF9500` accent text).
