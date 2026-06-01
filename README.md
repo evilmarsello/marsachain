@@ -1,10 +1,10 @@
-# Marsa Chain — клиенты
+# Marsa Chain — Clients
 
-| Папка | Описание |
+| Folder | Description |
 |-------|----------|
-| [`android-client/`](android-client/) | Android SPV-клиент |
+| [`android-client/`](android-client/) | Android SPV-client |
 | [`TMA/`](TMA/) | Telegram Mini App + pool API |
 
-Fullnode — отдельно, не в этом репозитории.
+Fullnode is separate, not in this repository.
 
-Сборка: см. README в каждой папке.
+Build: See the README in each folder.
