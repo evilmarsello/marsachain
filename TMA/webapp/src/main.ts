@@ -11,6 +11,7 @@ import {
   loadWalletRows,
   migrateWatchOnlyFromLegacyAddress,
   persistSeedAndInitHdZero,
+  repairOnboardingIfNoLocalWallet,
   setActiveAddress,
 } from "./walletStore";
 import { txRowHtml } from "./txRowHtml";
@@ -126,7 +127,7 @@ import { unmountConnectionsPage } from "./connectionsPage";
 import { resolveMiningNodeBase, resolveReadNodeBase, resolveWalletNodeBase } from "./nodeEndpoints";
 import { fetchMiningStatsJsonMulti, parseMiningStatsJson } from "./miningStatsFetch";
 import { formatMrsBalanceDisplay } from "./formatMrsBalance";
-import { mirrorLocalStorageKey, restoreWalletKeysFromCloud, mirrorAllWalletKeys } from "./cloudStorageMirror";
+import { purgeLegacyCloudWalletKeys } from "./cloudStorageMirror";
 import { attachUiHaptics } from "./uiHaptics";
 import { tmaAlert } from "./tmaAlertUi";
 
@@ -2679,7 +2680,6 @@ async function runMainApp(root: HTMLElement): Promise<void> {
     ensureHdWalletListFromStoredSeed();
     migrateWatchOnlyFromLegacyAddress();
     ensureActiveWalletInStore();
-    if (loadWalletRows().length > 0) mirrorAllWalletKeys();
   } catch (e) {
     console.warn("wallet bootstrap skipped", e);
   }
@@ -2730,7 +2730,8 @@ async function main(): Promise<void> {
 
   if (!(await enforceTelegramAccess(root))) return;
 
-  await restoreWalletKeysFromCloud();
+  await purgeLegacyCloudWalletKeys();
+  repairOnboardingIfNoLocalWallet(ONBOARDING_LS);
 
   try {
     if (localStorage.getItem(ONBOARDING_LS) !== "1") {
@@ -2749,7 +2750,6 @@ async function main(): Promise<void> {
         }
         try {
           localStorage.setItem(ONBOARDING_LS, "1");
-          mirrorLocalStorageKey(ONBOARDING_LS);
         } catch {
           /* ignore */
         }

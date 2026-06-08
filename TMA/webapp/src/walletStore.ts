@@ -1,5 +1,5 @@
 import { hdKeyPairAtIndex } from "./crypto/hdWallet";
-import { clearCloudMirrorKeys, mirrorAllWalletKeys, mirrorLocalStorageKey } from "./cloudStorageMirror";
+import { clearCloudMirrorKeys } from "./cloudStorageMirror";
 
 const LS_SEED = "tma_hd_seed_b64";
 const LS_WALLETS = "tma_wallets_v1";
@@ -64,7 +64,6 @@ function writeSeedBytesVerified(seed: Uint8Array): { ok: boolean; encoded?: stri
   try {
     const enc = b64Encode(seed);
     localStorage.setItem(LS_SEED, enc);
-    mirrorLocalStorageKey(LS_SEED);
     const back = readSeedBytes();
     if (!back || back.length !== seed.length) return { ok: false };
     for (let i = 0; i < seed.length; i++) if (back[i] !== seed[i]) return { ok: false };
@@ -224,7 +223,6 @@ export function saveWalletRows(rows: TmaWalletRow[]): boolean {
   try {
     const json = JSON.stringify(rows);
     localStorage.setItem(LS_WALLETS, json);
-    mirrorLocalStorageKey(LS_WALLETS);
     return localStorage.getItem(LS_WALLETS) === json;
   } catch {
     return false;
@@ -249,7 +247,6 @@ export function getActiveAddress(): string | null {
 export function setActiveAddress(address: string): void {
   try {
     localStorage.setItem(LS_ACTIVE, address.trim());
-    mirrorLocalStorageKey(LS_ACTIVE);
   } catch {
     /* ignore */
   }
@@ -301,7 +298,6 @@ function rebuildWalletListForSeed(seed: Uint8Array): boolean {
     /* ignore */
   }
   setActiveAddress(kp0.address);
-  mirrorAllWalletKeys();
   return true;
 }
 
@@ -434,7 +430,6 @@ export function applySavedWalletOrder(rows: TmaWalletRow[]): TmaWalletRow[] {
 export function saveWalletListOrder(addresses: string[]): void {
   try {
     localStorage.setItem(LS_ORDER, addresses.join(","));
-    mirrorLocalStorageKey(LS_ORDER);
   } catch {
     /* ignore */
   }
@@ -443,7 +438,18 @@ export function saveWalletListOrder(addresses: string[]): void {
 export function clearWalletListOrder(): void {
   try {
     localStorage.removeItem(LS_ORDER);
-    mirrorLocalStorageKey(LS_ORDER);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** If onboarding was marked complete but no local wallet exists, ask for seed again. */
+export function repairOnboardingIfNoLocalWallet(onboardingKey: string): void {
+  try {
+    if (localStorage.getItem(onboardingKey) !== "1") return;
+    if (readSeedBytes()) return;
+    if (loadWalletRows().length > 0) return;
+    localStorage.removeItem(onboardingKey);
   } catch {
     /* ignore */
   }
