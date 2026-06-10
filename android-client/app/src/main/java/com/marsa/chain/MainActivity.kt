@@ -21,14 +21,26 @@ import com.marsa.chain.fragments.WalletTrashFragment
 import com.marsa.chain.fragments.AboutFragment
 import com.marsa.chain.fragments.AboutMarsaChainFragment
 import com.marsa.chain.fragments.ConnectionsFragment
+import com.marsa.chain.fragments.PoolsListFragment
+import com.marsa.chain.fragments.PoolDetailFragment
+import com.marsa.chain.fragments.NetworkConfigFragment
+import com.marsa.chain.fragments.SocialMediaFragment
 import com.marsa.chain.manager.WalletManager
+import com.marsa.chain.manager.LocaleManager
 import com.marsa.chain.security.OnboardingPrefs
+import com.marsa.chain.ui.HeaderInsets
+import com.marsa.chain.ui.UiTheme
 
 class MainActivity : FragmentActivity() {
     private lateinit var binding: ActivityMainBinding
     private var currentFragment: Fragment? = null
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleManager.attachBaseContext(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        UiTheme.apply(this)
         super.onCreate(savedInstanceState)
         if (!OnboardingPrefs.isComplete(this)) {
             startActivity(android.content.Intent(this, OnboardingActivity::class.java))
@@ -37,8 +49,8 @@ class MainActivity : FragmentActivity() {
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
-        // Initialize wallets and migrate legacy data
+        HeaderInsets.applyTopBar(binding.topBar)
+
         initializeWallets()
         
         setupTabs()
@@ -48,7 +60,7 @@ class MainActivity : FragmentActivity() {
         setBackButtonVisible(false)
     }
 
-    /** Back button and header logo are not shown together — arrow moves to left edge without logo. */
+    
     private fun setBackButtonVisible(visible: Boolean) {
         binding.backButton.visibility = if (visible) View.VISIBLE else View.GONE
         binding.headerLogo.visibility = if (visible) View.GONE else View.VISIBLE
@@ -74,10 +86,8 @@ class MainActivity : FragmentActivity() {
             try {
                 val walletManager = WalletManager(this@MainActivity)
                 
-                // First try to migrate legacy wallet
                 walletManager.migrateOldWallet()
                 
-                // Then check for an active wallet
                 val activeWallet = walletManager.getActiveWallet()
                 if (activeWallet != null) {
                     android.util.Log.d("MainActivity", "✅ Active wallet found: ${activeWallet.address}")
@@ -99,27 +109,27 @@ class MainActivity : FragmentActivity() {
     private fun setupTabs() {
         // Set initial selection
         binding.miningTab.isSelected = true
-        binding.titleText.text = "Mining"
+        binding.titleText.text = getString(R.string.title_mining)
         
         // Tab listeners
         binding.walletTab.setOnClickListener {
             selectTab(binding.walletTab)
             showFragment(WalletFragment())
-            binding.titleText.text = "Wallet"
+            binding.titleText.text = getString(R.string.title_wallet)
             setBackButtonVisible(false)
         }
         
         binding.miningTab.setOnClickListener {
             selectTab(binding.miningTab)
             showFragment(MiningFragment())
-            binding.titleText.text = "Mining"
+            binding.titleText.text = getString(R.string.title_mining)
             setBackButtonVisible(false)
         }
         
         binding.settingsTab.setOnClickListener {
             selectTab(binding.settingsTab)
             showFragment(SettingsFragment())
-            binding.titleText.text = "Settings"
+            binding.titleText.text = getString(R.string.title_settings)
             setBackButtonVisible(false)
         }
     }
@@ -137,7 +147,7 @@ class MainActivity : FragmentActivity() {
     private fun setupStatisticsButton() {
         binding.statisticsButton.setOnClickListener {
             showFragment(StatisticsFragment(), addToBackStack = true)
-            binding.titleText.text = "Statistics"
+            binding.titleText.text = getString(R.string.title_statistics)
             setBackButtonVisible(true)
         }
         
@@ -172,6 +182,25 @@ class MainActivity : FragmentActivity() {
                         showFragment(WalletFragment())
                         updateTitleAndBackButtonFromVisibleFragment()
                     }
+                    is PoolsListFragment -> {
+                        selectTab(binding.walletTab)
+                        showFragment(WalletFragment())
+                        updateTitleAndBackButtonFromVisibleFragment()
+                    }
+                    is PoolDetailFragment -> {
+                        showFragment(PoolsListFragment(), addToBackStack = false)
+                        showBackButton(getString(R.string.pools_title))
+                    }
+                    is NetworkConfigFragment -> {
+                        selectTab(binding.settingsTab)
+                        showFragment(SettingsFragment())
+                        updateTitleAndBackButtonFromVisibleFragment()
+                    }
+                    is SocialMediaFragment -> {
+                        selectTab(binding.settingsTab)
+                        showFragment(SettingsFragment())
+                        updateTitleAndBackButtonFromVisibleFragment()
+                    }
                     else -> {
                         selectTab(binding.miningTab)
                         showFragment(MiningFragment())
@@ -182,64 +211,83 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    /** Updates title and Back button for current visible fragment (after pop or tab change). */
+    
     private fun updateTitleAndBackButtonFromVisibleFragment() {
         val frag = supportFragmentManager.findFragmentById(R.id.contentFrame)
         currentFragment = frag
         when (frag) {
             is MiningFragment -> {
-                binding.titleText.text = "Mining"
+                binding.titleText.text = getString(R.string.title_mining)
                 setBackButtonVisible(false)
                 selectTab(binding.miningTab)
             }
             is WalletFragment -> {
-                binding.titleText.text = "Wallet"
+                binding.titleText.text = getString(R.string.title_wallet)
                 setBackButtonVisible(false)
                 selectTab(binding.walletTab)
             }
             is SettingsFragment -> {
-                binding.titleText.text = "Settings"
+                binding.titleText.text = getString(R.string.title_settings)
                 setBackButtonVisible(false)
                 selectTab(binding.settingsTab)
             }
             is StatisticsFragment -> {
-                binding.titleText.text = "Statistics"
+                binding.titleText.text = getString(R.string.title_statistics)
                 setBackButtonVisible(true)
             }
             is HistoryFragment -> {
-                binding.titleText.text = "History"
+                binding.titleText.text = getString(R.string.title_history)
                 setBackButtonVisible(true)
             }
             is WalletsListFragment -> {
-                binding.titleText.text = "Wallets"
+                binding.titleText.text = getString(R.string.title_wallets)
                 setBackButtonVisible(true)
             }
             is WalletTrashFragment -> {
-                binding.titleText.text = "Deleted wallets"
+                binding.titleText.text = getString(R.string.title_deleted_wallets)
                 setBackButtonVisible(true)
                 selectTab(binding.walletTab)
             }
             is WalletSettingsFragment -> {
-                binding.titleText.text = "Wallet settings"
+                binding.titleText.text = getString(R.string.title_wallet_settings)
                 setBackButtonVisible(true)
                 selectTab(binding.walletTab)
             }
             is ConnectionsFragment -> {
-                binding.titleText.text = "Connections"
+                binding.titleText.text = getString(R.string.title_connections)
                 setBackButtonVisible(true)
             }
             is AboutFragment -> {
-                binding.titleText.text = "About"
+                binding.titleText.text = getString(R.string.title_about)
                 setBackButtonVisible(true)
                 selectTab(binding.settingsTab)
             }
             is AboutMarsaChainFragment -> {
-                binding.titleText.text = "About Marsa Chain"
+                binding.titleText.text = getString(R.string.title_about_marsa)
                 setBackButtonVisible(true)
                 selectTab(binding.settingsTab)
             }
+            is NetworkConfigFragment -> {
+                binding.titleText.text = getString(R.string.network_config_title)
+                setBackButtonVisible(true)
+                selectTab(binding.settingsTab)
+            }
+            is SocialMediaFragment -> {
+                binding.titleText.text = getString(R.string.social_media_title)
+                setBackButtonVisible(true)
+                selectTab(binding.settingsTab)
+            }
+            is PoolsListFragment -> {
+                binding.titleText.text = getString(R.string.pools_title)
+                setBackButtonVisible(true)
+                selectTab(binding.walletTab)
+            }
+            is PoolDetailFragment -> {
+                setBackButtonVisible(true)
+                selectTab(binding.walletTab)
+            }
             else -> {
-                binding.titleText.text = "Mining"
+                binding.titleText.text = getString(R.string.title_mining)
                 setBackButtonVisible(false)
                 selectTab(binding.miningTab)
             }
@@ -271,12 +319,24 @@ class MainActivity : FragmentActivity() {
     
     fun showHistoryFragment() {
         showFragment(HistoryFragment(), addToBackStack = true)
-        showBackButton("History")
+        showBackButton(getString(R.string.title_history))
     }
 
     fun showWalletSettingsFragment() {
         showFragment(WalletSettingsFragment(), addToBackStack = true)
-        showBackButton("Wallet settings")
+        showBackButton(getString(R.string.title_wallet_settings))
+        selectTab(binding.walletTab)
+    }
+
+    fun showPoolsListFragment() {
+        showFragment(PoolsListFragment(), addToBackStack = true)
+        showBackButton(getString(R.string.pools_title))
+        selectTab(binding.walletTab)
+    }
+
+    fun showPoolDetailFragment(poolId: Int, poolName: String) {
+        showFragment(PoolDetailFragment.newInstance(poolId, poolName), addToBackStack = true)
+        showBackButton(poolName)
         selectTab(binding.walletTab)
     }
     

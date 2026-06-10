@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <!-- Semi-transparent dark fill -->
+    <!-- Полупрозрачный темный фон -->
     <solid android:color="#EE1A1A1A" />
-    <!-- Orange border (app theme color) -->
+    <!-- Оранжевая граница (цвет темы приложения) -->
     <stroke
         android:width="3dp"
-        android:color="#BC5A2B" />
-    <!-- Rounded corners -->
+        android:color="#B1562C" />
+    <!-- Круглые углы -->
     <corners android:radius="16dp" />
 </shape>

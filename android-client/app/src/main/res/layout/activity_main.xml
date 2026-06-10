@@ -12,20 +12,17 @@
         android:layout_height="wrap_content"
         android:background="#1C1C1E"
         android:orientation="vertical"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="0dp">
 
-        <!-- System status bar space -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:background="#1C1C1E" />
-
-        <!-- Title and status row: title always screen-centered, buttons at edges -->
+        <!-- TMA .top-bar-row: 36dp, logo/title/stats aligned to bottom -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="20dp">
+            android:layout_height="36dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="10dp">
 
             <ImageView
                 android:id="@+id/headerLogo"
@@ -39,10 +36,11 @@
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
                 android:gravity="center"
-                android:text="Mining"
+                android:paddingBottom="2dp"
+                android:text="@string/title_mining"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
@@ -52,7 +50,7 @@
                 android:id="@+id/backButton"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_gravity="start|center_vertical"
+                android:layout_gravity="start|bottom"
                 android:layout_marginStart="38dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:text="←"
@@ -124,7 +122,7 @@
                 android:id="@+id/walletText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wallet"
+                android:text="@string/tab_wallet"
                 android:textSize="10sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/text_color_selector" />
@@ -159,7 +157,7 @@
                 android:id="@+id/miningText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mine"
+                android:text="@string/tab_mine"
                 android:textSize="10sp"
                 android:fontFamily="sans-serif-medium"
                 android:textStyle="bold"
@@ -193,7 +191,7 @@
                 android:id="@+id/settingsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Settings"
+                android:text="@string/tab_settings"
                 android:textSize="10sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/text_color_selector" />

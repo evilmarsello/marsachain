@@ -17,7 +17,7 @@ import kotlin.math.min
 
 data class CascadeLeg(
     val wallet: WalletInfo,
-    /** Amount to recipient from this wallet (excluding network fee). */
+    
     val amountToRecipient: Long,
     val fee: Long
 )
@@ -95,7 +95,6 @@ class WalletManager(private val context: Context) {
                     allWallets.isEmpty() && seed != null ->
                         activeWallet = insertHdWallet(seed, 0, "Main Wallet", makeActive = true)
                     allWallets.isEmpty() -> {
-                        // No seed and no wallets — wait for onboarding (MainActivity must not create wallet itself).
                         activeWallet = null
                     }
                     else -> {
@@ -111,17 +110,14 @@ class WalletManager(private val context: Context) {
         return activeWallet
     }
 
-    /** After onboarding: save seed and create HD wallet index 0 (idempotent). */
+    
     suspend fun setupHdWalletAfterOnboarding(seed: ByteArray) = withContext(Dispatchers.IO) {
         SeedVault(context).storeSeed(seed)
         if (walletsDao.getHdWalletAtIndex(0) != null) return@withContext
         insertHdWallet(seed, 0, "Main Wallet", makeActive = true)
     }
 
-    /**
-     * Restore by 24 words: removes HD wallets only, overwrites seed, creates index 0.
-     * Key-imported wallets are kept.
-     */
+    
     suspend fun restoreFromMnemonicTwentyFourWords(mnemonic: String, wordList: List<String>) =
         withContext(Dispatchers.IO) {
             require(Bip39.validateMnemonicPhrase(mnemonic, wordList)) { "invalid mnemonic" }
@@ -184,9 +180,7 @@ class WalletManager(private val context: Context) {
         walletDao.put(com.marsa.chain.data.WalletEntity(address, balance))
     }
 
-    /**
-     * Remove from My Wallets — move to trash (~30 days), not instant erase.
-     */
+    
     suspend fun moveWalletToTrash(wallet: WalletInfo) = withContext(Dispatchers.IO) {
         purgeExpiredDeletedWallets()
         val fresh = walletsDao.getWalletByAddress(wallet.address) ?: return@withContext
@@ -224,10 +218,7 @@ class WalletManager(private val context: Context) {
         deletedWalletsDao.deleteByAddress(address)
     }
 
-    /**
-     * Restore wallet from trash to My Wallets.
-     * @return false if wallet with this address already in main list
-     */
+    
     suspend fun restoreWalletFromTrash(deleted: DeletedWalletInfo): Boolean = withContext(Dispatchers.IO) {
         if (walletsDao.getWalletByAddress(deleted.address) != null) {
             return@withContext false
@@ -261,10 +252,7 @@ class WalletManager(private val context: Context) {
         deletedWalletsDao.deleteAll()
     }
 
-    /**
-     * Order: active first, then others by date (newer first).
-     * Each leg is a separate tx with full fee [feePerTx].
-     */
+    
     suspend fun planCascadeLegs(
         active: WalletInfo,
         allWallets: List<WalletInfo>,
@@ -299,7 +287,6 @@ class WalletManager(private val context: Context) {
         return try {
             android.util.Log.d("WalletManager", "🔑 Attempting to import wallet with private key")
             
-            // Create KeyPair from private key
             val keyPair = com.marsa.chain.crypto.KeyPair.fromPrivateKey(privateKey)
             if (keyPair == null) {
                 android.util.Log.e("WalletManager", "❌ Failed to create KeyPair from private key")
@@ -309,7 +296,6 @@ class WalletManager(private val context: Context) {
             android.util.Log.d("WalletManager", "✅ KeyPair created successfully")
             android.util.Log.d("WalletManager", "📍 Address: ${keyPair.address}")
             
-            // Check wallet with this address does not exist (IO)
             val existingWallet = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 walletsDao.getWalletByAddress(keyPair.address)
             }
@@ -318,7 +304,6 @@ class WalletManager(private val context: Context) {
                 return null
             }
             
-            // Create new wallet
             val wallet = WalletInfo(
                 address = keyPair.address,
                 privateKey = keyPair.privateKey,
@@ -331,7 +316,6 @@ class WalletManager(private val context: Context) {
             
             android.util.Log.d("WalletManager", "💾 Saving imported wallet to database")
             
-            // Save wallet and init balance (IO)
             kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 walletsDao.insertWallet(wallet)
                 walletDao.put(com.marsa.chain.data.WalletEntity(wallet.address, 0L))
@@ -383,14 +367,12 @@ class WalletManager(private val context: Context) {
 
     suspend fun migrateOldWallet() {
         try {
-            // Check for legacy SharedPreferences data
             val prefs = context.getSharedPreferences("wallet", android.content.Context.MODE_PRIVATE)
             val oldAddress = prefs.getString("address", null)
             val oldPrivateKey = prefs.getString("privateKey", null)
             val oldPublicKey = prefs.getString("publicKey", null)
             
             if (oldAddress != null && oldPrivateKey != null && oldPublicKey != null) {
-                // Create wallet from legacy data
                 val wallet = WalletInfo(
                     address = oldAddress,
                     privateKey = oldPrivateKey,
@@ -401,11 +383,9 @@ class WalletManager(private val context: Context) {
                     hdIndex = null
                 )
                 
-                // Deactivate all wallets and activate migrated one
                 walletsDao.deactivateAllWallets()
                 walletsDao.insertWallet(wallet)
                 
-                // Clear legacy data
                 prefs.edit().clear().apply()
                 
                 android.util.Log.d("WalletManager", "Successfully migrated old wallet: $oldAddress")

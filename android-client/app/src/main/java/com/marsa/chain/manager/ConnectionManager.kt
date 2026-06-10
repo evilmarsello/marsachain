@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Validator node with load (pick least loaded). */
+
 data class ValidatorNodeInfo(
     val ip: String,
     val apiPort: Int,
@@ -17,7 +17,7 @@ data class ValidatorNodeInfo(
     val loadPercent: Int = 0
 ) {
     val url: String get() = "http://$ip:$apiPort/"
-    /** Legacy format "host:PORT". */
+    
     val hostPort: String get() = "$ip:$apiPort"
 }
 
@@ -31,14 +31,44 @@ class ConnectionManager(context: Context) {
         private const val KEY_VALIDATOR_NODES = "validator_nodes" // JSON array of ValidatorNodeInfo
         private const val KEY_SELECTED_AUTO_IP = "selected_auto_ip" // Selected IP in auto mode
         private const val KEY_AUTO_SELECT_ENABLED = "auto_select_enabled" // Auto-select working IP
+        private const val KEY_POOL_API_BASE = "pool_api_base_url"
+
+        /** Official marsa-pool-api (nginx on marsachain.ru) — same as TMA `/api/pool`. */
+        const val DEFAULT_OFFICIAL_POOL_API_BASE = "https://marsachain.ru/api/pool"
         
-        private val DEFAULT_AUTO_IPS = emptyList<String>()
+        private val DEFAULT_AUTO_IPS = listOf(
+            "168.222.142.105"
+        )
     }
     
     enum class ConnectionMode {
         AUTO, MANUAL
     }
     
+    /** marsa-pool-api base, e.g. https://host/api/pool — empty = backend stats disabled. */
+    fun getPoolApiBaseUrl(): String? {
+        val stored = prefs.getString(KEY_POOL_API_BASE, null)?.trim().orEmpty()
+        return stored.takeIf { it.isNotEmpty() }
+    }
+
+    fun setPoolApiBaseUrl(url: String?) {
+        val trimmed = url?.trim().orEmpty()
+        if (trimmed.isEmpty()) {
+            prefs.edit().remove(KEY_POOL_API_BASE).apply()
+        } else {
+            prefs.edit().putString(KEY_POOL_API_BASE, trimmed).apply()
+        }
+    }
+
+    /** Custom pool API URL, or official VPS endpoint when not set (TMA uses same-origin `/api/pool`). */
+    fun resolvePoolApiBaseUrl(): String? {
+        val custom = getPoolApiBaseUrl()?.trim()?.takeIf { it.isNotEmpty() }
+        if (custom != null) {
+            return custom.trimEnd('/')
+        }
+        return DEFAULT_OFFICIAL_POOL_API_BASE
+    }
+
     fun getConnectionMode(): ConnectionMode {
         val mode = prefs.getString(KEY_CONNECTION_MODE, "auto") ?: "auto"
         return if (mode == "manual") ConnectionMode.MANUAL else ConnectionMode.AUTO
@@ -61,7 +91,6 @@ class ConnectionManager(context: Context) {
     fun getAutoIps(): List<String> {
         val json = prefs.getString(KEY_AUTO_IPS, null)
         if (json == null || json.isEmpty()) {
-            // If none saved, return defaults
             setAutoIps(DEFAULT_AUTO_IPS)
             return DEFAULT_AUTO_IPS
         }
@@ -77,7 +106,7 @@ class ConnectionManager(context: Context) {
         prefs.edit().putString(KEY_AUTO_IPS, JSONArray(ips).toString()).apply()
     }
 
-    /** Validator list with load (fetched from node via Load from node). */
+    
     fun getValidatorNodes(): List<ValidatorNodeInfo> {
         val json = prefs.getString(KEY_VALIDATOR_NODES, null) ?: return emptyList()
         return try {
@@ -115,7 +144,6 @@ class ConnectionManager(context: Context) {
             })
         }
         prefs.edit().putString(KEY_VALIDATOR_NODES, arr.toString()).apply()
-        // By default external connections use host without explicit port (80/443 via proxy).
         setAutoIps(nodes.map { it.ip })
     }
     
@@ -132,7 +160,7 @@ class ConnectionManager(context: Context) {
     }
     
     fun isAutoSelectEnabled(): Boolean {
-        return prefs.getBoolean(KEY_AUTO_SELECT_ENABLED, true) // Enabled by default
+        return prefs.getBoolean(KEY_AUTO_SELECT_ENABLED, true)
     }
     
     fun setAutoSelectEnabled(enabled: Boolean) {
@@ -163,7 +191,6 @@ class ConnectionManager(context: Context) {
                 if (selectedIp != null && getAutoIps().contains(selectedIp)) {
                     return toBaseUrl(selectedIp)
                 }
-                // Auto-select: when validator list exists pick least loaded (most free slots)
                 val nodes = getValidatorNodes()
                 if (nodes.isNotEmpty()) {
                     val best = nodes.filter { it.isActive && !it.isOverloaded }.maxByOrNull { it.minerSlotsFree }
@@ -176,7 +203,7 @@ class ConnectionManager(context: Context) {
         }
     }
 
-    /** All mining node candidates: manual — one node, auto — all in list. Used to pick a node with an active validator. */
+    
     fun getCandidateBaseUrls(): List<String> {
         fun toBaseUrl(endpoint: String): String {
             val value = endpoint.trim()

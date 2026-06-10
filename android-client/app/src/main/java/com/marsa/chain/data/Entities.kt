@@ -31,13 +31,13 @@ data class WalletInfo(
     val name: String = "Wallet ${address.takeLast(8)}",
     val createdAt: Long = System.currentTimeMillis(),
     val isActive: Boolean = false,
-    /** `hd` — from mnemonic (SLIP-0010); `imported` — key import or legacy entries. */
+    
     val walletType: String = "imported",
-    /** Index for `m/44'/78213'/0'/0'/index'`; null for imported. */
+    
     val hdIndex: Int? = null
 )
 
-/** Wallet in trash after removal from list (kept for limited time). */
+
 @Entity(tableName = "deleted_wallets")
 data class DeletedWalletInfo(
     @PrimaryKey val address: String,
@@ -209,7 +209,6 @@ abstract class AppDatabase : RoomDatabase() {
         
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Create new wallets table
                 database.execSQL("""
                     CREATE TABLE IF NOT EXISTS wallets (
                         address TEXT NOT NULL PRIMARY KEY,
@@ -225,7 +224,6 @@ abstract class AppDatabase : RoomDatabase() {
         
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Create transactions table
                 database.execSQL("""
                     CREATE TABLE IF NOT EXISTS transactions (
                         txid TEXT NOT NULL PRIMARY KEY,

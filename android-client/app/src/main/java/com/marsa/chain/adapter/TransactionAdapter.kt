@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.marsa.chain.R
 import com.marsa.chain.data.TransactionEntity
 import com.marsa.chain.utils.CoinFormatter
+import com.marsa.chain.utils.TxKindHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionAdapter(
     private var transactions: List<TransactionEntity>,
-    var userAddresses: List<String>, // was val, now var
+    var userAddresses: List<String>,
     private val onTransactionClick: (TransactionEntity) -> Unit
 ) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
@@ -41,11 +42,9 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactions[position]
         
-        // Determine transaction type for user
         val transactionType = getTransactionTypeForUser(transaction)
         val displayAmount = getDisplayAmount(transaction)
         
-        // Set icon and type label
         when (transactionType) {
             "send" -> {
                 holder.typeIcon.setImageResource(R.drawable.send_money)
@@ -72,6 +71,22 @@ class TransactionAdapter(
                 holder.amountText.text = CoinFormatter.format(transaction.amount)
                 holder.amountText.setTextColor(holder.itemView.context.getColor(R.color.color_internal))
             }
+            "miner_stake" -> bindStakeRow(holder, transaction, R.string.tx_kind_miner_stake)
+            "miner_unstake" -> bindStakeRow(holder, transaction, R.string.tx_kind_miner_unstake, debit = false)
+            "miner_pool_stake" -> bindStakeRow(holder, transaction, R.string.tx_kind_miner_pool_stake)
+            "miner_pool_unstake" -> bindStakeRow(holder, transaction, R.string.tx_kind_miner_pool_unstake, debit = false)
+            "stake", "unstake" -> bindStakeRow(
+                holder,
+                transaction,
+                if (transactionType == "stake") R.string.tx_kind_stake else R.string.tx_kind_unstake,
+                debit = transactionType == "stake"
+            )
+            "validator_reward" -> {
+                holder.typeIcon.setImageResource(R.drawable.ic_mining2)
+                holder.typeText.text = holder.itemView.context.getString(R.string.tx_kind_validator_reward)
+                holder.amountText.text = "+${CoinFormatter.format(transaction.amount)}"
+                holder.amountText.setTextColor(holder.itemView.context.getColor(R.color.color_mining))
+            }
             else -> {
                 holder.typeIcon.setImageResource(android.R.drawable.ic_menu_help)
                 holder.typeText.text = "Unknown"
@@ -80,29 +95,29 @@ class TransactionAdapter(
             }
         }
         
-        // Address route (short form)
         val shortFrom = formatAddress(transaction.fromAddress)
         val shortTo = formatAddress(transaction.toAddress)
         val routeText: String = when (transactionType) {
-            "mining" -> "⚒ mining → $shortTo"
+            "mining", "validator_reward" -> "⚒ mining → $shortTo"
+            "miner_stake", "miner_unstake", "miner_pool_stake", "miner_pool_unstake", "stake", "unstake" ->
+                holder.itemView.context.getString(R.string.tx_route_stake, shortFrom)
             "send", "internal" -> "$shortFrom → $shortTo"
             "receive" -> "$shortFrom → $shortTo"
             else -> "$shortFrom → $shortTo"
         }
         holder.addressText.text = routeText
-        // Can style with different colors if desired, e.g. send/receive
         when (transactionType) {
             "send" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_send))
             "receive" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_send))
-            "mining" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_mining))
+            "mining", "validator_reward" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_mining))
             "internal" -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_internal))
+            "miner_stake", "miner_unstake", "miner_pool_stake", "miner_pool_unstake", "stake", "unstake" ->
+                holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_internal))
             else -> holder.addressText.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.color_unknown))
         }
         
-        // Set time
         holder.timeText.text = dateFormat.format(Date(transaction.timestamp))
         
-        // Set status
         val displayStatus = when {
             transaction.type == "mining" -> "Success ⚒"
             chainHeight != null && transaction.blockHeight != null -> {
@@ -122,7 +137,6 @@ class TransactionAdapter(
             else -> holder.statusText.setTextColor(holder.itemView.context.getColor(R.color.color_confirmed))
         }
         
-        // Set confirmations (Bitcoin-style)
         if (transaction.type != "mining") {
             val conf = when {
                 chainHeight != null && transaction.blockHeight != null -> {
@@ -140,7 +154,6 @@ class TransactionAdapter(
             holder.confirmationsText.visibility = View.GONE
         }
         
-        // Click handler
         holder.itemView.setOnClickListener {
             onTransactionClick(transaction)
         }
@@ -162,18 +175,20 @@ class TransactionAdapter(
         notifyDataSetChanged()
     }
 
-    private fun getTransactionTypeForUser(transaction: TransactionEntity): String {
-        val isFromUser = userAddresses.contains(transaction.fromAddress)
-        val isToUser = userAddresses.contains(transaction.toAddress)
-        val isCoinbaseId = transaction.txid.endsWith("_cb")
-        
-        return when {
-            transaction.type == "mining" || transaction.fromAddress == "mining_reward" || isCoinbaseId -> "mining"
-            isFromUser && isToUser -> "internal"
-            isFromUser -> "send"
-            isToUser -> "receive"
-            else -> "unknown"
-        }
+    private fun getTransactionTypeForUser(transaction: TransactionEntity): String =
+        TxKindHelper.classifyForUser(transaction, userAddresses)
+
+    private fun bindStakeRow(
+        holder: TransactionViewHolder,
+        transaction: TransactionEntity,
+        labelRes: Int,
+        debit: Boolean = true
+    ) {
+        holder.typeIcon.setImageResource(R.drawable.miner_stake)
+        holder.typeText.text = holder.itemView.context.getString(labelRes)
+        val total = TxKindHelper.stakeDebitAmount(transaction)
+        holder.amountText.text = if (debit) "-${CoinFormatter.format(total)}" else CoinFormatter.format(transaction.amount)
+        holder.amountText.setTextColor(holder.itemView.context.getColor(R.color.color_internal))
     }
 
     private fun getDisplayAmount(transaction: TransactionEntity): Long {

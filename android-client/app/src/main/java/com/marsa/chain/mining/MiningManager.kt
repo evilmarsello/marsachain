@@ -45,7 +45,7 @@ class MiningManager(
     private val lastAttemptMutex = Mutex()
     private var lastAttemptTs = 0L
 
-    /** Queue (nonce, challenge) from first node; credits deducted on issue. */
+    
     private val pendingQueue = ArrayDeque<PendingSlot>()
     private val queueMutex = Mutex()
 
@@ -80,7 +80,6 @@ class MiningManager(
 
         _status.value = MiningStatus.Attempting
 
-        // Only nodes with active validator (stake) accept mining blocks
         val miningNodes = mutableListOf<String>()
         for (n in nodes) {
             if (hasActiveValidator(n)) miningNodes.add(n)
@@ -112,7 +111,6 @@ class MiningManager(
 
         val statusResp = service0.getStatus()
         if (!statusResp.success || statusResp.data == null) {
-            // Return slot — challenge still usable
             queueMutex.withLock { pendingQueue.addFirst(slot) }
             val res = MiningStatus.Result(false, 0, "Не удалось получить status (height)")
             _status.value = res
@@ -171,7 +169,6 @@ class MiningManager(
 
         val attestation = "stub-attestation"
 
-        // Prepare request (claimedHeight = next block after current height)
         val submitReq = MiningSubmitRequest(
             address = address,
             challengeId = challenge.challengeId,
@@ -184,7 +181,6 @@ class MiningManager(
             nonce = nonceStr
         )
 
-        // Submit to N nodes in parallel (only nodes with active validator)
         val selected = miningNodes.take(parallelSubmissions)
         var confirmations = 0
         val tasks = selected.map { base ->
@@ -210,16 +206,12 @@ class MiningManager(
         return@withContext res
     }
 
-    /**
-     * Reset queue (e.g. wallet / node change).
-     */
+    
     suspend fun clearPendingQueue() {
         queueMutex.withLock { pendingQueue.clear() }
     }
 
-    /**
-     * One open challenge per address per node; new request drops previous unused.
-     */
+    
     private suspend fun refillPendingQueue(service: FullnodeService): Boolean {
         val available = loadAvailableCredits(service)
         if (available == 0) return false
@@ -249,10 +241,7 @@ class MiningManager(
         return true
     }
 
-    /**
-     * Available credits for batch. If MINER_STAKE not active on node or response missing —
-     * use [MAX_PENDING_ON_SERVER] (legacy fallback without active MINER_STAKE on node).
-     */
+    
     private suspend fun loadAvailableCredits(service: FullnodeService): Int {
         return try {
             val resp = service.getMiningInfo(address)
@@ -296,7 +285,7 @@ class MiningManager(
     }
 
     companion object {
-        /** Matches MiningParams::MAX_PENDING_CHALLENGES_PER_ADDRESS on node. */
+        
         private const val MAX_PENDING_ON_SERVER = 1
     }
 }

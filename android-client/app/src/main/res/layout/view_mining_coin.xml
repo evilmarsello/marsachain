@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:id="@+id/miningCoinTap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/circular_mining_button"
+        android:clickable="true"
+        android:focusable="true">
+
+        <FrameLayout
+            android:id="@+id/miningCoinInner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/miningFaceSolo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/miningFaceSoloText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="MRS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/mining_button_text"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/miningFacePool"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:rotationY="180">
+
+                <TextView
+                    android:id="@+id/miningFacePoolText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="MRS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/mining_button_text"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/miningFacePoolIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_pool" />
+            </FrameLayout>
+
+        </FrameLayout>
+    </FrameLayout>
+
+</merge>

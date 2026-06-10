@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create MINER_STAKE"
+        android:text="@string/stake_title"
         android:textSize="26sp"
         android:fontFamily="sans-serif-medium"
         android:textStyle="bold"
@@ -21,7 +21,6 @@
         android:id="@+id/tvBalanceInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Wallet Balance: 0 MRS"
         android:textSize="14sp"
         android:fontFamily="sans-serif"
         android:textColor="#8E8E93"
@@ -29,9 +28,9 @@
         android:layout_gravity="center" />
 
     <TextView
+        android:id="@+id/tvStakeMinHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Minimum stake: 100 MRS"
         android:textSize="13sp"
         android:fontFamily="sans-serif"
         android:textColor="#8E8E93"
@@ -41,7 +40,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Amount to Stake (MRS)"
+        android:text="@string/stake_amount_label"
         android:textSize="15sp"
         android:fontFamily="sans-serif-medium"
         android:textColor="#8E8E93"
@@ -59,12 +58,12 @@
         android:textColorHint="#636366"
         android:background="@drawable/input_background"
         android:padding="12dp"
-        android:hint="Enter amount (e.g., 100-)" />
+        android:hint="@string/stake_amount_placeholder" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You will receive mining credits based on your stake"
+        android:text="@string/stake_credits_hint"
         android:textSize="13sp"
         android:fontFamily="sans-serif"
         android:textColor="#8E8E93"
@@ -74,7 +73,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Credits refill every 100 blocks"
+        android:text="@string/stake_refill_hint"
         android:textSize="13sp"
         android:fontFamily="sans-serif"
         android:textColor="#8E8E93"
@@ -84,7 +83,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Coins will be locked until unlock block"
+        android:text="@string/stake_lock_hint"
         android:textSize="13sp"
         android:fontFamily="sans-serif"
         android:textColor="#8E8E93"
@@ -102,7 +101,7 @@
             android:layout_height="@dimen/button_height"
             android:layout_weight="1"
             android:layout_marginEnd="10dp"
-            android:text="Cancel"
+            android:text="@string/common_cancel"
             android:textSize="17sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="#FFFFFF"
@@ -114,7 +113,7 @@
             android:layout_height="@dimen/button_height"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:text="Create Stake"
+            android:text="@string/stake_create_btn"
             android:textSize="17sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="#FFFFFF"

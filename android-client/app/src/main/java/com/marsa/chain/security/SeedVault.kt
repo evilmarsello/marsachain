@@ -5,9 +5,7 @@ import android.util.Base64
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
-/**
- * Encrypted storage for BIP39 seed (64-byte PBKDF2) per spec §4.8.
- */
+
 class SeedVault(context: Context) {
     private val appContext = context.applicationContext
 

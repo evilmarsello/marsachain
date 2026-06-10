@@ -6,7 +6,7 @@
             <solid android:color="#44000000" />
         </shape>
     </item>
-    <!-- Main circle with gradient (symmetric insets — circle center = button center, else glow shifts down-right) -->
+    <!-- Main circle with gradient (симметричные inset — центр круга = центр кнопки, иначе свечение «уезжает» вправо-вниз) -->
     <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="4dp">
         <shape android:shape="oval">
             <gradient

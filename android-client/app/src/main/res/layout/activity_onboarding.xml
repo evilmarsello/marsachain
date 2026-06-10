@@ -8,23 +8,20 @@
     android:filterTouchesWhenObscured="true"
     android:orientation="vertical">
 
-    <!-- Top bar: current step title only (no logo) -->
+    
     <LinearLayout
+        android:id="@+id/onboardingTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1C1C1E"
         android:elevation="4dp"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:background="#1C1C1E" />
+        android:orientation="vertical"
+        android:paddingBottom="0dp">
 
         <TextView
             android:id="@+id/tvToolbarTitle"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="36dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:paddingStart="20dp"
@@ -34,7 +31,7 @@
             android:textSize="15sp" />
     </LinearLayout>
 
-    <!-- Logo centered, wordmark below centered; greeting below -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -501,4 +498,37 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <!-- Language bar — fixed at bottom (TMA onb-lang-bar) -->
+    <LinearLayout
+        android:id="@+id/onboardingLangBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1C1C1E"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/language_title"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <include
+            android:id="@+id/onboardingLocalePicker"
+            layout="@layout/locale_picker_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </LinearLayout>

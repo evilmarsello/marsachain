@@ -15,6 +15,8 @@ import com.marsa.chain.OnboardingActivity
 import com.marsa.chain.R
 import com.marsa.chain.databinding.FragmentSettingsBinding
 import com.marsa.chain.manager.WalletManager
+import com.marsa.chain.ui.LocalePickerHelper
+import com.marsa.chain.pool.PoolHelper
 import com.marsa.chain.network.ApiClient
 import com.marsa.chain.network.TransactionInput
 import com.marsa.chain.network.TransactionOutput
@@ -35,6 +37,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var walletManager: WalletManager
     private lateinit var api: ApiClient
+    private var localePicker: LocalePickerHelper? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +54,7 @@ class SettingsFragment : Fragment() {
         walletManager = WalletManager(requireContext())
         api = ApiClient(requireContext())
 
+        setupLocalePicker()
         setupUI()
     }
 
@@ -59,22 +63,34 @@ class SettingsFragment : Fragment() {
         refreshMinerUnstakeButtonState()
     }
 
+    private fun setupLocalePicker() {
+        val picker = binding.settingsLocalePicker
+        localePicker = LocalePickerHelper(
+            context = requireContext(),
+            anchor = picker.localePickerRow,
+            valueView = picker.localePickerValue,
+            chevronView = picker.localePickerChevron
+        ) {
+            requireActivity().recreate()
+        }.also { it.bind() }
+    }
+
     private fun setupUI() {
         binding.minerUnstakeButton.setOnClickListener {
             if (!binding.minerUnstakeButton.isEnabled) return@setOnClickListener
-            val dialogView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_miner_unstake_confirm, null, false)
-            val dialog = AlertDialog.Builder(requireContext())
-                .setView(dialogView)
-                .create()
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            dialogView.findViewById<View>(R.id.btnMinerUnstakeClose).setOnClickListener { dialog.dismiss() }
-            dialogView.findViewById<View>(R.id.btnMinerUnstakeCancel).setOnClickListener { dialog.dismiss() }
-            dialogView.findViewById<View>(R.id.btnMinerUnstakeSend).setOnClickListener {
-                dialog.dismiss()
-                submitMinerUnstake()
+            viewLifecycleOwner.lifecycleScope.launch {
+                val wallet = withContext(Dispatchers.IO) { walletManager.getActiveWallet() } ?: return@launch
+                val info = withContext(Dispatchers.IO) { api.getMiningInfo(wallet.address) }
+                if (PoolHelper.miningInfoIsPoolStake(info)) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.settings_pool_unstake_blocked),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+                showMinerUnstakeDialog()
             }
-            dialog.show()
         }
 
         binding.connectionsButton.setOnClickListener {
@@ -89,11 +105,35 @@ class SettingsFragment : Fragment() {
             showAboutMarsaChain()
         }
 
+        binding.networkConfigButton.setOnClickListener {
+            showNetworkConfig()
+        }
+
+        binding.socialMediaButton.setOnClickListener {
+            showSocialMedia()
+        }
+
         binding.resetWalletFromPhraseButton.setOnClickListener {
             showWalletResetConfirmDialog()
         }
 
         binding.settingsAppVersionText.text = readVersionNameFromPackage()
+    }
+
+    private fun showMinerUnstakeDialog() {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_miner_unstake_confirm, null, false)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialogView.findViewById<View>(R.id.btnMinerUnstakeClose).setOnClickListener { dialog.dismiss() }
+        dialogView.findViewById<View>(R.id.btnMinerUnstakeCancel).setOnClickListener { dialog.dismiss() }
+        dialogView.findViewById<View>(R.id.btnMinerUnstakeSend).setOnClickListener {
+            dialog.dismiss()
+            submitMinerUnstake()
+        }
+        dialog.show()
     }
 
     private fun refreshMinerUnstakeButtonState() {
@@ -105,7 +145,8 @@ class SettingsFragment : Fragment() {
                 return@launch
             }
             val info = withContext(Dispatchers.IO) { api.getMiningInfo(active.address) }
-            val hasStake = info?.has_stake == true
+            val isPoolStake = PoolHelper.miningInfoIsPoolStake(info)
+            val hasStake = info?.has_stake == true && !isPoolStake
             val canUnstake = info?.can_unstake != false
             val enabled = hasStake && canUnstake
             binding.minerUnstakeButton.isEnabled = enabled
@@ -158,9 +199,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    /**
-     * Same txid prefix as MINER_STAKE in MiningFragment: … + tx_type + data (for unstake data = "0").
-     */
+    
     private fun buildMinerUnstakeTransactionRequest(
         from: String,
         publicKey: String,
@@ -270,7 +309,7 @@ class SettingsFragment : Fragment() {
             .addToBackStack("connections")
             .commit()
 
-        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton("Connections")
+        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton(getString(R.string.title_connections))
     }
 
     private fun showAbout() {
@@ -278,7 +317,7 @@ class SettingsFragment : Fragment() {
             .replace(R.id.contentFrame, AboutFragment())
             .addToBackStack("about")
             .commit()
-        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton("About")
+        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton(getString(R.string.title_about))
     }
 
     private fun showAboutMarsaChain() {
@@ -286,7 +325,27 @@ class SettingsFragment : Fragment() {
             .replace(R.id.contentFrame, AboutMarsaChainFragment())
             .addToBackStack("about_marsa_chain")
             .commit()
-        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton("About Marsa Chain")
+        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton(getString(R.string.title_about_marsa))
+    }
+
+    private fun showNetworkConfig() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.contentFrame, NetworkConfigFragment())
+            .addToBackStack("network_config")
+            .commit()
+        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton(
+            getString(R.string.network_config_title)
+        )
+    }
+
+    private fun showSocialMedia() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.contentFrame, SocialMediaFragment())
+            .addToBackStack("social_media")
+            .commit()
+        (requireActivity() as? com.marsa.chain.MainActivity)?.showBackButton(
+            getString(R.string.social_media_title)
+        )
     }
 
     private fun readVersionNameFromPackage(): String {
@@ -303,6 +362,8 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        localePicker?.dismiss()
+        localePicker = null
         super.onDestroyView()
         _binding = null
     }

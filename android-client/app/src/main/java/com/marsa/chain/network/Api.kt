@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 object Api {
@@ -15,7 +16,6 @@ object Api {
 
     private val gson = Gson()
 
-    // BODY clutters logs polling /status every 5–10s; NONE keeps app logs only
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.NONE
     }
@@ -23,7 +23,7 @@ object Api {
     private val defaultClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS) // Increased for mining submit
+        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
@@ -48,16 +48,13 @@ data class HeaderDTO(
     val nonce: Int
 )
 
-/** commitment = H(nonce) hex (64 chars), optional — anti nonce brute-force. */
+
 data class ChallengeRequest(val address: String, val pubKey: String, val commitment: String? = null)
 
-/** bits — compact target at issue time (as on node); for local PoW before submit. */
+
 data class ChallengeResponse(val challengeId: String, val challenge: String, val expiresAt: Long, val bits: Int? = null)
 
-/**
- * Node response: when success=false error/reason present, data may be missing in JSON.
- * Do not use non-null data — Gson fails on error body and client only sees generic catch.
- */
+
 data class ApiResponse<T>(
     val success: Boolean = false,
     val data: T? = null,
@@ -79,7 +76,7 @@ data class MiningSubmitRequest(
     val nonce: String
 )
 
-/** POST /mining/challenge/abandon — close challenge without block (local PoW failed). */
+
 data class ChallengeAbandonRequest(
     val address: String,
     val challengeId: String,
@@ -89,9 +86,9 @@ data class ChallengeAbandonRequest(
 
 data class ChallengeAbandonResult(val abandoned: Boolean? = null)
 
-/** Mining API constants (in sync with fullnode). */
+
 object MiningApi {
-    /** UTF-8 string for Ed25519; node verifies Crypto::verify(pubKey, message, signature). */
+    
     fun abandonSignMessage(address: String, challengeId: String): String =
         "marsa:mining:abandon:v1:$challengeId:$address"
 }
@@ -107,17 +104,15 @@ data class MerkleProof(
     val height: Int
 )
 
-/** height, target, bits/difficulty — for client difficulty display (mining does not filter by bits). */
+
 data class StatusDTO(val height: Int, val target: Int, val difficulty: Int? = null, val bits: Int? = null)
 
-// Legacy format (backward compatible)
 data class BalanceDTO(val address: String, val balance: Long)
 
-// New format with fractional coins
 data class WalletBalanceDTO(
     val address: String,
-    val balance: String, // Formatted string (e.g. "5000.00")
-    val balance_wei: String? = null, // smallest units (wei), 1 coin = 10^8 wei
+    val balance: String,
+    val balance_wei: String? = null,
     val frozen_balance: String? = null,
     val frozen_balance_wei: String? = null,
     val available_balance: String? = null,
@@ -147,13 +142,14 @@ data class TransactionRequest(
     val inputs: List<TransactionInput>,
     val outputs: List<TransactionOutput>,
     val fee: Long,
-    val tx_type: Int = 0,  // 0 = REGULAR, 10 = MINER_STAKE, 11 = MINER_UNSTAKE
+    val tx_type: Int = 0,  // 0 = REGULAR, 10 = MINER_STAKE, 11 = MINER_UNSTAKE, 13/14 = pool
     val data: String = "",  // JSON data for special transactions
     val metadata: Map<String, Any>? = null  // Metadata for STAKE/MINER_STAKE transactions
 )
 
 data class MiningStatsDTO(
     val activeMiners: Int,
+    val stakedMiners: Int = 0,
     val totalMiners: Int,
     val blocksPerHour: Int,
     val averageHashrate: Double
@@ -179,7 +175,7 @@ data class AddressTxDTO(
     val type: String
 )
 
-/** GET /validators response: node validators (check active stake and pick by load). */
+
 data class ValidatorDTO(
     val node_id: String?,
     val wallet_address: String?,
@@ -202,16 +198,14 @@ data class ValidatorsResponseDTO(
 )
 
 // ========================================================================
-// MINER_STAKE: mining stake info
 // ========================================================================
 
-/** MINER_STAKE info for address (matches node API) */
+
 data class MinerStakeInfoDTO(
     val address: String,
     val current_height: Int,
     val miner_stake_active: Boolean,
     val has_stake: Boolean,
-    // If stake exists:
     val staked_amount: Long? = null,  // wei
     val staked_amount_formatted: String? = null,
     val unlock_block: Int? = null,
@@ -229,11 +223,13 @@ data class MinerStakeInfoDTO(
     val can_unstake: Boolean? = null,
     val blocks_until_can_unstake: Int? = null,
     val min_miner_stake_lock_blocks: Int? = null,
-    // If no stake:
     val min_stake_amount: Long? = null,
     val min_stake_formatted: String? = null,
     val min_stake_duration: Int? = null,
-    val max_stake_duration: Int? = null
+    val max_stake_duration: Int? = null,
+    val is_pool_stake: Boolean? = null,
+    val stake_type: String? = null,
+    val pool_bind_active: Boolean? = null
 )
 
 interface FullnodeService {
@@ -277,11 +273,20 @@ interface FullnodeService {
         @Query("limit") limit: Int? = null
     ): ApiResponse<List<AddressTxDTO>>
 
-    /** Node validator list. Node OK for mining if at least one validator has is_active. */
+    
     @GET("validators")
     suspend fun getValidators(): ApiResponse<ValidatorsResponseDTO>
     
-    /** Get MINER_STAKE info for address */
+    
     @GET("account/mining_info")
     suspend fun getMiningInfo(@Query("address") address: String): ApiResponse<MinerStakeInfoDTO>
+
+    @GET("pool/official/list")
+    suspend fun getOfficialPoolsList(): ApiResponse<OfficialPoolsListDTO>
+
+    @GET("pool/bind/{address}")
+    suspend fun getPoolBind(@Path("address") address: String): ApiResponse<PoolBindInfo>
+
+    @GET("pool/member/{address}")
+    suspend fun getPoolMember(@Path("address") address: String): ApiResponse<PoolMemberInfo>
 }

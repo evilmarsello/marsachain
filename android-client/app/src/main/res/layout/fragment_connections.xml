@@ -314,6 +314,68 @@
 
         </LinearLayout>
 
+        <!-- Pool API (optional override) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/connection_pool_api_title"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/connection_pool_api_hint"
+                android:textColor="#8E8E93"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/poolApiUrlEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/input_background"
+                android:fontFamily="sans-serif"
+                android:hint="@string/connection_pool_api_placeholder"
+                android:inputType="textUri"
+                android:padding="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#8E8E93"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/poolApiResolvedText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="#8E8E93"
+                android:textSize="12sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/savePoolApiButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:background="@drawable/send_button_background"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/connection_pool_api_save"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

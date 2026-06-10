@@ -1,53 +1,52 @@
 package com.marsa.chain.fragments
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marsa.chain.R
-import com.marsa.chain.adapter.TransactionAdapter
+import com.marsa.chain.adapter.WalletTxAdapter
 import com.marsa.chain.data.TransactionEntity
 import com.marsa.chain.manager.TransactionManager
 import com.marsa.chain.manager.WalletManager
+import com.marsa.chain.manager.WalletTxSync
+import com.marsa.chain.utils.TxKindHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HistoryFragment : Fragment() {
+
     private lateinit var walletManager: WalletManager
     private lateinit var transactionManager: TransactionManager
     private lateinit var api: com.marsa.chain.network.ApiClient
-    @Volatile private var latestTransactions: List<TransactionEntity> = emptyList()
-    private var confirmationsJob: kotlinx.coroutines.Job? = null
-    private var lastChainHeight: Int = -1
-    private val nextPollAtMs = java.util.concurrent.ConcurrentHashMap<String, Long>()
+    private lateinit var walletTxSync: WalletTxSync
 
     private var allTransactions = listOf<TransactionEntity>()
+    private var addresses = listOf<String>()
+    private var adapter: WalletTxAdapter? = null
+    private var collectJob: Job? = null
+    private var filterPopup: PopupWindow? = null
+
     private var currentFilter = "all"
-    private lateinit var addresses: List<String>
-    private var adapter: TransactionAdapter? = null
-    
-    // Pagination
-    private var currentPage = 0
-    private val pageSize = 10
-    private var isLoading = false
-    private var hasMoreData = true
+    private var visibleCount = PAGE_SIZE
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_history, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_history, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,375 +54,184 @@ class HistoryFragment : Fragment() {
         walletManager = WalletManager(requireContext())
         transactionManager = TransactionManager(requireContext())
         api = com.marsa.chain.network.ApiClient(requireContext())
-
-
-        val titleText = view.findViewById<TextView>(R.id.titleText)
-        titleText?.text = "History"
+        walletTxSync = WalletTxSync(requireContext(), transactionManager, api)
+        api.updateBaseUrl(requireContext())
 
         val recycler = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.transactionsRecyclerView)
-        val emptyState = view.findViewById<LinearLayout>(R.id.emptyStateLayout)
+        val statusText = view.findViewById<TextView>(R.id.historyStatusText)
+        val filterTrigger = view.findViewById<View>(R.id.historyFilterTrigger)
+        val filterLabel = view.findViewById<TextView>(R.id.historyFilterLabel)
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
+        adapter = WalletTxAdapter(emptyList(), "")
+        recycler.adapter = adapter
 
-        // Filter buttons
-        var filterAll = view.findViewById<Button>(R.id.filterAllButton)
-        var filterSent = view.findViewById<Button>(R.id.filterSentButton)
-        var filterReceived = view.findViewById<Button>(R.id.filterReceivedButton)
-        var filterMining = view.findViewById<Button>(R.id.filterMiningButton)
+        filterTrigger.setOnClickListener { toggleFilterMenu(filterTrigger, filterLabel, recycler, statusText) }
 
-        // Assign click handlers immediately
-        filterAll.setOnClickListener {
-            android.util.Log.d("HistoryFragment", "CLICK: filterAll")
-            currentFilter = "all"
-            currentPage = 0 // Reset pagination on filter change
-            updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState)
-        }
-        filterSent.setOnClickListener {
-            android.util.Log.d("HistoryFragment", "CLICK: filterSent")
-            currentFilter = "send"
-            currentPage = 0 // Reset pagination on filter change
-            updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState)
-        }
-        filterReceived.setOnClickListener {
-            android.util.Log.d("HistoryFragment", "CLICK: filterReceived")
-            currentFilter = "receive"
-            currentPage = 0 // Reset pagination on filter change
-            updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState)
-        }
-        filterMining.setOnClickListener {
-            android.util.Log.d("HistoryFragment", "CLICK: filterMining")
-            currentFilter = "mining"
-            currentPage = 0 // Reset pagination on filter change
-            updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState)
-        }
+        recycler.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val lm = rv.layoutManager as? LinearLayoutManager ?: return
+                val last = lm.findLastVisibleItemPosition()
+                val total = lm.itemCount
+                if (last >= total - 3 && visibleCount < applyFilter(allTransactions).size) {
+                    visibleCount += PAGE_SIZE
+                    paintList(recycler, statusText)
+                }
+            }
+        })
 
-        // Rest — data loading
-        lifecycleScope.launch {
-            // Clear all tx history before load
-            withContext(Dispatchers.IO) { transactionManager.clearAllTransactions() }
+        viewLifecycleOwner.lifecycleScope.launch {
+            statusText.visibility = View.VISIBLE
+            statusText.text = getString(R.string.common_loading)
+            recycler.visibility = View.GONE
+
             val wallets = withContext(Dispatchers.IO) { walletManager.getAllWallets().first() }
             addresses = wallets.map { it.address }
-            adapter = TransactionAdapter(
-                transactions = emptyList(),
-                userAddresses = addresses,
-                onTransactionClick = { tx -> showTransactionDetails(tx) }
-            )
-            recycler.adapter = adapter
-
-            // Add scroll listener for loading more
-            recycler.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    
-                    val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-                    if (layoutManager != null && !isLoading && hasMoreData) {
-                        val visibleItemCount = layoutManager.childCount
-                        val totalItemCount = layoutManager.itemCount
-                        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                        
-                        // When user nears list end (3 items left)
-                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 3 && firstVisibleItemPosition >= 0) {
-                            loadMoreTransactions()
-                        }
-                    }
-                }
-            })
-
-            // Immediate one-shot reconciliation: update blockHeight from /address/transactions
-            launch(Dispatchers.IO) {
-                try {
-                    val snapshot = transactionManager.getTransactionsForAddresses(addresses).first()
-                    
-                    for (addr in addresses) {
-                        val remoteTxs = api.getAddressTransactions(addr, limit = 200)
-                        
-                        for (rtx in remoteTxs) {
-                            val existing = snapshot.find { it.txid == rtx.txid }
-                            if (existing != null && existing.blockHeight == null && rtx.blockHeight != null) {
-                                transactionManager.updateTransaction(existing.copy(blockHeight = rtx.blockHeight))
-                            }
-                        }
-                    }
-                    
-                    // Right after reconciliation fetch chainHeight
-                    val status = runCatching { api.getStatus() }.getOrNull()
-                    val chainHeight = (status?.get("height") as? Int)
-                    if (chainHeight != null && chainHeight >= 0) {
-                        withContext(Dispatchers.Main) {
-                            adapter?.updateChainHeight(chainHeight)
-                        }
-                    }
-                } catch (_: Exception) { }
-            }
-            var imported = 0
-            for (addr in addresses) {
-                val remoteTxs = api.getAddressTransactions(addr, limit = 500)
-                withContext(Dispatchers.IO) {
-                    for (rtx in remoteTxs) {
-                        val existing = transactionManager.getTransactionById(rtx.txid)
-                        if (existing == null) {
-                            val baseTs = (if (rtx.timestamp > 10_000_000_000L) rtx.timestamp else rtx.timestamp * 1000L)
-                            val entity = when (rtx.type) {
-                                "send" -> transactionManager.createSendTransaction(
-                                    txid = rtx.txid,
-                                    fromAddress = rtx.fromAddress,
-                                    toAddress = rtx.toAddress,
-                                    amount = rtx.amount,
-                                    fee = rtx.fee
-                                ).copy(
-                                    blockHeight = rtx.blockHeight,
-                                    confirmations = 0,
-                                    timestamp = baseTs,
-                                    status = "pending"
-                                )
-                                "mining" -> transactionManager.createMiningTransaction(
-                                    txid = rtx.txid,
-                                    minerAddress = rtx.toAddress,
-                                    reward = rtx.amount,
-                                    blockHeight = rtx.blockHeight
-                                ).copy(
-                                    confirmations = 0,
-                                    timestamp = baseTs,
-                                    status = "pending"
-                                )
-                                else -> transactionManager.createReceiveTransaction(
-                                    txid = rtx.txid,
-                                    fromAddress = rtx.fromAddress,
-                                    toAddress = rtx.toAddress,
-                                    amount = rtx.amount,
-                                    fee = rtx.fee
-                                ).copy(
-                                    blockHeight = rtx.blockHeight,
-                                    confirmations = 0,
-                                    timestamp = baseTs,
-                                    status = "pending"
-                                )
-                            }
-                            transactionManager.addTransaction(entity)
-                            imported++
-                        }
-                    }
-                }
-            }
-            // Trigger history display right after load
-            transactionManager.getTransactionsForAddresses(addresses).collect { list ->
-                allTransactions = list
-                latestTransactions = list
-                updateFilteredList(recycler, emptyState)
+            if (addresses.isEmpty()) {
+                statusText.text = getString(R.string.history_no_wallets)
+                return@launch
             }
 
-            // Try raising entire filter container (buttons parent)
-            val filtersContainer = (filterAll.parent as? View)
-            filtersContainer?.let { fc ->
-                fc.isClickable = true
-                fc.isFocusable = true
-                try { androidx.core.view.ViewCompat.setElevation(fc, 16f) } catch (_: Throwable) {}
-                try { fc.translationZ = 16f } catch (_: Throwable) {}
-                fc.bringToFront()
-                fc.requestLayout()
-                fc.invalidate()
-
-                // Push list below filter bar via padding (more reliable than margin)
-                fc.post {
-                    recycler.clipToPadding = false
-                    val topPadding = fc.height.coerceAtLeast(8)
-                    if (recycler.paddingTop < topPadding) {
-                        recycler.setPadding(recycler.paddingLeft, topPadding, recycler.paddingRight, recycler.paddingBottom)
-                        recycler.requestLayout()
-                    }
-                }
+            val cached = withContext(Dispatchers.IO) {
+                transactionManager.getTransactionsForAddresses(addresses).first()
+            }
+            if (cached.isNotEmpty()) {
+                allTransactions = cached
+                visibleCount = PAGE_SIZE
+                paintList(recycler, statusText)
             }
 
-            // Ensure clickable and visible above list
-            listOf(filterAll, filterSent, filterReceived, filterMining).forEach { btn ->
-                btn?.isClickable = true
-                btn?.isEnabled = true
-                btn?.isFocusable = true
-                btn?.bringToFront()
-                try { androidx.core.view.ViewCompat.setElevation(btn!!, 18f) } catch (_: Throwable) {}
-                try { btn!!.translationZ = 18f } catch (_: Throwable) {}
+            withContext(Dispatchers.IO) {
+                walletTxSync.syncAddresses(addresses, forceNetwork = true)
             }
 
-            // Also lower list Z so it does not steal clicks
-            try { androidx.core.view.ViewCompat.setElevation(recycler, 0f) } catch (_: Throwable) {}
-            try { recycler.translationZ = 0f } catch (_: Throwable) {}
-
-            // Set initial state — only All button active
-            updateFilterButtons(currentFilter, filterAll, filterSent, filterReceived, filterMining)
-            updateFilteredList(recycler, emptyState) // so ALL works on first display
-
-            fun applyFilter(list: List<TransactionEntity>): List<TransactionEntity> = when (currentFilter) {
-                "send" -> list.filter { getTransactionTypeForUser(it, addresses) == "send" }
-                "receive" -> list.filter { getTransactionTypeForUser(it, addresses) == "receive" }
-                "mining" -> list.filter { getTransactionTypeForUser(it, addresses) == "mining" }
-                // Fixed: ALL now shows all user tx types including received
-                else -> list.filter {
-                    val t = getTransactionTypeForUser(it, addresses)
-                    t == "send" || t == "receive" || t == "internal" || t == "mining"
-                }
-            }
-
-            fun updateFilteredList(recycler: androidx.recyclerview.widget.RecyclerView, emptyState: LinearLayout) {
-                adapter?.updateUserAddresses(addresses)
-                val filtered = applyFilter(allTransactions)
-                
-                // Apply pagination: show only first (currentPage + 1) * pageSize items
-                val paginatedList = filtered.take((currentPage + 1) * pageSize)
-                hasMoreData = paginatedList.size < filtered.size
-                
-                adapter?.updateTransactions(paginatedList)
-                
-                if (paginatedList.isEmpty()) {
-                    recycler.visibility = View.GONE
-                    emptyState.visibility = View.VISIBLE
-                } else {
-                    recycler.visibility = View.VISIBLE
-                    emptyState.visibility = View.GONE
-                }
-            }
-            
-            // Start single smart loop: height polling
-            if (confirmationsJob == null) {
-                confirmationsJob = lifecycleScope.launch(Dispatchers.IO) {
-                    while (isActive) {
-                        try {
-                            // Fetch current height (1 request)
-                            val status = runCatching { api.getStatus() }.getOrNull()
-                            val chainHeight = (status?.get("height") as? Int) ?: lastChainHeight
-                            if (chainHeight >= 0) {
-                                lastChainHeight = chainHeight
-                                withContext(Dispatchers.Main) {
-                                    adapter?.updateChainHeight(chainHeight)
-                                }
-                            }
-
-                        } catch (_: Exception) { /* ignore single cycle errors */ }
-
-                        kotlinx.coroutines.delay(3000) // Poll /status every 3 seconds
-                    }
+            collectJob?.cancel()
+            collectJob = viewLifecycleOwner.lifecycleScope.launch {
+                transactionManager.getTransactionsForAddresses(addresses).collect { list ->
+                    if (!isAdded) return@collect
+                    allTransactions = list
+                    paintList(recycler, statusText)
                 }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Clear tx cache on app close
-        lifecycleScope.launch(Dispatchers.IO) {
-            transactionManager.clearAllTransactions()
+    private fun toggleFilterMenu(
+        trigger: View,
+        filterLabel: TextView,
+        recycler: androidx.recyclerview.widget.RecyclerView,
+        statusText: TextView
+    ) {
+        if (filterPopup?.isShowing == true) {
+            dismissFilterMenu()
+            return
         }
+        showFilterMenu(trigger, filterLabel, recycler, statusText)
     }
 
-    private suspend fun updateStats(addresses: List<String>, totalSent: TextView, totalReceived: TextView) {
-        var sent = 0L
-        var recv = 0L
-        val tm = transactionManager
-        withContext(Dispatchers.IO) {
-            addresses.forEach { addr ->
-                sent += tm.getTotalSent(addr)
-                recv += tm.getTotalReceived(addr)
+    private fun showFilterMenu(
+        trigger: View,
+        filterLabel: TextView,
+        recycler: androidx.recyclerview.widget.RecyclerView,
+        statusText: TextView
+    ) {
+        dismissFilterMenu()
+        val options = listOf(
+            "all" to getString(R.string.history_filter_all),
+            "send" to getString(R.string.history_filter_sent),
+            "receive" to getString(R.string.history_filter_received),
+            "mining" to getString(R.string.history_filter_mining),
+            "stakes" to getString(R.string.history_filter_stakes)
+        )
+        val menu = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(R.drawable.wallet_picker_menu_bg)
+        }
+        options.forEachIndexed { index, (key, label) ->
+            val item = layoutInflater.inflate(R.layout.item_wallet_picker_option, menu, false)
+            item.findViewById<TextView>(R.id.walletPickerOptionText).apply {
+                text = label
+                setTextColor(if (key == currentFilter) 0xFFFF9500.toInt() else 0xFFFFFFFF.toInt())
+            }
+            item.findViewById<View>(R.id.walletPickerOptionDot).visibility = View.GONE
+            item.setOnClickListener {
+                currentFilter = key
+                visibleCount = PAGE_SIZE
+                filterLabel.text = label
+                dismissFilterMenu()
+                paintList(recycler, statusText)
+            }
+            menu.addView(item)
+            if (index < options.lastIndex) {
+                val divider = View(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        (1 * resources.displayMetrics.density).toInt()
+                    )
+                    setBackgroundColor(0xFF2C2C2E.toInt())
+                }
+                menu.addView(divider)
             }
         }
-        totalSent.text = "$sent MRS"
-        totalReceived.text = "$recv MRS"
+        filterPopup = PopupWindow(menu, trigger.width, ViewGroup.LayoutParams.WRAP_CONTENT, true).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setOnDismissListener { filterPopup = null }
+        }
+        filterPopup?.showAsDropDown(trigger, 0, (4 * resources.displayMetrics.density).toInt(), Gravity.START)
     }
 
-    private fun showTransactionDetails(tx: TransactionEntity) {
-        // For now, we can reuse WalletFragment's dialog or implement later
-    }
-    
-    private fun getTransactionTypeForUser(transaction: TransactionEntity, userAddresses: List<String>): String {
-        val isFromUser = userAddresses.contains(transaction.fromAddress)
-        val isToUser = userAddresses.contains(transaction.toAddress)
-        val isCoinbaseId = transaction.txid.endsWith("_cb")
-        
-        return when {
-            transaction.type == "mining" || transaction.fromAddress == "mining_reward" || isCoinbaseId -> "mining"
-            isFromUser && isToUser -> "internal"
-            isFromUser -> "send"
-            isToUser -> "receive"
-            else -> "unknown"
-        }
+    private fun dismissFilterMenu() {
+        filterPopup?.dismiss()
+        filterPopup = null
     }
 
     private fun applyFilter(list: List<TransactionEntity>): List<TransactionEntity> = when (currentFilter) {
-        "send" -> list.filter { getTransactionTypeForUser(it, addresses) == "send" }
-        "receive" -> list.filter { getTransactionTypeForUser(it, addresses) == "receive" }
-        "mining" -> list.filter { getTransactionTypeForUser(it, addresses) == "mining" }
-        else -> list.filter {
-            val t = getTransactionTypeForUser(it, addresses)
-            t == "send" || t == "receive" || t == "internal" || t == "mining"
+        "send" -> list.filter { classify(it) == "send" }
+        "receive" -> list.filter { classify(it) == "receive" }
+        "mining" -> list.filter {
+            val k = classify(it)
+            k == "mining" || k == "validator_reward"
         }
+        "stakes" -> list.filter { TxKindHelper.isStakeKind(classify(it)) }
+        else -> list.filter { TxKindHelper.isHistoryAllKind(classify(it)) }
     }
 
-    private fun loadMoreTransactions() {
-        if (isLoading || !hasMoreData) return
-        
-        isLoading = true
-        currentPage++
-        
-        // Refresh list with new page
-        view?.let { v ->
-            val recycler = v.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.transactionsRecyclerView)
-            val emptyState = v.findViewById<LinearLayout>(R.id.emptyStateLayout)
-            updateFilteredList(recycler, emptyState)
-        }
-        
-        isLoading = false
-    }
-    
-    private fun updateFilteredList(recycler: androidx.recyclerview.widget.RecyclerView, emptyState: LinearLayout) {
-        adapter?.updateUserAddresses(addresses)
+    private fun classify(tx: TransactionEntity): String =
+        TxKindHelper.classifyForUser(tx, addresses)
+
+    private fun paintList(
+        recycler: androidx.recyclerview.widget.RecyclerView,
+        statusText: TextView
+    ) {
         val filtered = applyFilter(allTransactions)
-        adapter?.updateTransactions(filtered)
         if (filtered.isEmpty()) {
             recycler.visibility = View.GONE
-            emptyState.visibility = View.VISIBLE
-        } else {
-            recycler.visibility = View.VISIBLE
-            emptyState.visibility = View.GONE
+            statusText.visibility = View.VISIBLE
+            statusText.text = if (allTransactions.isEmpty()) {
+                getString(R.string.history_pull_hint)
+            } else {
+                getString(R.string.history_empty)
+            }
+            adapter?.update(emptyList(), "")
+            return
         }
+        statusText.visibility = View.GONE
+        recycler.visibility = View.VISIBLE
+        val slice = filtered.take(visibleCount)
+        adapter?.update(slice, addresses.firstOrNull().orEmpty())
     }
-    
-    private fun updateFilterButtons(currentFilter: String, filterAll: Button, filterSent: Button, filterReceived: Button, filterMining: Button) {
-        // Reset all buttons to inactive
-        filterAll.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
-        filterAll.setTextColor(requireContext().getColor(R.color.background_card))
-        
-        filterSent.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
-        filterSent.setTextColor(requireContext().getColor(R.color.background_card))
-        
-        filterReceived.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
-        filterReceived.setTextColor(requireContext().getColor(R.color.background_card))
-        
-        filterMining.background = requireContext().getDrawable(R.drawable.filter_button_inactive)
-        filterMining.setTextColor(requireContext().getColor(R.color.background_card))
-        
-        // Activate selected button
-        when (currentFilter) {
-            "all" -> {
-                filterAll.background = requireContext().getDrawable(R.drawable.send_button_background)
-                filterAll.setTextColor(requireContext().getColor(R.color.background_card))
-            }
-            "send" -> {
-                filterSent.background = requireContext().getDrawable(R.drawable.send_button_background)
-                filterSent.setTextColor(requireContext().getColor(R.color.background_card))
-            }
-            "receive" -> {
-                filterReceived.background = requireContext().getDrawable(R.drawable.send_button_background)
-                filterReceived.setTextColor(requireContext().getColor(R.color.background_card))
-            }
-            "mining" -> {
-                filterMining.background = requireContext().getDrawable(R.drawable.send_button_background)
-                filterMining.setTextColor(requireContext().getColor(R.color.background_card))
-            }
-        }
+
+    override fun onDestroyView() {
+        collectJob?.cancel()
+        collectJob = null
+        dismissFilterMenu()
+        adapter = null
+        super.onDestroyView()
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 20
     }
 }
-
-
-

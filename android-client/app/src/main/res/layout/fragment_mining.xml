@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -34,7 +35,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="6dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Total Balance"
+                    android:text="@string/mining_total_balance"
                     android:textColor="#8E8E93"
                     android:textSize="15sp" />
 
@@ -81,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="6dp"
                     android:layout_marginBottom="6dp"
                     android:gravity="end"
                     android:orientation="horizontal">
@@ -91,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="sans-serif-medium"
-                        android:text="Total blocks:"
+                        android:text="@string/mining_total_blocks"
                         android:textColor="#8E8E93"
                         android:textSize="11sp" />
 
@@ -99,7 +100,7 @@
                         android:id="@+id/networkHeightText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="6dp"
                         android:fontFamily="sans-serif-light"
                         android:text="..."
                         android:textColor="#FFFFFF"
@@ -112,7 +113,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="6dp"
                     android:layout_marginBottom="6dp"
                     android:gravity="end"
                     android:orientation="horizontal">
@@ -122,7 +123,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="sans-serif-medium"
-                        android:text="Active Miners:"
+                        android:text="@string/mining_active_miners"
                         android:textColor="#8E8E93"
                         android:textSize="11sp" />
 
@@ -130,7 +131,7 @@
                         android:id="@+id/activeMininersText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="6dp"
                         android:fontFamily="sans-serif-light"
                         android:text="0"
                         android:textColor="#FFFFFF"
@@ -143,7 +144,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="6dp"
                     android:gravity="end"
                     android:orientation="horizontal">
 
@@ -152,7 +153,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="sans-serif-medium"
-                        android:text="Difficulty:"
+                        android:text="@string/mining_difficulty"
                         android:textColor="#8E8E93"
                         android:textSize="11sp" />
 
@@ -160,7 +161,7 @@
                         android:id="@+id/difficultyText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="6dp"
                         android:fontFamily="sans-serif-light"
                         android:text="0"
                         android:textColor="#FFFFFF"
@@ -190,7 +191,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="6dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="Mining Stake: Not Active"
+                android:text="@string/mining_stake_lab"
                 android:textColor="#8E8E93"
                 android:textSize="11sp" />
 
@@ -220,7 +221,7 @@
 
         </LinearLayout>
 
-        <!-- Circular Mining Button with Glow Effect - Outside Card (square = glow circle without ellipse stretch) -->
+        
         <FrameLayout
             android:layout_width="@dimen/mining_glow_size"
             android:layout_height="@dimen/mining_glow_size"
@@ -229,7 +230,7 @@
 
             <!-- Glow Effect Background -->
 
-            <!-- Progress ring while waiting (node check, challenge, submit) -->
+            
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -243,28 +244,40 @@
                 android:layout_gravity="center"
                 android:visibility="gone" />
 
-            <!-- Main Mining Button -->
-            <Button
-                android:id="@+id/miningButton"
+            <com.marsa.chain.ui.MiningCoinView
+                android:id="@+id/miningCoinView"
                 android:layout_width="@dimen/mining_button_size"
                 android:layout_height="@dimen/mining_button_size"
-                android:layout_gravity="center"
-                android:background="@drawable/circular_mining_button"
-                android:text="MRS"
-                android:textColor="#FFFFFF"
-                android:textSize="@dimen/mining_button_text"
-                android:textStyle="bold" />
+                android:layout_gravity="center" />
 
-            <!-- Dark overlay to dim mining button -->
+            <!-- Dim only the coin — overlay text/buttons stay bright (above this layer) -->
             <View
                 android:id="@+id/miningButtonDimOverlay"
-                android:layout_width="@dimen/mining_glow_size"
-                android:layout_height="@dimen/mining_glow_size"
+                android:layout_width="@dimen/mining_button_size"
+                android:layout_height="@dimen/mining_button_size"
                 android:layout_gravity="center"
                 android:background="#80000000"
                 android:visibility="gone" />
 
-            <!-- Overlay: Create MINER_STAKE Button (shown above mining button) -->
+            <!-- Overlay message on coin (TMA style) -->
+            <Button
+                android:id="@+id/miningOverlayMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/create_stake_button_background"
+                android:gravity="center"
+                android:maxWidth="220dp"
+                android:paddingStart="16dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:backgroundTint="@null" />
+
+            
             <Button
                 android:id="@+id/createMinerStakeButton"
                 android:layout_width="wrap_content"
@@ -275,15 +288,16 @@
                 android:paddingTop="16dp"
                 android:paddingEnd="32dp"
                 android:paddingBottom="16dp"
-                android:text="CREATE MINER STAKE"
-                android:textColor="#BC5A2B"
+                android:text="@string/mining_create_stake_btn"
+                android:textColor="@color/primary_color"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:backgroundTint="@null" />
 
         </FrameLayout>
 
-        <!-- Mining Credits (below mining button) -->
+        
         <TextView
             android:id="@+id/miningCreditsText"
             android:layout_width="wrap_content"
@@ -291,7 +305,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Credits: N/A"
+            android:text="@string/mining_credits_na"
             android:textColor="#8E8E93"
             android:textSize="14sp"
             android:gravity="center"
@@ -309,7 +323,7 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Credits Status Text (below mining button) -->
+        <!-- Credits refill hint below coin (only when stake active, credits exhausted) -->
         <TextView
             android:id="@+id/creditsRefillText"
             android:layout_width="wrap_content"
@@ -317,9 +331,84 @@
             android:layout_gravity="center"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:text="Create MINER_STAKE to start mining"
             android:textColor="#8E8E93"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!-- Pool / Solo mode toggle (TMA-style) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/miningModePoolLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/mining_mode_pool"
+                android:textColor="#8E8E93"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:id="@+id/miningModeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:background="@drawable/mining_mode_switch_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp">
+
+                <ImageView
+                    android:id="@+id/miningModePoolIcon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:alpha="0.45"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_pool" />
+
+                <FrameLayout
+                    android:layout_width="52dp"
+                    android:layout_height="28dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/mining_mode_track_bg">
+
+                    <View
+                        android:id="@+id/miningModeKnob"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center_vertical|start"
+                        android:layout_marginStart="3dp"
+                        android:background="@drawable/mining_mode_knob_bg" />
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/miningModeSoloIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:alpha="0.45"
+                    android:contentDescription="@null"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/person" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/miningModeSoloLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/mining_mode_solo"
+                android:textColor="#8E8E93"
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

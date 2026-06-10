@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compact trigger — right side of TMA-style lang row (label is separate). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/localePickerRow"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/locale_picker_trigger_bg"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical|start"
+    android:layoutDirection="ltr"
+    android:minHeight="36dp"
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingEnd="4dp">
+
+    <TextView
+        android:id="@+id/localePickerValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="start"
+        android:layoutDirection="ltr"
+        android:textAlignment="viewStart"
+        android:textDirection="ltr"
+        android:maxLines="1"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/localePickerChevron"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="4dp"
+        android:alpha="0.85"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_chevron_down" />
+
+</LinearLayout>

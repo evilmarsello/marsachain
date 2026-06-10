@@ -4,10 +4,7 @@ import android.os.Debug
 import java.io.File
 import java.io.FileInputStream
 
-/**
- * Previously called a JNI module with wrong symbol names; logic moved to Kotlin
- * to avoid NDK and broken :app:packageDebug on machines without proper multi-ABI builds.
- */
+
 class NativeChecks {
 
     fun isDebuggerPresent(): Boolean = Debug.isDebuggerConnected()

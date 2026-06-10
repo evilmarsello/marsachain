@@ -15,7 +15,7 @@ object OnboardingPrefs {
             .apply()
     }
 
-    /** Reset for debugging / re-run (use with care). */
+    
     fun reset(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
     }

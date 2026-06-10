@@ -20,12 +20,11 @@ class WalletOptionsPopup(
     private var popupWindow: PopupWindow? = null
     
     fun show(anchorView: View, wallet: WalletInfo) {
-        dismiss() // Dismiss previous popup if any
+        dismiss()
         
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.wallet_options_popup, null)
         
-        // Configure popup window
         popupWindow = PopupWindow(
             popupView,
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -37,10 +36,8 @@ class WalletOptionsPopup(
             setBackgroundDrawable(context.getDrawable(android.R.color.transparent))
         }
         
-        // Configure buttons
         setupButtons(popupView, wallet)
         
-        // Show popup near button
         showPopup(anchorView, popupView)
     }
     
@@ -69,7 +66,6 @@ class WalletOptionsPopup(
     }
     
     private fun showPopup(anchorView: View, popupView: View) {
-        // Measure sizes
         popupView.measure(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -78,7 +74,6 @@ class WalletOptionsPopup(
         val popupWidth = popupView.measuredWidth
         val popupHeight = popupView.measuredHeight
         
-        // Get anchor view coordinates
         val location = IntArray(2)
         anchorView.getLocationOnScreen(location)
         val anchorX = location[0]
@@ -86,11 +81,9 @@ class WalletOptionsPopup(
         val anchorWidth = anchorView.width
         val anchorHeight = anchorView.height
         
-        // Compute popup position
         val popupX = anchorX + anchorWidth - popupWidth
-        val popupY = anchorY + anchorHeight + 8 // 8dp bottom offset
+        val popupY = anchorY + anchorHeight + 8
         
-        // Show popup
         popupWindow?.showAtLocation(anchorView, Gravity.NO_GRAVITY, popupX, popupY)
     }
     

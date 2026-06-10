@@ -24,18 +24,23 @@ import androidx.lifecycle.lifecycleScope
 import com.marsa.chain.crypto.hd.Bip39
 import com.marsa.chain.databinding.ActivityOnboardingBinding
 import com.marsa.chain.manager.WalletManager
+import com.marsa.chain.manager.LocaleManager
 import com.marsa.chain.security.OnboardingPrefs
+import com.marsa.chain.ui.LocalePickerHelper
+import com.marsa.chain.ui.HeaderInsets
+import com.marsa.chain.ui.UiTheme
 import com.marsa.chain.security.SeedVault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-/**
- * First launch: warnings → 24 words → verify 3 words → seed in [SeedVault] + HD#0.
- * Or restore by phrase (see spec).
- */
+
 class OnboardingActivity : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleManager.attachBaseContext(newBase))
+    }
 
     companion object {
         const val EXTRA_FROM_SETTINGS_RESET = "extra_from_settings_reset"
@@ -47,8 +52,10 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var mnemonicWords: List<String>
 
     private var termsOfUseDialog: Dialog? = null
+    private var localePicker: LocalePickerHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        UiTheme.apply(this)
         super.onCreate(savedInstanceState)
         val fromSettingsReset = intent.getBooleanExtra(EXTRA_FROM_SETTINGS_RESET, false)
         if (!fromSettingsReset && OnboardingPrefs.isComplete(this)) {
@@ -62,6 +69,7 @@ class OnboardingActivity : AppCompatActivity() {
         }
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        HeaderInsets.applyTopBar(binding.onboardingTopBar)
 
         wordList = Bip39.loadEnglishWordList(this)
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, wordList)
@@ -70,6 +78,7 @@ class OnboardingActivity : AppCompatActivity() {
         binding.acWord3.setAdapter(adapter)
 
         setupUnderstandTermsRow()
+        setupLocalePicker()
 
         binding.cbUnderstand.setOnClickListener {
             if (binding.cbUnderstand.isChecked) {
@@ -106,6 +115,24 @@ class OnboardingActivity : AppCompatActivity() {
         binding.btnWordsContinue.setOnClickListener { showVerifyStep() }
 
         binding.btnVerifySubmit.setOnClickListener { onVerifySubmit() }
+    }
+
+    private fun setupLocalePicker() {
+        val picker = binding.onboardingLocalePicker
+        localePicker = LocalePickerHelper(
+            context = this,
+            anchor = picker.localePickerRow,
+            valueView = picker.localePickerValue,
+            chevronView = picker.localePickerChevron
+        ) {
+            recreate()
+        }.also { it.bind() }
+    }
+
+    override fun onDestroy() {
+        localePicker?.dismiss()
+        localePicker = null
+        super.onDestroy()
     }
 
     private fun setupUnderstandTermsRow() {
@@ -167,7 +194,7 @@ class OnboardingActivity : AppCompatActivity() {
         showMnemonicDisplayStep()
     }
 
-    /** Show word grid without regenerating (e.g. after verification error). */
+    
     private fun showMnemonicDisplayStep() {
         require(mnemonicWords.size == 24)
         populateMnemonicGrid(mnemonicWords)

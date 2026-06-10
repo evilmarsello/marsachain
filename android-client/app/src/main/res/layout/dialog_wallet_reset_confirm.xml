@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
-            android:text="Reset wallet?"
+            android:text="@string/reset_wallet_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -74,7 +74,7 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:fontFamily="sans-serif-medium"
-                android:text="Reset"
+                android:text="@string/reset_wallet_continue"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
@@ -103,7 +103,7 @@
             android:fontFamily="sans-serif-medium"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Cancel"
+            android:text="@string/common_cancel"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />

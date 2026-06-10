@@ -4,20 +4,13 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
-/**
- * Convert compact TARGET (bits) to human-readable difficulty.
- * Not on node — client only.
- * Initial difficulty = 2 (~2 taps per block). As target tightens: 2 × (initialTarget/currentTarget), e.g. 2.2 at +10%.
- */
+
 object DifficultyDisplay {
     private const val INITIAL_TARGET_COMPACT = 0x207fffffL
-    /** Initial displayed difficulty: "2" = ~2 taps per block. */
+    
     private const val INITIAL_DISPLAY_VALUE = 2.0
 
-    /**
-     * PoW check: hash (64 hex, big-endian) as number ≤ compact target.
-     * Used in mining (MiningManager, MiningFragment) and on node.
-     */
+    
     fun hashMeetsTarget(hashHex: String, compactBits: Long): Boolean {
         if (hashHex.length != 64) return false
         val target = compactToTarget(compactBits)
@@ -26,7 +19,7 @@ object DifficultyDisplay {
         return hashNum.compareTo(target) <= 0
     }
 
-    /** Decode compact to 256-bit target (BigInteger). */
+    
     fun compactToTarget(compact: Long): BigInteger {
         val nSize = (compact ushr 24).toInt() and 0xFF
         val nWord = compact and 0x7FFFFFL
@@ -37,10 +30,7 @@ object DifficultyDisplay {
         }
     }
 
-    /**
-     * Format compact bits for user display.
-     * Initial difficulty = 2; smaller target → difficulty = 2 × (initialTarget/currentTarget), e.g. 2.2 at +10%.
-     */
+    
     fun formatCompactBits(bits: Int): String {
         val compact = bits.toLong() and 0xFFFFFFFFL
         val target = compactToTarget(compact)

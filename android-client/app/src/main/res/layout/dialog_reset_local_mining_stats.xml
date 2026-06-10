@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
-            android:text="Reset local statistics?"
+            android:text="@string/stats_reset_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:lineSpacingExtra="4dp"
-        android:text="All local profile statistics on this device will be reset."
+        android:text="@string/stats_reset_hint"
         android:textColor="#8E8E93"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
@@ -64,7 +64,7 @@
             android:fontFamily="sans-serif-medium"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Cancel"
+            android:text="@string/common_cancel"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
@@ -80,7 +80,7 @@
             android:fontFamily="sans-serif-medium"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Reset"
+            android:text="@string/common_reset"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />

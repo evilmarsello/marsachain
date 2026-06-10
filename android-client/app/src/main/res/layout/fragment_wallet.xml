@@ -14,7 +14,7 @@
         android:bottomLeftRadius="26dp"
         android:bottomRightRadius="26dp"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="10dp"
         android:layout_marginTop="10dp"
         android:paddingTop="25dp">
 
@@ -24,23 +24,46 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:orientation="vertical"
-            android:paddingLeft="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:alpha="0.8"
-                android:fontFamily="sans-serif"
-                android:text="Balance"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
+            android:paddingLeft="18dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="bottom">
+                android:layout_marginBottom="-4dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/wallet_balance_label"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/walletBalanceToggle"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/wallet_balance_hide"
+                    android:padding="4dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_eye_open" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/walletBalanceText"
@@ -49,23 +72,24 @@
                     android:fontFamily="sans-serif-light"
                     android:text="0"
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/walletBalanceMrsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:fontFamily="sans-serif"
                     android:text="MRS"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
 
         </LinearLayout>
 
-        <!-- Two rows of 4 buttons: equal weight and horizontal padding -->
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,11 +114,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
-                    android:text="Send"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/wallet_send"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -118,11 +145,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
-                    android:text="Receive"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/wallet_receive"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -146,11 +176,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
-                    android:text="History"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/wallet_history"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -174,11 +207,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
-                    android:text="Import Wallet"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/wallet_import"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -212,12 +248,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:text="My Wallets"
+                    android:maxLines="1"
+                    android:text="@string/wallet_my_wallets"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -241,12 +279,14 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:text="New Wallet"
+                    android:maxLines="1"
+                    android:text="@string/wallet_new_wallet"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -261,21 +301,25 @@
 
                 <ImageButton
                     android:id="@+id/buttonWalletMiningPoolsRow"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:background="@drawable/wallet_action_button"
                     android:contentDescription="Mining Pools"
-                    android:src="@drawable/drop"
+                    android:padding="18dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_pool"
                     android:textColor="#FF9500"
                     android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:text="Mining Pools"
+                    android:maxLines="1"
+                    android:text="@string/wallet_mining_pools"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -300,12 +344,14 @@
                     app:tint="#B1562C" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:text="Wallet settings"
+                    android:maxLines="1"
+                    android:text="@string/wallet_settings_btn"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -315,6 +361,7 @@
 
     <!-- Bottom Section -->
     <ScrollView
+        android:id="@+id/walletTxScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -328,27 +375,72 @@
             android:padding="24dp"
             android:paddingTop="32dp">
 
-            <!-- Recent Transactions -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recent Transactions"
-                android:textSize="20sp"
                 android:fontFamily="sans-serif-medium"
-                android:textStyle="bold"
+                android:text="@string/wallet_coin_transfers"
                 android:textColor="#FFFFFF"
-                android:layout_marginBottom="16dp" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:id="@+id/walletPickerRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/input_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp">
+
+                <TextView
+                    android:id="@+id/walletPickerLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+                <View
+                    android:id="@+id/walletPickerActiveDot"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/active_indicator"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/walletPickerChevron"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_chevron_down" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/walletTxRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
 
             <TextView
                 android:id="@+id/noTransactionsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No transactions yet"
-                android:textSize="15sp"
                 android:fontFamily="sans-serif"
-                android:textColor="#8E8E93"
                 android:gravity="center"
-                android:padding="24dp" />
+                android:padding="24dp"
+                android:text="@string/wallet_no_transactions"
+                android:textColor="#8E8E93"
+                android:textSize="15sp"
+                android:visibility="gone" />
 
     </LinearLayout>
 

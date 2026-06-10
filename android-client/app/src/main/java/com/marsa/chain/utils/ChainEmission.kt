@@ -2,11 +2,7 @@ package com.marsa.chain.utils
 
 import java.math.BigInteger
 
-/**
- * Network emission by chain height — same constants and halvings as node [Reward]
- * (INITIAL_REWARD, HALVING_INTERVAL, MAX_SUPPLY, progressive percentages).
- * Not to be confused with 90% miner reward in [MiningFragment.calculateBlockReward].
- */
+
 object ChainEmission {
     const val MAX_SUPPLY_COINS = 50_000_000_000L
     private val MAX_SUPPLY_NANOS: Long = MAX_SUPPLY_COINS * CoinFormatter.WEI_PER_COIN
@@ -35,14 +31,14 @@ object ChainEmission {
         return reward.toLong()
     }
 
-    /** Full block reward (like Reward::getBlockReward), in smallest units. */
+    
     fun blockRewardFullNanos(height: Int): Long {
         if (height <= 0) return INITIAL_NANOS
         val halvingCount = (height - 1) / HALVING_INTERVAL
         return rewardNanosForHalvingCount(halvingCount)
     }
 
-    /** Total emission blocks 0..height inclusive, capped. */
+    
     fun totalEmittedNanos(upToHeightInclusive: Int): Long {
         if (upToHeightInclusive < 0) return 0L
         var total = blockRewardFullNanos(0)
@@ -71,7 +67,7 @@ object ChainEmission {
     fun emittedWholeCoins(upToHeightInclusive: Int): Long =
         totalEmittedNanos(upToHeightInclusive) / CoinFormatter.WEI_PER_COIN
 
-    /** Short whole-coin notation: 113M, 50B (no fraction). */
+    
     fun abbrevWholeMrs(coins: Long): String {
         if (coins <= 0) return "0"
         val v = coins.toDouble()

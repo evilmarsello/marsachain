@@ -100,7 +100,7 @@
                     android:paddingTop="8dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="4dp"
-                    android:text="Reset"
+                    android:text="@string/common_reset"
                     android:textColor="@color/primary_color"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -194,6 +194,32 @@
 
                 <TextView
                     android:id="@+id/activeMinersText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FFFFFF" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/stats_staked_miners"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#8E8E93" />
+
+                <TextView
+                    android:id="@+id/stakedMinersText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"

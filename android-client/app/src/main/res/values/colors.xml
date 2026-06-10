@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Primary Colors -->
-    <color name="primary_color">#FF9500</color> <!-- App orange color -->
+    <color name="primary_color">#B1562C</color>
     <color name="white">#FFFFFFFF</color>
 
     <!-- Transaction Colors -->
@@ -23,7 +23,7 @@
     <!-- Background Colors -->
     <color name="background_card">#FFFFFFFF</color>
 
-    <!-- Mining progress ring (along mining button circle) -->
+    <!-- Mining progress ring (вдоль окружности кнопки) -->
     <color name="mining_ring_progress">#FF30D158</color>
     <color name="mining_ring_track">#33FFFFFF</color>
 </resources>

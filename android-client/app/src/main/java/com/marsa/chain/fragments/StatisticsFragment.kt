@@ -87,6 +87,7 @@ class StatisticsFragment : Fragment() {
                 val miningStats = api.getMiningStats()
                 if (miningStats != null) {
                     binding.activeMinersText.text = miningStats.activeMiners.toString()
+                    binding.stakedMinersText.text = miningStats.stakedMiners.toString()
                     binding.totalMinersText.text = miningStats.totalMiners.toString()
                     binding.blocksPerHourText.text = miningStats.blocksPerHour.toString()
                     binding.averageHashrateText.text = formatHashrate(miningStats.averageHashrate)

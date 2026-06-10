@@ -30,8 +30,11 @@ import com.marsa.chain.R
 import com.marsa.chain.utils.PressHoldReveal
 import com.marsa.chain.data.WalletInfo
 import com.marsa.chain.databinding.FragmentWalletsListBinding
+import com.marsa.chain.manager.PoolRepository
 import com.marsa.chain.manager.WalletManager
 import com.marsa.chain.network.ApiClient
+import com.marsa.chain.pool.WalletStakeBadgeHelper
+import com.marsa.chain.pool.WalletStakeBadgeKind
 import com.marsa.chain.ui.WalletOptionsPopup
 import com.marsa.chain.ui.SortOptionsPopup
 import com.marsa.chain.utils.CoinFormatter
@@ -94,6 +97,7 @@ class WalletsListFragment : Fragment() {
     private lateinit var walletManager: WalletManager
     private lateinit var walletsAdapter: WalletsAdapter
     private lateinit var api: ApiClient
+    private lateinit var poolRepository: PoolRepository
     private lateinit var optionsPopup: WalletOptionsPopup
     private lateinit var sortOptionsPopup: SortOptionsPopup
     
@@ -122,6 +126,7 @@ class WalletsListFragment : Fragment() {
         
         walletManager = WalletManager(requireContext())
         api = ApiClient(requireContext())
+        poolRepository = PoolRepository(requireContext())
         setupOptionsPopup()
         setupSortOptionsPopup()
         setupRecyclerView()
@@ -158,7 +163,7 @@ class WalletsListFragment : Fragment() {
     }
     
     private fun setupRecyclerView() {
-        walletsAdapter = WalletsAdapter(api, walletManager,
+        walletsAdapter = WalletsAdapter(api, poolRepository, walletManager,
             onWalletOptions = { wallet, anchorView -> showWalletOptions(wallet, anchorView) },
             onOrderChanged = { newOrder ->
                 allWallets = newOrder
@@ -256,7 +261,6 @@ class WalletsListFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
@@ -317,7 +321,6 @@ class WalletsListFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnShowPrivateKey).visibility = View.GONE
@@ -373,6 +376,7 @@ class WalletsListFragment : Fragment() {
 
 class WalletsAdapter(
     private val api: ApiClient,
+    private val poolRepository: PoolRepository,
     private val walletManager: WalletManager,
     private val onWalletOptions: (WalletInfo, View) -> Unit,
     private val onOrderChanged: (List<WalletInfo>) -> Unit
@@ -485,13 +489,21 @@ class WalletsAdapter(
         private fun loadMiningBadge(address: String) {
             kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    val info = withContext(Dispatchers.IO) { api.getMiningInfo(address) }
+                    val kind = withContext(Dispatchers.IO) {
+                        WalletStakeBadgeHelper.resolveBadgeKind(api, poolRepository, address)
+                    }
                     if (adapterPosition == RecyclerView.NO_POSITION) return@launch
-                    // has_stake on node = stakeInfo.isActive(height): frozen amount and height < unlock_block.
-                    // Do not confuse with can mine now (credits > 0) — badge is on-chain MINER_STAKE.
-                    val show = info?.has_stake == true &&
-                        (info.unlock_block?.let { info.current_height < it } != false)
-                    walletMinerStakeBadge.visibility = if (show) View.VISIBLE else View.GONE
+                    if (kind == null) {
+                        walletMinerStakeBadge.visibility = View.GONE
+                    } else {
+                        walletMinerStakeBadge.text = when (kind) {
+                            WalletStakeBadgeKind.POOL ->
+                                itemView.context.getString(R.string.wallets_pool_miner_badge)
+                            WalletStakeBadgeKind.SOLO ->
+                                itemView.context.getString(R.string.wallets_miner_badge)
+                        }
+                        walletMinerStakeBadge.visibility = View.VISIBLE
+                    }
                 } catch (_: Exception) {
                     if (adapterPosition != RecyclerView.NO_POSITION) {
                         walletMinerStakeBadge.visibility = View.GONE

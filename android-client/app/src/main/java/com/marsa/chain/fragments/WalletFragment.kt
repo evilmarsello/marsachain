@@ -8,9 +8,14 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.Bundle
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -29,9 +34,14 @@ import com.marsa.chain.network.TransactionRequest
 import com.marsa.chain.network.TransactionInput
 import com.marsa.chain.utils.AddressValidator
 import com.marsa.chain.network.TransactionOutput
+import com.marsa.chain.adapter.WalletTxAdapter
 import com.marsa.chain.manager.WalletManager
 import com.marsa.chain.manager.WalletPreferences
 import com.marsa.chain.manager.TransactionManager
+import com.marsa.chain.manager.WalletTxSync
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import com.marsa.chain.data.TransactionEntity
 import com.marsa.chain.data.WalletInfo
 import com.marsa.chain.MainActivity
@@ -48,13 +58,20 @@ class WalletFragment : Fragment() {
     private lateinit var walletManager: WalletManager
     private lateinit var walletPreferences: WalletPreferences
     private lateinit var transactionManager: TransactionManager
+    private lateinit var walletTxSync: WalletTxSync
+    private var walletTxAdapter: WalletTxAdapter? = null
+    private var viewAddress: String? = null
+    private var allWallets = listOf<WalletInfo>()
+    private var txCollectJob: Job? = null
+    private var walletPickerPopup: PopupWindow? = null
+    private var allWalletTxRows = listOf<TransactionEntity>()
+    private var walletTxVisibleCount = TX_PAGE_SIZE
+    private var balanceHidden = false
+    private var lastBalanceDisplay = "0"
     
-    // Minimum fee: same logic as Reward::getMinimumTransactionFee (fullnode/include/Reward.h).
     private fun computeMinFeeCoins(height: Int): Double {
-        val initial = 1.0 // 1 coin; on node INITIAL_MIN_FEE = 1 * WEI_PER_COIN
+        val initial = 1.0
         if (height <= 0) return initial
-        // Must match Reward::HALVING_INTERVAL (1_050_000), else empty fee field
-        // client sends too-low min (e.g. 0.21 at height 92 with wrong interval=30).
         val interval = 1_050_000
         val halvingCount = (height - 1) / interval
         var fee = initial
@@ -71,7 +88,6 @@ class WalletFragment : Fragment() {
         return fee
     }
     
-    // Safe function to show Toast (Room/network often on Dispatchers.IO — Toast only on main thread)
     private fun showToast(message: String) {
         if (!isAdded || context == null) return
         val appCtx = requireContext().applicationContext
@@ -102,13 +118,52 @@ class WalletFragment : Fragment() {
         walletManager = WalletManager(requireContext())
         walletPreferences = WalletPreferences(requireContext())
         transactionManager = TransactionManager(requireContext())
+        walletTxSync = WalletTxSync(requireContext(), transactionManager, api)
         
+        balanceHidden = walletPreferences.balanceHidden
+        setupBalanceToggle()
         setupUI()
+        setupWalletTransactions()
         loadBalance()
     }
 
+    private fun setupBalanceToggle() {
+        updateBalanceToggleUi()
+        binding.walletBalanceToggle.setOnClickListener {
+            balanceHidden = !balanceHidden
+            walletPreferences.balanceHidden = balanceHidden
+            updateBalanceToggleUi()
+        }
+    }
+
+    private fun updateBalanceDisplay(formatted: String) {
+        lastBalanceDisplay = formatted
+        if (_binding == null) return
+        if (balanceHidden) {
+            binding.walletBalanceText.text = getString(R.string.wallet_balance_hidden_mask)
+            binding.walletBalanceMrsLabel.visibility = View.GONE
+        } else {
+            binding.walletBalanceText.text = formatted
+            binding.walletBalanceMrsLabel.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateBalanceToggleUi() {
+        val b = _binding ?: return
+        if (balanceHidden) {
+            b.walletBalanceText.text = getString(R.string.wallet_balance_hidden_mask)
+            b.walletBalanceMrsLabel.visibility = View.GONE
+            b.walletBalanceToggle.setImageResource(R.drawable.ic_eye_closed)
+            b.walletBalanceToggle.contentDescription = getString(R.string.wallet_balance_show)
+        } else {
+            b.walletBalanceText.text = lastBalanceDisplay
+            b.walletBalanceMrsLabel.visibility = View.VISIBLE
+            b.walletBalanceToggle.setImageResource(R.drawable.ic_eye_open)
+            b.walletBalanceToggle.contentDescription = getString(R.string.wallet_balance_hide)
+        }
+    }
+
     private fun setupUI() {
-        // Load initial balance
         loadBalance()
         
         // Button listeners
@@ -124,7 +179,6 @@ class WalletFragment : Fragment() {
         
         
         binding.transactionHistoryButton.setOnClickListener {
-            // Open History via MainActivity for correct navigation
             val mainActivity = requireActivity() as? MainActivity
             mainActivity?.showHistoryFragment()
         }
@@ -139,26 +193,193 @@ class WalletFragment : Fragment() {
         binding.buttonViewAllWalletsRow.setOnClickListener {
             showAllWalletsFromWalletTab()
         }
-        binding.buttonWalletMiningPoolsRow.setOnClickListener { v ->
-            CloudPopup.showInfoBelow(
-                v,
-                "Mining pools",
-                "Pooling hash power with other miners will be added in a future release.\n\n" +
-                    "For now you mine against the node directly (solo mining; rewards are credited per address)."
-            )
+        binding.buttonWalletMiningPoolsRow.setOnClickListener {
+            (requireActivity() as? com.marsa.chain.MainActivity)?.showPoolsListFragment()
         }
         binding.buttonWalletSettingsRow.setOnClickListener {
             (requireActivity() as? MainActivity)?.showWalletSettingsFragment()
         }
         
-        // Remove demo txs; use real history data
     }
 
     override fun onResume() {
         super.onResume()
-        // Update API client with latest connection settings
         api.updateBaseUrl(requireContext())
         loadBalance()
+        refreshWalletTransactions(forceNetwork = false)
+    }
+
+    private fun setupWalletTransactions() {
+        binding.walletTxRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        walletTxAdapter = WalletTxAdapter(emptyList(), "")
+        binding.walletTxRecyclerView.adapter = walletTxAdapter
+        binding.walletTxScrollView.setOnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
+            if (scrollY <= oldScrollY) return@setOnScrollChangeListener
+            val sv = v as android.widget.ScrollView
+            val child = sv.getChildAt(0) ?: return@setOnScrollChangeListener
+            val threshold = (48 * resources.displayMetrics.density).toInt()
+            val diff = child.bottom - (sv.height + scrollY)
+            if (diff < threshold) loadMoreWalletTx()
+        }
+        binding.walletPickerRow.setOnClickListener { toggleWalletPickerDropdown() }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val active = withContext(Dispatchers.IO) { walletManager.getActiveWallet() }
+            allWallets = withContext(Dispatchers.IO) { walletManager.getAllWallets().first() }
+            viewAddress = walletPreferences.getViewAddress(active?.address)
+            updateWalletPickerLabel()
+            bindTransactionFlow()
+        }
+    }
+
+    private fun updateWalletPickerLabel() {
+        val addr = viewAddress ?: return
+        val wallet = allWallets.find { it.address == addr }
+        val short = if (addr.length > 16) "${addr.take(8)}…${addr.takeLast(8)}" else addr
+        val name = wallet?.name ?: getString(R.string.wallet_default_name)
+        binding.walletPickerLabel.text = "$name — $short"
+        val active = allWallets.find { it.isActive }
+        binding.walletPickerActiveDot.visibility =
+            if (active?.address == addr) View.VISIBLE else View.GONE
+    }
+
+    private fun toggleWalletPickerDropdown() {
+        if (walletPickerPopup?.isShowing == true) {
+            dismissWalletPickerDropdown()
+            return
+        }
+        showWalletPickerDropdown()
+    }
+
+    private fun showWalletPickerDropdown() {
+        if (allWallets.isEmpty() || _binding == null) return
+        dismissWalletPickerDropdown()
+        val anchor = binding.walletPickerRow
+        val menu = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(R.drawable.wallet_picker_menu_bg)
+            val pad = (4 * resources.displayMetrics.density).toInt()
+            setPadding(0, pad, 0, pad)
+        }
+        val activeAddr = allWallets.find { it.isActive }?.address
+        allWallets.forEachIndexed { index, wallet ->
+            val item = layoutInflater.inflate(R.layout.item_wallet_picker_option, menu, false)
+            val short = if (wallet.address.length > 16) {
+                "${wallet.address.take(8)}…${wallet.address.takeLast(8)}"
+            } else {
+                wallet.address
+            }
+            item.findViewById<TextView>(R.id.walletPickerOptionText).text = "${wallet.name} — $short"
+            item.findViewById<View>(R.id.walletPickerOptionDot).visibility =
+                if (wallet.address == activeAddr) View.VISIBLE else View.GONE
+            item.setOnClickListener {
+                viewAddress = wallet.address
+                walletPreferences.setViewAddress(wallet.address)
+                walletTxVisibleCount = TX_PAGE_SIZE
+                updateWalletPickerLabel()
+                bindTransactionFlow()
+                refreshWalletTransactions(forceNetwork = false)
+                dismissWalletPickerDropdown()
+            }
+            menu.addView(item)
+            if (index < allWallets.lastIndex) {
+                val divider = View(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        (1 * resources.displayMetrics.density).toInt()
+                    )
+                    setBackgroundColor(0xFF2C2C2E.toInt())
+                }
+                menu.addView(divider)
+            }
+        }
+        val popup = PopupWindow(
+            menu,
+            anchor.width,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            isOutsideTouchable = true
+            elevation = 12f
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setOnDismissListener { walletPickerPopup = null }
+        }
+        popup.showAsDropDown(anchor, 0, (4 * resources.displayMetrics.density).toInt(), Gravity.START)
+        walletPickerPopup = popup
+        binding.walletPickerChevron.rotation = 180f
+    }
+
+    private fun dismissWalletPickerDropdown() {
+        walletPickerPopup?.dismiss()
+        walletPickerPopup = null
+        _binding?.walletPickerChevron?.rotation = 0f
+    }
+
+    private fun bindTransactionFlow() {
+        txCollectJob?.cancel()
+        val addr = viewAddress ?: return
+        walletTxVisibleCount = TX_PAGE_SIZE
+        txCollectJob = viewLifecycleOwner.lifecycleScope.launch {
+            transactionManager.getTransactionsForAddress(addr).collectLatest { list ->
+                if (_binding == null || !isAdded) return@collectLatest
+                renderWalletTxList(list)
+            }
+        }
+    }
+
+    private fun renderWalletTxList(all: List<TransactionEntity>) {
+        if (_binding == null) return
+        val addr = viewAddress ?: return
+        allWalletTxRows = walletTxSync.walletTabRows(all, addr)
+        paintWalletTxSlice()
+    }
+
+    private fun paintWalletTxSlice() {
+        val b = _binding ?: return
+        val addr = viewAddress ?: return
+        val slice = allWalletTxRows.take(walletTxVisibleCount)
+        walletTxAdapter?.update(slice, addr)
+        if (slice.isEmpty()) {
+            b.walletTxRecyclerView.visibility = View.GONE
+            b.noTransactionsText.visibility = View.VISIBLE
+        } else {
+            b.walletTxRecyclerView.visibility = View.VISIBLE
+            b.noTransactionsText.visibility = View.GONE
+            ensureWalletTxScrollableOrExhausted()
+        }
+    }
+
+    private fun ensureWalletTxScrollableOrExhausted() {
+        val b = _binding ?: return
+        b.walletTxScrollView.post {
+            if (_binding == null) return@post
+            val sv = b.walletTxScrollView
+            val child = sv.getChildAt(0) ?: return@post
+            val canScroll = child.height > sv.height + 4
+            if (!canScroll && walletTxVisibleCount < allWalletTxRows.size) {
+                loadMoreWalletTx()
+            }
+        }
+    }
+
+    private fun loadMoreWalletTx() {
+        if (walletTxVisibleCount >= allWalletTxRows.size) return
+        walletTxVisibleCount = (walletTxVisibleCount + TX_PAGE_SIZE).coerceAtMost(allWalletTxRows.size)
+        paintWalletTxSlice()
+    }
+
+    private fun refreshWalletTransactions(forceNetwork: Boolean) {
+        lifecycleScope.launch {
+            val active = withContext(Dispatchers.IO) { walletManager.getActiveWallet() }
+            allWallets = withContext(Dispatchers.IO) { walletManager.getAllWallets().first() }
+            if (viewAddress.isNullOrBlank()) {
+                viewAddress = walletPreferences.getViewAddress(active?.address)
+            }
+            updateWalletPickerLabel()
+            val addr = viewAddress ?: return@launch
+            withContext(Dispatchers.IO) {
+                walletTxSync.syncAddress(addr, forceNetwork)
+            }
+        }
     }
 
     private fun loadBalance() {
@@ -175,7 +396,7 @@ class WalletFragment : Fragment() {
                 walletManager.getTotalBalance()
             }
             android.util.Log.d("WalletFragment", "Initial total balance: $totalBalance nanos")
-            binding.walletBalanceText.text = CoinFormatter.format(totalBalance)
+            updateBalanceDisplay(CoinFormatter.format(totalBalance))
             
             if (updateFromServer) {
                 // Update individual wallet balances from server
@@ -193,7 +414,6 @@ class WalletFragment : Fragment() {
                             walletManager.updateWalletBalance(wallet.address, balanceResp.balance)
                         }
                     } else {
-                        // If wallet not on server, set balance 0
                         android.util.Log.w("WalletFragment", "Wallet ${wallet.address} not found on server, setting balance to 0")
                         withContext(Dispatchers.IO) {
                             walletManager.updateWalletBalance(wallet.address, 0L)
@@ -206,7 +426,7 @@ class WalletFragment : Fragment() {
                     walletManager.getTotalBalance()
                 }
                 android.util.Log.d("WalletFragment", "Updated total balance: $updatedTotalBalance nanos")
-                binding.walletBalanceText.text = CoinFormatter.formatWithSuffix(updatedTotalBalance)
+                updateBalanceDisplay(CoinFormatter.formatWithSuffix(updatedTotalBalance))
             }
             
         } catch (e: Exception) {
@@ -214,7 +434,7 @@ class WalletFragment : Fragment() {
         }
     }
 
-    /** Paste first text clip from clipboard into field. */
+    
     private fun pasteClipboardPlainTextInto(target: EditText) {
         val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = cm.primaryClip ?: return
@@ -258,7 +478,6 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // ✅ Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // Add real-time warning for own wallets
@@ -275,18 +494,14 @@ class WalletFragment : Fragment() {
                         val address = s?.toString()?.trim() ?: ""
                         
                         if (address.isEmpty()) {
-                            // Empty field — hide all warnings
                             tvOwnWalletWarning.visibility = View.GONE
                         } else if (!AddressValidator.isValidAddress(address)) {
-                            // Invalid address — show validation error
                             tvOwnWalletWarning.text = "Address must start with 'mrs' and be 43 characters long"
                             tvOwnWalletWarning.visibility = View.VISIBLE
                         } else if (AddressValidator.isOwnWallet(address, userWallets)) {
-                            // Valid address but yours — show warning
                             tvOwnWalletWarning.text = "This is one of your own wallets"
                             tvOwnWalletWarning.visibility = View.VISIBLE
                         } else {
-                            // Valid foreign address — hide warnings
                             tvOwnWalletWarning.visibility = View.GONE
                         }
                     }
@@ -303,17 +518,14 @@ class WalletFragment : Fragment() {
         dialogView.findViewById<View>(R.id.btnSend).setOnClickListener {
             lifecycleScope.launch {
             val recipient = etRecipient.text.toString().trim()
-            // Parse coins and convert to nanos
             val amountNanos = CoinFormatter.parseToNanos(etAmount.text.toString().trim()) ?: 0L
             val feeInput = etFee.text.toString().trim()
-                // Get current height for minimum fee (same as on the node)
                 val status = runCatching { api.getStatus() }.getOrNull()
                 val height = (status?.get("height") as? Int) ?: 0
                 val minFeeCoins = computeMinFeeCoins(height)
                 val minFeeNanos = CoinFormatter.coinsToNanos(minFeeCoins.toDouble())
-                val feeNanos = CoinFormatter.parseToNanos(feeInput) ?: minFeeNanos // Default minFee
+                val feeNanos = CoinFormatter.parseToNanos(feeInput) ?: minFeeNanos
             
-            // Log for debugging (can remove later)
             android.util.Log.d("WalletFragment", "Fee input: '$feeInput' -> feeWei: $feeNanos (${feeNanos / CoinFormatter.WEI_PER_COIN.toDouble()} coins)")
             
             if (recipient.isEmpty()) {
@@ -382,7 +594,6 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // ✅ Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
@@ -424,7 +635,7 @@ class WalletFragment : Fragment() {
                         val totalBalance = withContext(Dispatchers.IO) {
                             walletManager.getTotalBalance()
                         }
-                        binding.walletBalanceText.text = CoinFormatter.format(totalBalance)
+                        updateBalanceDisplay(CoinFormatter.format(totalBalance))
                         showToast( "Balance refreshed: ${CoinFormatter.format(totalBalance)} MRS")
                     } else {
                         showToast( "Failed to refresh balance")
@@ -549,22 +760,17 @@ class WalletFragment : Fragment() {
         return true
     }
 
-    // Like TON/Ethereum: build and sign tx locally (private key never leaves client)
     private fun createTransaction(from: String, to: String, amount: Long, fee: Long, publicKey: String, privateKey: String): TransactionRequest {
-        // STEP 1: build unsigned tx to compute txid
-        // txid from all tx fields (inputs, outputs, fee, tx_type) WITHOUT signature
         val txidData = StringBuilder()
         txidData.append(from).append((amount + fee).toString())
         txidData.append(to).append(amount.toString())
         txidData.append(fee.toString())
-        txidData.append("0") // tx_type = 0 for REGULAR txs
+        txidData.append("0")
         
-        // STEP 2: compute SHA256 hash (txid) - same as GUI
         val txidBytes = java.security.MessageDigest.getInstance("SHA-256")
             .digest(txidData.toString().toByteArray())
         val txid = txidBytes.joinToString("") { String.format("%02x", it) }
         
-        // STEP 3: sign txid with Ed25519 (same as GUI and TON/Ethereum)
         val keyPair = KeyPair.fromPrivateKey(privateKey)
         if (keyPair == null) {
             throw Exception("Failed to create KeyPair from private key")
@@ -575,7 +781,6 @@ class WalletFragment : Fragment() {
             throw Exception("Failed to sign transaction")
         }
         
-        // Encode signature as base64
         val signature = Base64.encodeToString(signatureBytes, Base64.NO_WRAP)
         
         return TransactionRequest(
@@ -584,7 +789,7 @@ class WalletFragment : Fragment() {
                 TransactionInput(
                     address = from,
                     amount = amount + fee,
-                    signature = signature, // Like TON/Ethereum: real Ed25519 txid signature
+                    signature = signature,
                     pubKey = publicKey
                 )
             ),
@@ -605,7 +810,6 @@ class WalletFragment : Fragment() {
                 if (activeWallet != null) {
                     val address = activeWallet.address
                     
-                    // Create several demo transactions
                     val demoTransactions = listOf(
                         transactionManager.createReceiveTransaction(
                             txid = "demo_receive_1",
@@ -623,7 +827,7 @@ class WalletFragment : Fragment() {
                         transactionManager.createMiningTransaction(
                             txid = "demo_mining_1",
                             minerAddress = address,
-                            reward = CoinFormatter.coinsToNanos(9000.0), // miner share after 10% to validator
+                            reward = CoinFormatter.coinsToNanos(9000.0),
                             blockHeight = 1001
                         ),
                         transactionManager.createReceiveTransaction(
@@ -641,7 +845,6 @@ class WalletFragment : Fragment() {
                         )
                     )
                     
-                    // Add transactions to database
                     for (transaction in demoTransactions) {
                         transactionManager.addTransaction(transaction)
                     }
@@ -696,7 +899,7 @@ class WalletFragment : Fragment() {
             .replace(R.id.contentFrame, WalletsListFragment())
             .addToBackStack("wallets_list")
             .commit()
-        (requireActivity() as? MainActivity)?.showBackButton("My Wallets")
+        (requireActivity() as? MainActivity)?.showBackButton(getString(R.string.title_my_wallets))
     }
 
     private fun importWallet() {
@@ -715,10 +918,8 @@ class WalletFragment : Fragment() {
             .setView(dialogView)
             .create()
 
-        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Button handlers
         dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener {
             dialog.dismiss()
         }
@@ -736,16 +937,13 @@ class WalletFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Show loading status
             showStatusMessage(tvStatusMessage, "🔄 Validating private key...", true)
             
-            // Test address generation
             val testAddress = com.marsa.chain.crypto.KeyPair.testAddressGeneration(privateKey)
             android.util.Log.d("WalletFragment", "🔍 Test Address Generation:")
             android.util.Log.d("WalletFragment", "🔍 Private Key: $privateKey")
             android.util.Log.d("WalletFragment", "🔍 Generated Address: $testAddress")
             
-            // Validate private key
             lifecycleScope.launch {
                 try {
                     val isValid = walletManager.validatePrivateKey(privateKey)
@@ -756,7 +954,6 @@ class WalletFragment : Fragment() {
 
                     showStatusMessage(tvStatusMessage, "🔄 Importing wallet...", true)
 
-                    // Import wallet
                     val importedWallet = walletManager.importWallet(
                         privateKey = privateKey,
                         name = if (walletName.isNotEmpty()) walletName else null
@@ -765,13 +962,11 @@ class WalletFragment : Fragment() {
                     if (importedWallet != null) {
                         showStatusMessage(tvStatusMessage, "✅ Wallet imported successfully!", true)
                         
-                        // Close dialog after 2 seconds
                         kotlinx.coroutines.delay(2000)
                         dialog.dismiss()
                         
                         showToast( "Wallet '${importedWallet.name}' imported successfully!\nAddress: ${importedWallet.address}")
                         
-                        // Refresh balance after import
                         loadBalance()
                     } else {
                         showStatusMessage(tvStatusMessage, "❌ Failed to import wallet. It may already exist.", false)
@@ -798,7 +993,15 @@ class WalletFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        txCollectJob?.cancel()
+        txCollectJob = null
+        dismissWalletPickerDropdown()
+        walletTxAdapter = null
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val TX_PAGE_SIZE = 5
     }
 }

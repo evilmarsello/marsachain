@@ -92,12 +92,9 @@ class ConnectionsFragment : Fragment() {
         binding.autoSelectSwitch.setOnCheckedChangeListener { _, isChecked ->
             connectionManager.setAutoSelectEnabled(isChecked)
             if (isChecked) {
-                // When auto-select enabled — clear selected IP
                 connectionManager.setSelectedAutoIp(null)
-                // Check all IPs and pick first working one
                 findAndSelectWorkingServer()
             } else {
-                // When disabled — use current selection or first in list
                 val currentSelected = connectionManager.getSelectedAutoIp()
                 if (currentSelected == null || !connectionManager.getAutoIps().contains(currentSelected)) {
                     connectionManager.setSelectedAutoIp(connectionManager.getAutoIps().firstOrNull())
@@ -120,6 +117,10 @@ class ConnectionsFragment : Fragment() {
         // Disconnect manual connection button
         binding.disconnectManualButton.setOnClickListener {
             disconnectManual()
+        }
+
+        binding.savePoolApiButton.setOnClickListener {
+            savePoolApiUrl()
         }
     }
     
@@ -145,6 +146,9 @@ class ConnectionsFragment : Fragment() {
         val manualIp = connectionManager.getManualIp()
         binding.manualIpEditText.setText(manualIp)
         
+        binding.poolApiUrlEditText.setText(connectionManager.getPoolApiBaseUrl().orEmpty())
+        updatePoolApiResolvedLabel()
+
         // Check connection status after loading settings
         if (mode == ConnectionManager.ConnectionMode.AUTO) {
             if (connectionManager.isAutoSelectEnabled()) {
@@ -211,6 +215,30 @@ class ConnectionsFragment : Fragment() {
         }
     }
 
+    private fun savePoolApiUrl() {
+        val raw = binding.poolApiUrlEditText.text.toString().trim()
+        if (raw.isNotEmpty() && !raw.startsWith("http://") && !raw.startsWith("https://")) {
+            Toast.makeText(requireContext(), getString(R.string.connection_pool_api_invalid), Toast.LENGTH_SHORT).show()
+            return
+        }
+        connectionManager.setPoolApiBaseUrl(raw.ifEmpty { null })
+        updatePoolApiResolvedLabel()
+        Toast.makeText(
+            requireContext(),
+            if (raw.isEmpty()) getString(R.string.connection_pool_api_cleared) else getString(R.string.connection_pool_api_saved),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun updatePoolApiResolvedLabel() {
+        val resolved = connectionManager.resolvePoolApiBaseUrl()
+        binding.poolApiResolvedText.text = if (resolved.isNullOrEmpty()) {
+            getString(R.string.connection_pool_api_unavailable)
+        } else {
+            getString(R.string.connection_pool_api_active, resolved)
+        }
+    }
+
     private fun switchToAutoMode() {
         connectionManager.setConnectionMode(ConnectionManager.ConnectionMode.AUTO)
         binding.autoConnectSection.visibility = View.VISIBLE
@@ -219,7 +247,6 @@ class ConnectionsFragment : Fragment() {
         // Update all ApiClient instances
         updateApiClients()
         
-        // Check connection status (with auto-select)
         if (connectionManager.isAutoSelectEnabled()) {
             findAndSelectWorkingServer()
         } else {
@@ -263,7 +290,6 @@ class ConnectionsFragment : Fragment() {
         // Update all ApiClient instances
         updateApiClients()
         
-        // Check connection and update UI (viewLifecycleOwner — cancel when leaving screen)
         viewLifecycleOwner.lifecycleScope.launch {
             delay(500) // Small delay for visual feedback
             if (_binding == null) return@launch
@@ -315,7 +341,6 @@ class ConnectionsFragment : Fragment() {
         binding.connectManualButton.visibility = View.GONE
         binding.disconnectManualButton.visibility = View.GONE
         
-        // Check connection in background (viewLifecycleOwner — cancel when view destroyed, else NPE on binding)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val apiClient = ApiClient(requireContext())
@@ -363,7 +388,6 @@ class ConnectionsFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // Remove white corner background (same as dialog_create_wallet)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
         btnCancel.setOnClickListener {
@@ -391,7 +415,6 @@ class ConnectionsFragment : Fragment() {
             
             dialog.dismiss()
             
-            // Check new IP and switch if working (viewLifecycleOwner — cancel when leaving)
             viewLifecycleOwner.lifecycleScope.launch {
                 val testBaseUrl = "http://$fullAddress/"
                 val testClient = Api.serviceFor(testBaseUrl)
@@ -462,7 +485,6 @@ class ConnectionsFragment : Fragment() {
             .setView(dialogView)
             .create()
         
-        // Remove white corner background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
         btnCancel.setOnClickListener {
@@ -487,13 +509,11 @@ class ConnectionsFragment : Fragment() {
                 autoIpsList.addAll(connectionManager.getAutoIps())
                 autoIpsAdapter.notifyDataSetChanged()
                 
-                // If it was the selected IP — update selection
                 val currentSelected = connectionManager.getSelectedAutoIp()
                 if (currentSelected == ip) {
                     connectionManager.setSelectedAutoIp(newAddress)
                 }
                 
-                // Check connection with updated IP (viewLifecycleOwner — cancel when leaving)
                 viewLifecycleOwner.lifecycleScope.launch {
                     val testBaseUrl = "http://$newAddress/"
                     val testClient = Api.serviceFor(testBaseUrl)
@@ -567,12 +587,13 @@ class ConnectionsFragment : Fragment() {
     }
 
     private fun updateApiClients() {
-        // Notify MainActivity to update all ApiClient instances
+        if (_binding != null) {
+            updatePoolApiResolvedLabel()
+        }
         (requireActivity() as? com.marsa.chain.MainActivity)?.updateApiClients()
     }
     
     private fun startConnectionCheck() {
-        // Check connection status periodically (viewLifecycleOwner — cancel when leaving screen, else NPE on binding)
         connectionCheckJob?.cancel()
         connectionCheckJob = viewLifecycleOwner.lifecycleScope.launch {
             while (isActive && _binding != null) {
@@ -583,7 +604,7 @@ class ConnectionsFragment : Fragment() {
                         checkConnectionStatus()
                     }
                 }
-                delay(10000) // Check every 10 seconds (to avoid overload)
+                delay(10000)
             }
         }
     }
@@ -604,13 +625,11 @@ class ConnectionsFragment : Fragment() {
             return
         }
         
-        // If auto-select on — find working server
         if (connectionManager.isAutoSelectEnabled()) {
             findAndSelectWorkingServer()
             return
         }
         
-        // Else check current selected IP
         val baseUrl = connectionManager.getCurrentBaseUrl()
         
         // Show checking state
@@ -619,7 +638,6 @@ class ConnectionsFragment : Fragment() {
         statusText.setTextColor(0xFF8E8E93.toInt())
         progressBar.visibility = View.VISIBLE
         
-        // Check connection in background (viewLifecycleOwner — cancel when leaving screen)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val apiClient = ApiClient(requireContext())
@@ -683,7 +701,6 @@ class ConnectionsFragment : Fragment() {
                         break
                     }
                 } catch (e: Exception) {
-                    // Continue checking next IP
                 }
             }
             
