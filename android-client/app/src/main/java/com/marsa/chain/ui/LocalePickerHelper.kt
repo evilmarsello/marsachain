@@ -20,7 +20,8 @@ class LocalePickerHelper(
     private val anchor: View,
     private val valueView: TextView,
     private val chevronView: ImageView?,
-    private val onLocaleChanged: (() -> Unit)? = null
+    private val onLocaleChanged: (() -> Unit)? = null,
+    private val dropUp: Boolean = false
 ) {
     private var popup: PopupWindow? = null
     private val codes = LocaleManager.supportedLocales()
@@ -30,9 +31,14 @@ class LocalePickerHelper(
         valueView.layoutDirection = View.LAYOUT_DIRECTION_LTR
         valueView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         valueView.textDirection = View.TEXT_DIRECTION_LTR
+        chevronView?.rotation = closedChevronRotation()
         refreshValue()
         anchor.setOnClickListener { toggleMenu() }
     }
+
+    private fun closedChevronRotation(): Float = if (dropUp) 180f else 0f
+
+    private fun openChevronRotation(): Float = if (dropUp) 0f else 180f
 
     fun refreshValue() {
         valueView.text = labelFor(LocaleManager.getLocale(context))
@@ -113,16 +119,26 @@ class LocalePickerHelper(
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setOnDismissListener {
                 popup = null
-                chevronView?.rotation = 0f
+                chevronView?.rotation = closedChevronRotation()
             }
         }
-        popup?.showAsDropDown(anchor, 0, (4 * context.resources.displayMetrics.density).toInt(), Gravity.START)
-        chevronView?.rotation = 180f
+        val gap = (4 * context.resources.displayMetrics.density).toInt()
+        menu.measure(
+            View.MeasureSpec.makeMeasureSpec(anchor.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val yOffset = if (dropUp) {
+            -(menu.measuredHeight + anchor.height + gap)
+        } else {
+            gap
+        }
+        popup?.showAsDropDown(anchor, 0, yOffset, Gravity.START)
+        chevronView?.rotation = openChevronRotation()
     }
 
     fun dismiss() {
         popup?.dismiss()
         popup = null
-        chevronView?.rotation = 0f
+        chevronView?.rotation = closedChevronRotation()
     }
 }

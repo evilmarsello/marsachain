@@ -135,13 +135,15 @@ class PoolsListFragment : Fragment() {
                 if (isSelected) R.drawable.pool_card_background_selected
                 else R.drawable.pool_card_background
             )
-            badge.visibility = View.VISIBLE
-            badge.text = when {
-                activePoolId == pool.pool_id -> getString(R.string.pool_badge_active)
-                chosenId == pool.pool_id -> getString(R.string.pool_badge_chosen)
-                else -> ""
+            val isActivePool = activePoolId == pool.pool_id || chosenId == pool.pool_id
+            if (isActivePool) {
+                badge.visibility = View.VISIBLE
+                badge.text = getString(R.string.pool_badge_active)
+                badge.setBackgroundResource(R.drawable.pool_badge_active_bg)
+                badge.setTextColor(0xFF4CAF50.toInt())
+            } else {
+                badge.visibility = View.GONE
             }
-            if (badge.text.isNullOrEmpty()) badge.visibility = View.GONE
             val open = {
                 (requireActivity() as? MainActivity)?.showPoolDetailFragment(pool.pool_id, name)
             }

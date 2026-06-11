@@ -42,9 +42,14 @@
     <string name="mining_finish_solo_stake">Active solo MINER_STAKE — unstake solo before joining a pool.</string>
     <string name="pool_stake_pending">Pool-Stake wird gesendet…</string>
     <string name="pool_join_title">%1$d beitreten</string>
+    <string name="pool_stake_balance">Guthaben: %1$d MRS</string>
     <string name="pool_stake_fee_hint">Netzwerkgebühr: 1 MRS</string>
     <string name="pool_stake_amount_hint">1 MRS fee</string>
     <string name="pool_stake_min">Mindest-Stake: %1$s MRS</string>
+    <string name="pool_stake_lock_hint">Coins will be locked for 10,000 blocks.</string>
+    <string name="pool_stake_create_btn">Pool-Stake erstellen</string>
+    <string name="pool_stake_confirmed">Pool-Stake aktiv</string>
+    <string name="pool_stake_already_in_pool">This wallet is already in an official mining pool. A second MINER_POOL_STAKE is not allowed.</string>
     <string name="pool_stake_sending">Pool-Stake wird gesendet…</string>
     <string name="pool_stake_sent">Gesendet. Minen Sie 1 Block zur Bestätigung…</string>
     <string name="pool_stake_failed">Fehler</string>

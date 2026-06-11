@@ -37,9 +37,14 @@ ANDROID_TO_TMA = {
     "mining_finish_solo_stake": "poolStakeSoloBlocksJoin",
     "pool_stake_pending": "poolStakeSending",
     "pool_join_title": "poolStakeTitle",
+    "pool_stake_balance": "poolStakeBalance",
     "pool_stake_fee_hint": "poolStakeFeeHint",
     "pool_stake_amount_hint": "poolStakeAmountPlaceholder",
     "pool_stake_min": "poolStakeMin",
+    "pool_stake_lock_hint": "poolStakeLockHint",
+    "pool_stake_create_btn": "poolStakeCreateBtn",
+    "pool_stake_confirmed": "poolStakeConfirmed",
+    "pool_stake_already_in_pool": "poolStakeAlreadyInPool",
     "pool_stake_sending": "poolStakeSending",
     "pool_stake_sent": "poolStakeSent",
     "pool_stake_failed": "commonError",
@@ -112,6 +117,13 @@ ANDROID_TO_TMA = {
     "pool_treasury_balance": "poolTreasuryBalance",
     "pool_last_round_label": "poolLastRoundLabel",
     "pool_last_round_none": "poolLastRoundNone",
+    "pool_window_fill": "poolWindowFill",
+    "pool_your_taps": "poolYourTaps",
+    "pool_blocks_mined_by_you": "poolBlocksMinedByYou",
+    "pool_available_to_withdraw": "poolAvailableToWithdraw",
+    "pool_balance_simple": "poolBalanceSimple",
+    "pool_withdraw_locked_until": "poolWithdrawLockedUntil",
+    "pool_unstake_locked_until": "poolUnstakeLockedUntil",
     "pool_mining_participation_hint": "poolMiningParticipationHint",
     "pool_share_hint": "poolShareHint",
     "pool_not_in_this_pool": "poolNotInThisPool",
@@ -382,8 +394,19 @@ def resolve_value(name: str, default: str, locale: str, tma: dict[str, str]) -> 
         # Strip TMA template placeholders for Android format strings
         if name == "pool_join_title" and "${" in val:
             return val.replace("${poolName}", "%1$s")
+        if name == "pool_stake_balance" and "${" in val:
+            return val.replace("${bal}", "%1$s")
         if name == "pool_stake_min" and "${" in val:
             return val.replace("${min}", "%1$s")
+        if name == "pool_balance_simple" and "${" in val:
+            return val.replace("${owed}", "%1$s")
+        if name == "pool_window_fill":
+            if "%1$s%" in val:
+                return val.replace("%1$s%", "%1$.0f%%")
+            if "${" in val:
+                return val.replace("${pct}", "%1$.0f").replace("% filled", "%% filled")
+        if name in ("pool_withdraw_locked_until", "pool_unstake_locked_until") and "${" in val:
+            return val.replace("${block}", "%1$d")
         if name == "mining_wallet_in_pool" and "«" in val:
             return default
         if "%" not in val and "${" in val:

@@ -123,10 +123,10 @@ class OnboardingActivity : AppCompatActivity() {
             context = this,
             anchor = picker.localePickerRow,
             valueView = picker.localePickerValue,
-            chevronView = picker.localePickerChevron
-        ) {
-            recreate()
-        }.also { it.bind() }
+            chevronView = picker.localePickerChevron,
+            onLocaleChanged = { recreate() },
+            dropUp = true
+        ).also { it.bind() }
     }
 
     override fun onDestroy() {

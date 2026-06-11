@@ -207,15 +207,13 @@ class PoolDetailFragment : Fragment() {
     private fun paintJoinButton(walletAddress: String, activePoolId: Int?) {
         val chosen = poolModePrefs.getChosenPoolId(walletAddress) == poolId
         val inOther = activePoolId != null && activePoolId != poolId
+        val inThisPool = activePoolId == poolId
         when {
-            chosen -> {
-                binding.poolJoinButton.text = getString(R.string.pool_you_chose_this_pool)
-                binding.poolJoinButton.setBackgroundResource(R.drawable.pool_chosen_button_background)
-                binding.poolJoinButton.setTextColor(0xFF8E8E93.toInt())
-                binding.poolJoinButton.isEnabled = false
-                binding.poolJoinButton.alpha = 1f
+            inThisPool || chosen -> {
+                binding.poolJoinButton.visibility = View.GONE
             }
             inOther -> {
+                binding.poolJoinButton.visibility = View.VISIBLE
                 binding.poolJoinButton.text = getString(R.string.pools_join_mining_pool)
                 binding.poolJoinButton.setBackgroundResource(R.drawable.pool_join_button_background)
                 binding.poolJoinButton.setTextColor(0xFFFFFFFF.toInt())
@@ -223,6 +221,7 @@ class PoolDetailFragment : Fragment() {
                 binding.poolJoinButton.alpha = 0.5f
             }
             else -> {
+                binding.poolJoinButton.visibility = View.VISIBLE
                 binding.poolJoinButton.text = getString(R.string.pools_join_mining_pool)
                 binding.poolJoinButton.setBackgroundResource(R.drawable.pool_join_button_background)
                 binding.poolJoinButton.setTextColor(0xFFFFFFFF.toInt())

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <TextView
+        android:id="@+id/tvPoolStakeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvPoolBalanceInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#8E8E93"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvPoolStakeMinHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#8E8E93"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tvPoolStakeFeeHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/pool_stake_fee_hint"
+        android:textColor="#8E8E93"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/etPoolStakeAmount"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/input_background"
+        android:hint="@string/stake_amount_placeholder"
+        android:inputType="numberDecimal"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#636366"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/stake_refill_hint"
+        android:textColor="#8E8E93"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/pool_stake_lock_hint"
+        android:textColor="#8E8E93"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPoolStakeCancel"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/secondary_button_background"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/common_cancel"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnPoolStakeCreate"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/send_button_background"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/pool_stake_create_btn"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

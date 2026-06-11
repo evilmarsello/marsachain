@@ -69,10 +69,9 @@ class SettingsFragment : Fragment() {
             context = requireContext(),
             anchor = picker.localePickerRow,
             valueView = picker.localePickerValue,
-            chevronView = picker.localePickerChevron
-        ) {
-            requireActivity().recreate()
-        }.also { it.bind() }
+            chevronView = picker.localePickerChevron,
+            onLocaleChanged = { requireActivity().recreate() }
+        ).also { it.bind() }
     }
 
     private fun setupUI() {

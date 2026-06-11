@@ -29,6 +29,7 @@ import com.marsa.chain.network.MiningApi
 import com.marsa.chain.network.ChallengeResponse
 import com.marsa.chain.network.MiningSubmitRequest
 import com.marsa.chain.manager.WalletManager
+import com.marsa.chain.ui.CreateMinerPoolStakeHelper
 import com.marsa.chain.ui.MiningCoinView
 import com.marsa.chain.utils.CoinFormatter
 import com.marsa.chain.utils.DifficultyDisplay
@@ -56,6 +57,7 @@ class MiningFragment : Fragment() {
     private lateinit var walletManager: WalletManager
     private lateinit var poolModePrefs: PoolModePreferences
     private lateinit var poolRepository: PoolRepository
+    private lateinit var poolStakeHelper: CreateMinerPoolStakeHelper
     private lateinit var prefs: SharedPreferences
     private var poolMembership: PoolMembership = PoolMembership()
     private var activeWalletAddress: String? = null
@@ -155,6 +157,19 @@ class MiningFragment : Fragment() {
         walletManager = WalletManager(requireContext())
         poolModePrefs = PoolModePreferences(requireContext())
         poolRepository = PoolRepository(requireContext())
+        poolStakeHelper = CreateMinerPoolStakeHelper(
+            fragment = this,
+            walletManager = walletManager,
+            api = api,
+            poolRepository = poolRepository,
+            poolModePrefs = poolModePrefs,
+            onSuccess = {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    loadMinerStakeInfo()
+                    loadBalanceData()
+                }
+            }
+        )
         prefs = requireContext().getSharedPreferences("mining_stats", Context.MODE_PRIVATE)
         
         // Load saved stats
@@ -518,7 +533,7 @@ class MiningFragment : Fragment() {
         if (poolMode) {
             when {
                 soloBlocksPool -> showCoinMessage(getString(R.string.mining_finish_solo_first))
-                orphanPool -> showCoinAction(getString(R.string.mining_create_pool_stake)) { openChosenPoolDetail() }
+                orphanPool -> showCoinAction(getString(R.string.mining_create_pool_stake)) { showCreateMinerPoolStakeDialog() }
                 pending && !poolMember -> showCoinMessage(getString(R.string.mining_pool_stake_sent))
                 !poolMember -> {
                     val chosenId = addr?.let { poolModePrefs.getChosenPoolId(it) }
@@ -527,7 +542,7 @@ class MiningFragment : Fragment() {
                             (requireActivity() as? MainActivity)?.showPoolsListFragment()
                         }
                         info == null || !info.has_stake -> showCoinAction(getString(R.string.mining_create_pool_stake)) {
-                            openChosenPoolDetail()
+                            showCreateMinerPoolStakeDialog()
                         }
                         else -> {
                             val canMine = PoolHelper.canMineInPoolMode(info, membership)
@@ -563,11 +578,8 @@ class MiningFragment : Fragment() {
         }
     }
 
-    private fun openChosenPoolDetail() {
-        val addr = activeWalletAddress ?: return
-        val poolId = poolModePrefs.getChosenPoolId(addr) ?: return
-        val name = PoolHelper.displayPoolName(poolId, "")
-        (requireActivity() as? MainActivity)?.showPoolDetailFragment(poolId, name)
+    private fun showCreateMinerPoolStakeDialog() {
+        poolStakeHelper.show()
     }
 
     
