@@ -51,10 +51,14 @@ README.md
 
 ```bash
 cp local.properties.example local.properties   # sdk.dir
+cp keystore.properties.example keystore.properties
+# Edit keystore.properties (passwords, key alias) and place marsa-chain.jks in project root.
 ./gradlew :app:assembleDebug
-# release APK:
+# signed release APK (requires keystore.properties + marsa-chain.jks):
 ./gradlew :app:assembleRelease
 ```
+
+`marsa-chain.jks` and `keystore.properties` are gitignored — keep them only on your machine / CI secrets.
 
 JDK 17. The in-app node list is empty by default — add IPs under Connections. Host without a port → `http://IP/` (port 80 / nginx).
 

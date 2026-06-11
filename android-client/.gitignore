@@ -1,5 +1,7 @@
 # Android
 local.properties
+keystore.properties
+*.jks
 .gradle/
 **/build/
 app/.cxx/
